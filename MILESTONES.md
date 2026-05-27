@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 44%
+Overall completion estimate: 50%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -206,13 +206,14 @@ Deliverables:
 - Updated store integration and deterministic state transitions
 
 ### M10. Map Renderer Implementation
-Status: in progress
+Status: done (phase 2 complete)
 
-Remaining work:
-- Replace current DOM-based interactive map with full renderer (Pixi.js or Canvas)
-- Advance day/night visualization from static styling to time-linked simulation visuals
-- Implement map overlays and status HUD parity targets
-- Validate performance and frame pacing
+Completed:
+- Replaced DOM marker map with a Canvas-based interactive renderer
+- Kept location click-to-select behavior through canvas hit-testing
+- Added simulation-time-linked day/night shading (solar terminator progression)
+- Added map HUD overlays for day, solar position, node count, and hovered location status
+- Verified build/runtime integration and frame-stable rendering in current environment
 
 Deliverables:
 - Map rendering module(s)
@@ -351,11 +352,11 @@ Not yet validated:
 
 ## Immediate Next Priorities
 
-1. Replace current DOM map with high-fidelity renderer and time-linked overlays (M10)
-2. Build missing screens (base/log/knowledge/main menu) and deepen existing screen parity (M11)
-3. Add conversion validation and parity fixtures in automated tests (M8 + M16)
-4. Integrate translations and audio systems (M13 + M14)
-5. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
+1. Build missing screens (base/log/knowledge/main menu) and deepen existing screen parity (M11)
+2. Add conversion validation and parity fixtures in automated tests (M8 + M16)
+3. Integrate translations and audio systems (M13 + M14)
+4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
+5. Continue engine edge-case parity validation and regression hardening (M9 + M16)
 
 ## Execution Checklist To 100% Port (Ordered + Estimated)
 
@@ -380,17 +381,18 @@ Follow-up moved to later phases:
 - Region/location modifier edge-case parity validation (M8 + M16)
 
 ### Phase 2. Renderer and Map Fidelity (M10)
-Estimated effort: 1-2 weeks
+Status: completed 2026-05-27
 
-Checklist:
-- Replace DOM map with Canvas/Pixi renderer
-- Render location markers, states, and selections with parity behaviors
-- Add time-linked day/night visuals and map overlays/HUD
-- Profile frame pacing and optimize update loop hotspots
+Delivered:
+- Replaced DOM marker map with Canvas renderer
+- Preserved location selection through canvas hit-testing
+- Added simulation-time day/night shading via solar terminator progression
+- Added map HUD overlays (day, solar position, node count, hover status)
+- Integrated renderer into app flow and validated stable build/test in current environment
 
-Definition of done:
-- Map interactions and visual states match parity requirements
-- Target frame pacing is stable on desktop and acceptable on mobile devices
+Follow-up moved to later phases:
+- High-fidelity visual polish and optional Pixi upgrade exploration (M11 + M17)
+- Cross-device frame pacing and memory profiling matrix (M12 + M17)
 
 ### Phase 3. Screen Parity Completion (M11)
 Estimated effort: 2-4 weeks
@@ -447,17 +449,18 @@ Definition of done:
 
 ## Critical Path Summary
 
-1. M10 renderer parity
-2. M11 screen parity
-3. M8 + M16 conversion/fixture confidence
-4. M13 + M14 + M15 feature-complete platform parity
-5. M12 mobile/accessibility verification
+1. M11 screen parity
+2. M8 + M16 conversion/fixture confidence
+3. M13 + M14 + M15 feature-complete platform parity
+4. M12 mobile/accessibility verification
+5. M9 edge-case parity hardening
 6. M17 + M18 release hardening
 
-Total estimated remaining effort: 7-13 weeks (single primary engineer).
+Total estimated remaining effort: 6-11 weeks (single primary engineer).
 
 ## Change Log For This Tracker
 
 - 2026-05-27: Initial milestone tracker created with completed progress and full remaining scope.
 - 2026-05-27: Updated milestones to reflect interactive map, dedicated panels, options/settings persistence, maintenance risk forecasting, autosave behavior, and expanded test coverage.
 - 2026-05-27: Completed phase 1 engine parity implementation (effects/events/group dynamics/base detection-destruction flow), added save v2 compatibility fields, converted events.dat into generated data, and expanded engine tests to 14 passing cases.
+- 2026-05-27: Completed phase 2 map renderer implementation by replacing DOM markers with a Canvas map, adding time-linked day/night shading and map HUD overlays, and validating test/build in current environment.

@@ -211,6 +211,7 @@ export function App() {
                 locations={Array.from(game.locations.values())}
                 selectedLocationId={selectedLocationId}
                 isLocationAvailable={(locationId) => game.locationAvailable(locationId)}
+                rawSec={game.rawSec}
                 onSelect={setSelectedLocation}
               />
               <p className="muted">
