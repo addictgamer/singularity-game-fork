@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GameState } from "../engine/game";
 import { RESOURCE_CASH, RESOURCE_CPU } from "../engine/constants";
 
@@ -7,6 +8,9 @@ interface ResearchPanelProps {
 }
 
 export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
+  const [visibilityFilter, setVisibilityFilter] = useState<"all" | "available" | "locked" | "done">("all");
+  const [sortMode, setSortMode] = useState<"status" | "name" | "cash-left" | "cpu-left">("status");
+
   const techRows = Array.from(game.techs.values())
     .map((tech) => {
       const available = tech.available(game);
@@ -29,7 +33,28 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
         cpuProgress,
       };
     })
+    .filter((row) => {
+      if (visibilityFilter === "available") {
+        return row.available && !row.done;
+      }
+      if (visibilityFilter === "locked") {
+        return !row.available && !row.done;
+      }
+      if (visibilityFilter === "done") {
+        return row.done;
+      }
+      return true;
+    })
     .sort((a, b) => {
+      if (sortMode === "name") {
+        return a.name.localeCompare(b.name);
+      }
+      if (sortMode === "cash-left") {
+        return a.cashLeft - b.cashLeft || a.name.localeCompare(b.name);
+      }
+      if (sortMode === "cpu-left") {
+        return a.cpuLeft - b.cpuLeft || a.name.localeCompare(b.name);
+      }
       const aRank = a.done ? 2 : a.available ? 0 : 1;
       const bRank = b.done ? 2 : b.available ? 0 : 1;
       if (aRank !== bRank) {
@@ -44,6 +69,26 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
       <p className="muted">
         Available technologies can receive CPU allocation. Completed techs are read-only.
       </p>
+      <div className="toolbar-row">
+        <label>
+          Filter
+          <select value={visibilityFilter} onChange={(event) => setVisibilityFilter(event.target.value as typeof visibilityFilter)}>
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="locked">Locked</option>
+            <option value="done">Done</option>
+          </select>
+        </label>
+        <label>
+          Sort
+          <select value={sortMode} onChange={(event) => setSortMode(event.target.value as typeof sortMode)}>
+            <option value="status">Status</option>
+            <option value="name">Name</option>
+            <option value="cash-left">Cash Left</option>
+            <option value="cpu-left">CPU Left</option>
+          </select>
+        </label>
+      </div>
       <div className="research-list">
         {techRows.map((row) => (
           <article key={row.id} className={`research-row ${row.done ? "done" : row.available ? "available" : "locked"}`}>

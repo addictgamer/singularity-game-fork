@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 50%
+Overall completion estimate: 64%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -222,14 +222,28 @@ Deliverables:
 ### M11. Screen-by-Screen UI Parity
 Status: in progress
 
+Completed in this phase slice:
+- Added dedicated Main Menu panel with difficulty selection and continue/new game actions
+- Added dedicated Base Management panel with per-base upkeep and power controls
+- Added dedicated Activity Log panel backed by runtime session log entries
+- Added dedicated Knowledge/Story panel for researched techs, known locations, active events, and world-state summary
+- Expanded tab navigation to include main-menu/base/log/knowledge screens
+- Added explicit build-action cost and upkeep metadata in location build controls
+- Added save-slot metadata cards for slot-1/autosave in main menu
+- Added research filtering and sorting controls
+- Added log filtering by entry type
+- Added dedicated Save Manager screen with slot-1/slot-2/slot-3/autosave workflows
+- Added slot actions for save/load/delete with synchronized metadata refresh
+- Consolidated import/export workflows under the Save Manager screen
+
 Remaining work:
-- Main menu flow parity and game start flow details
+- Main menu flow deep parity (submenus, campaign start messaging, credits/help flows)
 - Research screen deep parity (advanced sorting/filtering/metadata)
 - Location screen deep parity (full base lifecycle actions and warnings)
-- Base screen parity for item construction and management
+- Base screen deep parity for item construction and management
 - Reports deep parity and detailed data views
-- Log screen parity
-- Knowledge/story screen parity
+- Log screen deep parity (filters, categories, persistent archival behavior)
+- Knowledge/story deep parity (story progression sections and narrative triggers)
 - Options deep parity with full settings coverage
 - Save/load UX parity around slots, metadata, and management workflows
 
@@ -352,7 +366,7 @@ Not yet validated:
 
 ## Immediate Next Priorities
 
-1. Build missing screens (base/log/knowledge/main menu) and deepen existing screen parity (M11)
+1. Deepen M11 screens to full workflow parity (research/location/base/log/knowledge/options)
 2. Add conversion validation and parity fixtures in automated tests (M8 + M16)
 3. Integrate translations and audio systems (M13 + M14)
 4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
@@ -395,13 +409,24 @@ Follow-up moved to later phases:
 - Cross-device frame pacing and memory profiling matrix (M12 + M17)
 
 ### Phase 3. Screen Parity Completion (M11)
-Estimated effort: 2-4 weeks
+Status: in progress
+
+Delivered so far:
+- Main menu panel and start/continue flow skeleton
+- Save-slot metadata cards for primary continue workflows
+- Dedicated save manager workflows (slot save/load/delete + import/export)
+- Base management screen with upkeep and power actions
+- Log screen with runtime action feed and type filtering
+- Knowledge/story screen with researched techs, locations, active events, and world-state summary
+- Research screen filtering and sorting controls
+- Expanded app tab structure to include all above screens
+- Location build actions now display cash/upkeep cost metadata
 
 Checklist:
-- Complete main menu/new game flow parity
-- Implement base management screen depth (items/construction/actions)
-- Implement log screen parity
-- Implement knowledge/story screen parity
+- Deepen main menu/new game flow to full parity
+- Implement base management depth (items/construction/actions)
+- Deepen log screen parity (categories, filtering, archival behavior)
+- Deepen knowledge/story parity with narrative flow
 - Deepen research/location/reports/options behavior details (sorting, metadata, workflows)
 - Finalize save/load UX parity with slot metadata and management flows
 
@@ -464,3 +489,10 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Updated milestones to reflect interactive map, dedicated panels, options/settings persistence, maintenance risk forecasting, autosave behavior, and expanded test coverage.
 - 2026-05-27: Completed phase 1 engine parity implementation (effects/events/group dynamics/base detection-destruction flow), added save v2 compatibility fields, converted events.dat into generated data, and expanded engine tests to 14 passing cases.
 - 2026-05-27: Completed phase 2 map renderer implementation by replacing DOM markers with a Canvas map, adding time-linked day/night shading and map HUD overlays, and validating test/build in current environment.
+- 2026-05-27: Began phase 3 screen parity implementation by adding dedicated main-menu/base/log/knowledge panels, wiring session activity logs, expanding screen tabs, and surfacing build-action cash/upkeep costs in location operations.
+- 2026-05-27: Extended phase 3 workflow parity with save-slot metadata cards, research filtering/sorting controls, log filtering, and richer knowledge/world-state summaries; validated test/build in current environment.
+- 2026-05-27: Fixed research panel refresh bug where project status could appear stale after time advancement until filter/sort interaction.
+- 2026-05-27: Completed quick stale-state sweep and removed additional mutable-game memoization risk in app-level derived UI state.
+- 2026-05-27: Added component regression test for research panel live progress updates after time advancement to prevent stale-status regressions.
+- 2026-05-27: Fixed engine bug where completed research tasks could retain CPU assignment; added regression coverage to ensure CPU auto-unassign on research completion.
+- 2026-05-27: Expanded phase 3 save/load UX with a dedicated Save Manager screen, multi-slot actions (save/load/delete), and centralized import/export workflows.

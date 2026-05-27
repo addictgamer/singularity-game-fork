@@ -781,17 +781,20 @@ export class GameState {
       if (taskId === "cpu_pool") {
         continue;
       }
-      cpuPool -= assignedCpu * seconds;
       const tech = this.techs.get(taskId);
       if (!tech || tech.done) {
+        this.cpuUsage.delete(taskId);
         continue;
       }
+
+      cpuPool -= assignedCpu * seconds;
       const workBudget = Math.max(0, assignedCpu * seconds);
       const result = tech.workOn(this.cash, workBudget);
       this.cash -= result.spentCash;
       if (result.completed) {
         this.researchedTechs.add(taskId);
         this.applyTechEffects(taskId);
+        this.cpuUsage.delete(taskId);
       }
     }
 

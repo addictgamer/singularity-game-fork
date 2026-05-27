@@ -1,10 +1,18 @@
 import { GameState } from "../engine/game";
 
+interface LocationBuildAction {
+  id: string;
+  label: string;
+  cashCost: number;
+  maintenanceCash: number;
+  maintenanceCpu: number;
+}
+
 interface LocationPanelProps {
   game: GameState;
   selectedLocationId: string;
   onSelectLocation: (locationId: string) => void;
-  buildableBaseIds: string[];
+  buildableBaseActions: LocationBuildAction[];
   onBuildBase: (baseId: string) => void;
   onToggleBasePower: (baseId: string) => void;
 }
@@ -13,7 +21,7 @@ export function LocationPanel({
   game,
   selectedLocationId,
   onSelectLocation,
-  buildableBaseIds,
+  buildableBaseActions,
   onBuildBase,
   onToggleBasePower,
 }: LocationPanelProps) {
@@ -52,13 +60,14 @@ export function LocationPanel({
       ) : null}
 
       <h3>Buildable Bases</h3>
-      {buildableBaseIds.length === 0 ? (
+      {buildableBaseActions.length === 0 ? (
         <p>No build options available at current tech/cash/location state.</p>
       ) : (
         <div className="actions">
-          {buildableBaseIds.map((baseId) => (
-            <button key={baseId} onClick={() => onBuildBase(baseId)}>
-              Build {baseId}
+          {buildableBaseActions.map((base) => (
+            <button key={base.id} onClick={() => onBuildBase(base.id)}>
+              Build {base.label} (${base.cashCost})
+              <span className="button-subline">Upkeep ${base.maintenanceCash}/d + {base.maintenanceCpu} cpu/s</span>
             </button>
           ))}
         </div>

@@ -8,6 +8,15 @@ export interface SavedGameRecord {
   state: SerializedGameState;
 }
 
+export interface SaveSummary {
+  slot: string;
+  updatedAt: string;
+  difficultyId: string;
+  day: number;
+  cash: number;
+  baseCount: number;
+}
+
 export interface AppSettings {
   timeStepSeconds: number;
   autosaveEnabled: boolean;
@@ -67,6 +76,24 @@ export async function saveGameToSlot(slot: string, state: SerializedGameState): 
 export async function loadGameFromSlot(slot: string): Promise<SerializedGameState | null> {
   const record = await gameDb.saves.where("slot").equals(slot).first();
   return record?.state ?? null;
+}
+
+export async function deleteGameFromSlot(slot: string): Promise<void> {
+  await gameDb.saves.where("slot").equals(slot).delete();
+}
+
+export async function listSaveSummaries(): Promise<SaveSummary[]> {
+  const records = await gameDb.saves.toArray();
+  return records
+    .map((record) => ({
+      slot: record.slot,
+      updatedAt: record.updatedAt,
+      difficultyId: record.state.difficultyId,
+      day: Math.floor(record.state.rawSec / (24 * 60 * 60)),
+      cash: record.state.cash,
+      baseCount: record.state.bases.length,
+    }))
+    .sort((a, b) => a.slot.localeCompare(b.slot));
 }
 
 export async function loadAppSettings(): Promise<AppSettings> {

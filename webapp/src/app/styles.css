@@ -67,7 +67,7 @@ h1 {
 .screen-tabs {
   display: grid;
   gap: 0.5rem;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   margin-bottom: 1rem;
 }
 
@@ -120,6 +120,20 @@ button {
   color: #fff;
   border: none;
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+.toolbar-row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 0.75rem;
+}
+
+.button-subline {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .actions {
@@ -325,6 +339,92 @@ button {
   gap: 0.8rem;
 }
 
+.base-table {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.base-table-head {
+  display: none;
+}
+
+.base-table-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.5rem;
+  align-items: center;
+}
+
+.log-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  max-height: 360px;
+  overflow: auto;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.knowledge-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.knowledge-grid article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.6rem;
+}
+
+.save-slot-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.save-slot-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.7rem;
+}
+
+.save-slot-card header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.save-manager-list {
+  display: grid;
+  gap: 0.7rem;
+  margin-bottom: 0.9rem;
+}
+
+.save-row-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.65rem;
+}
+
+.save-row-actions {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 260px;
+}
+
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -342,10 +442,24 @@ h3 {
 
 @media (max-width: 640px) {
   .screen-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .card-span-2 {
     grid-column: span 1;
+  }
+
+  .base-table-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .save-row-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .save-row-actions {
+    width: 100%;
+    min-width: 0;
   }
 }

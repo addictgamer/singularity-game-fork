@@ -44,6 +44,23 @@ describe("GameState", () => {
     expect(game.researchedTechs.has("Intrusion")).toBe(true);
   });
 
+  it("unassigns cpu after research completes", () => {
+    const game = new GameState(gameData, "normal");
+    game.cash = 100000;
+
+    const intrusion = game.techs.get("Intrusion");
+    if (!intrusion) {
+      throw new Error("Intrusion tech missing");
+    }
+
+    intrusion.costLeft = [1, 0, 0];
+    game.setAllocatedCpuFor("Intrusion", 1);
+    game.giveTime(1);
+
+    expect(intrusion.done).toBe(true);
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(0);
+  });
+
   it("progresses stealth when assigned and funded", () => {
     const game = new GameState(gameData, "normal");
     game.cash = 100000;

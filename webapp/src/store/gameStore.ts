@@ -7,6 +7,9 @@ import { exportGameToJson, importGameFromJson } from "../engine/save";
 import {
   AppSettings,
   DEFAULT_APP_SETTINGS,
+  SaveSummary,
+  deleteGameFromSlot,
+  listSaveSummaries,
   loadAppSettings,
   loadGameFromSlot,
   saveAppSettings,
@@ -21,9 +24,12 @@ interface GameStore {
   settings: AppSettings;
   settingsLoaded: boolean;
   lastAutosaveDay: number;
+  saveSummaries: SaveSummary[];
+  sessionLog: Array<{ id: number; day: number; kind: string; message: string }>;
   setDifficulty: (id: string) => void;
   setSelectedLocation: (id: string) => void;
   initializeSettings: () => Promise<void>;
+  refreshSaveSummaries: () => Promise<void>;
   updateSettings: (patch: Partial<AppSettings>) => Promise<void>;
   startNewGame: () => void;
   assignCpu: (taskId: string, amount: number) => void;
@@ -36,6 +42,7 @@ interface GameStore {
   advanceDay: () => Promise<void>;
   saveToSlot: (slot: string) => Promise<void>;
   loadFromSlot: (slot: string) => Promise<void>;
+  deleteFromSlot: (slot: string) => Promise<void>;
   exportCurrentGame: () => string | null;
   importCurrentGame: (serialized: string) => void;
 }
@@ -49,12 +56,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
   settings: DEFAULT_APP_SETTINGS,
   settingsLoaded: false,
   lastAutosaveDay: 0,
+  saveSummaries: [],
+  sessionLog: [],
   game: null,
   setDifficulty: (id) => set({ selectedDifficultyId: id }),
   setSelectedLocation: (id) => set({ selectedLocationId: id }),
   initializeSettings: async () => {
-    const settings = await loadAppSettings();
-    set({ settings, settingsLoaded: true });
+    const [settings, saveSummaries] = await Promise.all([loadAppSettings(), listSaveSummaries()]);
+    set({ settings, settingsLoaded: true, saveSummaries });
+  },
+  refreshSaveSummaries: async () => {
+    const saveSummaries = await listSaveSummaries();
+    set({ saveSummaries });
   },
   updateSettings: async (patch) => {
     const state = get();
@@ -64,9 +77,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   startNewGame: () => {
     const state = get();
+    const game = new GameState(typedGameData, state.selectedDifficultyId);
     set({
-      game: new GameState(typedGameData, state.selectedDifficultyId),
+      game,
       lastAutosaveDay: 0,
+      sessionLog: [
+        {
+          id: Date.now(),
+          day: game.rawDay,
+          kind: "system",
+          message: `Started new game on ${state.selectedDifficultyId}`,
+        },
+      ],
     });
   },
   assignCpu: (taskId, amount) => {
@@ -75,7 +97,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
     state.game.setAllocatedCpuFor(taskId, amount);
-    set({ game: state.game });
+    set({
+      game: state.game,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: state.game.rawDay,
+          kind: "cpu",
+          message: `CPU assignment: ${taskId} -> ${amount}`,
+        },
+      ],
+    });
   },
   buildBaseAtSelectedLocation: (baseId) => {
     const state = get();
@@ -83,7 +116,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return false;
     }
     const built = state.game.buildBase(baseId, state.selectedLocationId);
-    set({ game: state.game });
+    set({
+      game: state.game,
+      sessionLog: built
+        ? [
+            ...state.sessionLog,
+            {
+              id: Date.now(),
+              day: state.game.rawDay,
+              kind: "build",
+              message: `Built ${baseId} at ${state.selectedLocationId}`,
+            },
+          ]
+        : state.sessionLog,
+    });
     return built;
   },
   toggleBasePower: (baseId) => {
@@ -92,7 +138,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return false;
     }
     const toggled = state.game.toggleBasePower(baseId);
-    set({ game: state.game });
+    set({
+      game: state.game,
+      sessionLog: toggled
+        ? [
+            ...state.sessionLog,
+            {
+              id: Date.now(),
+              day: state.game.rawDay,
+              kind: "power",
+              message: `Toggled power state for ${baseId}`,
+            },
+          ]
+        : state.sessionLog,
+    });
     return toggled;
   },
   availableBuildableBaseIds: () => {
@@ -118,7 +177,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newLastAutosaveDay = state.game.rawDay;
     }
 
-    set({ game: state.game, lastAutosaveDay: newLastAutosaveDay });
+    const saveSummaries = newLastAutosaveDay !== state.lastAutosaveDay
+      ? await listSaveSummaries()
+      : state.saveSummaries;
+
+    set({
+      game: state.game,
+      lastAutosaveDay: newLastAutosaveDay,
+      saveSummaries,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: state.game.rawDay,
+          kind: "time",
+          message: `Advanced simulation by ${seconds} seconds`,
+        },
+      ],
+    });
   },
   advanceByCurrentTimeStep: async () => {
     const state = get();
@@ -136,14 +212,59 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
     await saveGameToSlot(slot, state.game.serialize());
+    const saveSummaries = await listSaveSummaries();
+    set({
+      saveSummaries,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: state.game.rawDay,
+          kind: "system",
+          message: `Saved to ${slot}`,
+        },
+      ],
+    });
   },
   loadFromSlot: async (slot) => {
+    const state = get();
     const saved = await loadGameFromSlot(slot);
     if (!saved) {
       return;
     }
     const game = GameState.deserialize(typedGameData, saved);
-    set({ game, lastAutosaveDay: game.rawDay });
+    const saveSummaries = await listSaveSummaries();
+    set({
+      game,
+      lastAutosaveDay: game.rawDay,
+      saveSummaries,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: game.rawDay,
+          kind: "system",
+          message: `Loaded save slot ${slot}`,
+        },
+      ],
+    });
+  },
+  deleteFromSlot: async (slot) => {
+    const state = get();
+    await deleteGameFromSlot(slot);
+    const saveSummaries = await listSaveSummaries();
+    set({
+      saveSummaries,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: state.game?.rawDay ?? 0,
+          kind: "system",
+          message: `Deleted save slot ${slot}`,
+        },
+      ],
+    });
   },
   exportCurrentGame: () => {
     const state = get();
@@ -153,7 +274,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return exportGameToJson(state.game);
   },
   importCurrentGame: (serialized) => {
+    const state = get();
     const game = importGameFromJson(typedGameData, serialized);
-    set({ game, lastAutosaveDay: game.rawDay });
+    set({
+      game,
+      lastAutosaveDay: game.rawDay,
+      sessionLog: [
+        ...state.sessionLog,
+        {
+          id: Date.now(),
+          day: game.rawDay,
+          kind: "system",
+          message: "Imported save JSON",
+        },
+      ],
+    });
+    void get().refreshSaveSummaries();
   },
 }));

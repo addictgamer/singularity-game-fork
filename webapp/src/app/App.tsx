@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGameStore } from "../store/gameStore";
 import { RESOURCE_CPU, RESOURCE_CASH } from "../engine/constants";
 import { WorldMap } from "./WorldMap";
@@ -6,8 +6,13 @@ import { ResearchPanel } from "./ResearchPanel";
 import { ReportsPanel } from "./ReportsPanel";
 import { LocationPanel } from "./LocationPanel";
 import { OptionsPanel } from "./OptionsPanel";
+import { MainMenuPanel } from "./MainMenuPanel";
+import { BasePanel } from "./BasePanel";
+import { LogPanel } from "./LogPanel";
+import { KnowledgePanel } from "./KnowledgePanel";
+import { SavePanel } from "./SavePanel";
 
-type ScreenId = "map" | "research" | "location" | "reports" | "options";
+type ScreenId = "main-menu" | "map" | "research" | "location" | "base" | "reports" | "save" | "log" | "knowledge" | "options";
 
 export function App() {
   const {
@@ -17,6 +22,8 @@ export function App() {
     selectedLocationId,
     settings,
     settingsLoaded,
+    saveSummaries,
+    sessionLog,
     setDifficulty,
     setSelectedLocation,
     initializeSettings,
@@ -31,19 +38,30 @@ export function App() {
     advanceDay,
     saveToSlot,
     loadFromSlot,
+    deleteFromSlot,
     exportCurrentGame,
     importCurrentGame,
   } = useGameStore();
 
-  const [screen, setScreen] = useState<ScreenId>("map");
-  const [importError, setImportError] = useState<string | null>(null);
+  const [screen, setScreen] = useState<ScreenId>("main-menu");
 
   useEffect(() => {
     void initializeSettings();
   }, [initializeSettings]);
 
-  const stealth = useMemo(() => game?.techs.get("Stealth"), [game]);
-  const buildableBaseIds = useMemo(() => availableBuildableBaseIds(), [game, selectedLocationId, availableBuildableBaseIds]);
+  const stealth = game?.techs.get("Stealth");
+  const buildableBaseActions = !game
+    ? []
+    : availableBuildableBaseIds().map((baseId) => {
+        const base = game.baseDefs.get(baseId);
+        return {
+          id: baseId,
+          label: base?.name ?? baseId,
+          cashCost: base?.cost[0] ?? 0,
+          maintenanceCash: base?.maintenance[0] ?? 0,
+          maintenanceCpu: base?.maintenance[1] ?? 0,
+        };
+      });
   return (
     <div className={`app-shell ${settings.compactCards ? "compact" : ""}`}>
       <header className="hero">
@@ -56,14 +74,32 @@ export function App() {
       </header>
 
       <nav className="screen-tabs" aria-label="Screens">
+        <button className={screen === "main-menu" ? "active" : ""} onClick={() => setScreen("main-menu")}>Main Menu</button>
         <button className={screen === "map" ? "active" : ""} onClick={() => setScreen("map")}>Map</button>
         <button className={screen === "research" ? "active" : ""} onClick={() => setScreen("research")}>Research</button>
         <button className={screen === "location" ? "active" : ""} onClick={() => setScreen("location")}>Location</button>
+        <button className={screen === "base" ? "active" : ""} onClick={() => setScreen("base")}>Base</button>
         <button className={screen === "reports" ? "active" : ""} onClick={() => setScreen("reports")}>Reports</button>
+        <button className={screen === "save" ? "active" : ""} onClick={() => setScreen("save")}>Save</button>
+        <button className={screen === "log" ? "active" : ""} onClick={() => setScreen("log")}>Log</button>
+        <button className={screen === "knowledge" ? "active" : ""} onClick={() => setScreen("knowledge")}>Knowledge</button>
         <button className={screen === "options" ? "active" : ""} onClick={() => setScreen("options")}>Options</button>
       </nav>
 
       <main className="grid">
+        {screen === "main-menu" ? (
+          <MainMenuPanel
+            availableDifficulties={availableDifficulties}
+            selectedDifficultyId={selectedDifficultyId}
+            saveSummaries={saveSummaries}
+            onSetDifficulty={setDifficulty}
+            onStartNewGame={startNewGame}
+            onLoadSlot={async (slot) => {
+              await loadFromSlot(slot);
+            }}
+          />
+        ) : null}
+
         <section className="card">
           <h2>Game Setup</h2>
           <label htmlFor="difficulty">Difficulty</label>
@@ -124,53 +160,8 @@ export function App() {
                 </button>
                 <button onClick={() => void advanceHalfDay()}>Advance 12h</button>
                 <button onClick={advanceDay}>Advance 24h</button>
-                <button onClick={() => void saveToSlot("slot-1")}>Save Slot 1</button>
-                <button onClick={() => void loadFromSlot("slot-1")}>Load Slot 1</button>
-                <button
-                  onClick={() => {
-                    const json = exportCurrentGame();
-                    if (!json) {
-                      return;
-                    }
-                    const blob = new Blob([json], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = "singularity-web-save.json";
-                    link.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                >
-                  Export Save
-                </button>
-                <label className="import-button">
-                  Import Save
-                  <input
-                    type="file"
-                    accept="application/json"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) {
-                        return;
-                      }
-                      if (settings.confirmImport) {
-                        const ok = window.confirm("Importing will replace current session state. Continue?");
-                        if (!ok) {
-                          return;
-                        }
-                      }
-                      try {
-                        const json = await file.text();
-                        importCurrentGame(json);
-                        setImportError(null);
-                      } catch (error) {
-                        setImportError((error as Error).message);
-                      }
-                    }}
-                  />
-                </label>
+                <button onClick={() => setScreen("save")}>Open Save Manager</button>
               </div>
-              {importError ? <p className="error">Import failed: {importError}</p> : null}
             </>
           )}
         </section>
@@ -231,17 +222,36 @@ export function App() {
             game={game}
             selectedLocationId={selectedLocationId}
             onSelectLocation={setSelectedLocation}
-            buildableBaseIds={buildableBaseIds}
+            buildableBaseActions={buildableBaseActions}
             onBuildBase={buildBaseAtSelectedLocation}
             onToggleBasePower={toggleBasePower}
           />
         )}
+
+        {game && screen === "base" ? <BasePanel game={game} onToggleBasePower={toggleBasePower} /> : null}
 
         {game && screen === "research" ? (
           <ResearchPanel game={game} onAssignCpu={assignCpu} />
         ) : null}
 
         {game && screen === "reports" ? <ReportsPanel game={game} /> : null}
+
+        {screen === "save" ? (
+          <SavePanel
+            saveSummaries={saveSummaries}
+            canSave={Boolean(game)}
+            confirmImport={settings.confirmImport}
+            onSaveSlot={saveToSlot}
+            onLoadSlot={loadFromSlot}
+            onDeleteSlot={deleteFromSlot}
+            onExport={exportCurrentGame}
+            onImport={importCurrentGame}
+          />
+        ) : null}
+
+        {screen === "log" ? <LogPanel entries={sessionLog} /> : null}
+
+        {game && screen === "knowledge" ? <KnowledgePanel game={game} /> : null}
 
         {screen === "options" ? (
           <OptionsPanel
