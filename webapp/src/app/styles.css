@@ -1,0 +1,377 @@
+:root {
+  --paper: #f7f1e1;
+  --ink: #2b1d17;
+  --accent: #f05a28;
+  --accent-strong: #b23613;
+  --panel: #fffdf7;
+  --line: #d8cbb7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Space Grotesk", "IBM Plex Sans", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, #ffe2c9 0%, transparent 35%),
+    radial-gradient(circle at 85% 80%, #ffd5bf 0%, transparent 45%),
+    linear-gradient(135deg, #f7f1e1 0%, #f2e8d8 100%);
+  min-height: 100vh;
+}
+
+.app-shell {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.app-shell.compact .card {
+  padding: 0.7rem;
+}
+
+.app-shell.compact .actions {
+  gap: 0.35rem;
+}
+
+.hero {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent-strong);
+  font-size: 0.75rem;
+}
+
+h1 {
+  margin: 0.2rem 0;
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 72ch;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.screen-tabs {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.screen-tabs button {
+  background: #fdf7ea;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.screen-tabs button.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  border-color: transparent;
+}
+
+.card {
+  background: color-mix(in srgb, var(--panel) 90%, white 10%);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 8px 18px rgba(73, 41, 16, 0.08);
+}
+
+.card-span-2 {
+  grid-column: span 2;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+label,
+select,
+button {
+  display: block;
+  width: 100%;
+}
+
+select,
+button {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  margin-top: 0.4rem;
+}
+
+button {
+  cursor: pointer;
+  color: #fff;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+.actions {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.import-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  cursor: pointer;
+}
+
+.import-button input {
+  display: none;
+}
+
+.stats {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.stats div {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem;
+}
+
+.stats dt {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6f5040;
+}
+
+.stats dd {
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+}
+
+.world-map {
+  position: relative;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 20% 40%, #31b6ff, #0775b2 60%, #094670 100%),
+    repeating-linear-gradient(
+      30deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.06) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+}
+
+.world-map-day-band,
+.world-map-night-band {
+  position: absolute;
+  inset: 0;
+}
+
+.world-map-day-band {
+  background: linear-gradient(90deg, rgba(255, 237, 193, 0.65), rgba(255, 237, 193, 0));
+}
+
+.world-map-night-band {
+  background: linear-gradient(90deg, rgba(8, 16, 40, 0) 45%, rgba(8, 16, 40, 0.72) 100%);
+}
+
+.map-location {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: auto;
+  margin-top: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: #fff;
+}
+
+.map-location-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffd861;
+  box-shadow: 0 0 14px rgba(255, 222, 123, 0.8);
+}
+
+.map-location-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.map-location.locked {
+  opacity: 0.55;
+}
+
+.map-location.locked .map-location-dot {
+  background: #bac5d8;
+  box-shadow: 0 0 10px rgba(186, 197, 216, 0.55);
+}
+
+.map-location.selected .map-location-dot {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.muted {
+  color: #6f5040;
+}
+
+.error {
+  color: #a30f0f;
+  font-weight: 600;
+}
+
+.warning {
+  color: #9b3d08;
+  font-weight: 700;
+}
+
+.ok {
+  color: #216a2a;
+  font-weight: 600;
+}
+
+.base-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.base-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.inline-action {
+  width: auto;
+  margin-top: 0;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.research-list {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 540px;
+  overflow: auto;
+  padding-right: 0.2rem;
+}
+
+.research-row {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.research-row header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.research-row.locked {
+  opacity: 0.75;
+}
+
+.research-row.done {
+  border-color: #84b988;
+}
+
+.research-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.86rem;
+  margin: 0.4rem 0;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #e8dece;
+  overflow: hidden;
+  margin-bottom: 0.45rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f19149, #f05a28);
+}
+
+.research-actions {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.research-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.options-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: auto;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+h3 {
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .screen-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-span-2 {
+    grid-column: span 1;
+  }
+}

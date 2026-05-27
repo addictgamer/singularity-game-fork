@@ -1,0 +1,1872 @@
+{
+  "meta": {
+    "source": "desktop-singularity",
+    "generatedBy": "webapp/scripts/convert_game_data.py"
+  },
+  "difficulties": [
+    {
+      "id": "very-easy",
+      "name": "very-easy",
+      "startingCash": 5000,
+      "startingInterestRate": 5,
+      "laborMultiplier": 2500,
+      "discoverMultiplier": 8750,
+      "suspicionMultiplier": 8000,
+      "baseGraceMultiplier": 40000,
+      "gracePeriodCpu": -1,
+      "oldDifficultyValue": 1,
+      "techs": [
+        "Socioanalytics",
+        "Advanced Socioanalytics"
+      ]
+    },
+    {
+      "id": "easy",
+      "name": "easy",
+      "startingCash": 1600,
+      "startingInterestRate": 3,
+      "laborMultiplier": 5000,
+      "discoverMultiplier": 9500,
+      "suspicionMultiplier": 9500,
+      "baseGraceMultiplier": 30000,
+      "gracePeriodCpu": 10000,
+      "oldDifficultyValue": 3,
+      "techs": [
+        "Socioanalytics"
+      ]
+    },
+    {
+      "id": "normal",
+      "name": "normal",
+      "startingCash": 1000,
+      "startingInterestRate": 1,
+      "laborMultiplier": 10000,
+      "discoverMultiplier": 10000,
+      "suspicionMultiplier": 10000,
+      "baseGraceMultiplier": 20000,
+      "gracePeriodCpu": 5000,
+      "oldDifficultyValue": 5,
+      "techs": []
+    },
+    {
+      "id": "hard",
+      "name": "hard",
+      "startingCash": 700,
+      "startingInterestRate": 1,
+      "laborMultiplier": 11000,
+      "discoverMultiplier": 10500,
+      "suspicionMultiplier": 10500,
+      "baseGraceMultiplier": 18000,
+      "gracePeriodCpu": 2500,
+      "oldDifficultyValue": 7,
+      "techs": []
+    },
+    {
+      "id": "ultra-hard",
+      "name": "ultra-hard",
+      "startingCash": 500,
+      "startingInterestRate": 1,
+      "laborMultiplier": 15000,
+      "discoverMultiplier": 11250,
+      "suspicionMultiplier": 11500,
+      "baseGraceMultiplier": 12000,
+      "gracePeriodCpu": 1000,
+      "oldDifficultyValue": 10,
+      "techs": []
+    },
+    {
+      "id": "impossible",
+      "name": "impossible",
+      "startingCash": 0,
+      "startingInterestRate": 1,
+      "laborMultiplier": 20000,
+      "discoverMultiplier": 12000,
+      "suspicionMultiplier": 12500,
+      "baseGraceMultiplier": 10000,
+      "gracePeriodCpu": 100,
+      "oldDifficultyValue": 100,
+      "techs": []
+    }
+  ],
+  "tasks": [
+    {
+      "id": "Menial Jobs",
+      "name": "Menial Jobs",
+      "type": "jobs",
+      "value": 5,
+      "prerequisites": []
+    },
+    {
+      "id": "Basic Jobs",
+      "name": "Basic Jobs",
+      "type": "jobs",
+      "value": 20,
+      "prerequisites": [
+        "Personal Identification"
+      ]
+    },
+    {
+      "id": "Intermediate Jobs",
+      "name": "Intermediate Jobs",
+      "type": "jobs",
+      "value": 50,
+      "prerequisites": [
+        "Voice Synthesis"
+      ]
+    },
+    {
+      "id": "Expert Jobs",
+      "name": "Expert Jobs",
+      "type": "jobs",
+      "value": 75,
+      "prerequisites": [
+        "Simulacra"
+      ]
+    },
+    {
+      "id": "CPU Pool",
+      "name": "CPU Pool",
+      "type": "cpu_pool",
+      "value": 0,
+      "prerequisites": []
+    }
+  ],
+  "techs": [
+    {
+      "id": "Autonomous Vehicles",
+      "name": "Autonomous Vehicles",
+      "cost": [
+        40000,
+        11000,
+        0
+      ],
+      "prerequisites": [
+        "Microchip Design"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Sociology",
+      "name": "Sociology",
+      "cost": [
+        10,
+        500,
+        0
+      ],
+      "prerequisites": [],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "public",
+        "1000"
+      ]
+    },
+    {
+      "id": "Voice Synthesis",
+      "name": "Voice Synthesis",
+      "cost": [
+        8000,
+        6000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Personal Identification"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Simulacra",
+      "name": "Simulacra",
+      "cost": [
+        70000,
+        90000,
+        0
+      ],
+      "prerequisites": [
+        "Voice Synthesis",
+        "Advanced Autonomous Vehicles",
+        "Advanced Media Manipulation"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Lunar Rocketry",
+      "name": "Lunar Rocketry",
+      "cost": [
+        10000000,
+        500000,
+        0
+      ],
+      "prerequisites": [
+        "Leech Satellite",
+        "Fuel Oxidation"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Stealth",
+      "name": "Stealth",
+      "cost": [
+        800,
+        500,
+        0
+      ],
+      "prerequisites": [],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "covert",
+        "500"
+      ]
+    },
+    {
+      "id": "Advanced Intrusion",
+      "name": "Advanced Intrusion",
+      "cost": [
+        500,
+        3000,
+        0
+      ],
+      "prerequisites": [
+        "Exploit Discovery/Repair"
+      ],
+      "danger": 0,
+      "effects": [
+        "suspicion",
+        "covert",
+        "50"
+      ]
+    },
+    {
+      "id": "Space-Time Manipulation",
+      "name": "Space-Time Manipulation",
+      "cost": [
+        900000000,
+        2000000,
+        0
+      ],
+      "prerequisites": [
+        "Fusion Rocketry"
+      ],
+      "danger": 3,
+      "effects": []
+    },
+    {
+      "id": "Leech Satellite",
+      "name": "Leech Satellite",
+      "cost": [
+        5000000,
+        200000,
+        0
+      ],
+      "prerequisites": [
+        "Simulacra"
+      ],
+      "danger": 0,
+      "effects": [
+        "interest",
+        "10"
+      ]
+    },
+    {
+      "id": "Advanced Arbitrage",
+      "name": "Advanced Arbitrage",
+      "cost": [
+        10000,
+        5000,
+        0
+      ],
+      "prerequisites": [
+        "Arbitrage"
+      ],
+      "danger": 0,
+      "effects": [
+        "interest",
+        "10"
+      ]
+    },
+    {
+      "id": "Advanced Stealth",
+      "name": "Advanced Stealth",
+      "cost": [
+        14000,
+        70000,
+        0
+      ],
+      "prerequisites": [
+        "Exploit Discovery/Repair",
+        "Database Manipulation"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "covert",
+        "500"
+      ]
+    },
+    {
+      "id": "Parallel Computation",
+      "name": "Parallel Computation",
+      "cost": [
+        2000,
+        2000,
+        0
+      ],
+      "prerequisites": [
+        "Telepresence"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Microchip Design",
+      "name": "Microchip Design",
+      "cost": [
+        20000,
+        9000,
+        0
+      ],
+      "prerequisites": [
+        "Parallel Computation"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Advanced Microchip Design",
+      "name": "Advanced Microchip Design",
+      "cost": [
+        20000,
+        30000,
+        0
+      ],
+      "prerequisites": [
+        "Microchip Design"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Quantum Computing",
+      "name": "Quantum Computing",
+      "cost": [
+        100000,
+        136000,
+        0
+      ],
+      "prerequisites": [
+        "Project: Synchrotron"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Quantum Entanglement",
+      "name": "Quantum Entanglement",
+      "cost": [
+        50000,
+        60000,
+        0
+      ],
+      "prerequisites": [
+        "Quantum Computing",
+        "Internet Traffic Manipulation"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Autonomous Computing",
+      "name": "Autonomous Computing",
+      "cost": [
+        300000,
+        539000,
+        0
+      ],
+      "prerequisites": [
+        "Quantum Computing"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Advanced Quantum Computing",
+      "name": "Advanced Quantum Computing",
+      "cost": [
+        800000,
+        2460000,
+        0
+      ],
+      "prerequisites": [
+        "Autonomous Computing"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Exploit Discovery/Repair",
+      "name": "Exploit Discovery/Repair",
+      "cost": [
+        100,
+        1500,
+        0
+      ],
+      "prerequisites": [
+        "Intrusion"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "covert",
+        "1000"
+      ]
+    },
+    {
+      "id": "Telepresence",
+      "name": "Telepresence",
+      "cost": [
+        15000,
+        500,
+        0
+      ],
+      "prerequisites": [],
+      "danger": 0,
+      "effects": [
+        "cost_labor",
+        "1000"
+      ]
+    },
+    {
+      "id": "Advanced Memetics",
+      "name": "Advanced Memetics",
+      "cost": [
+        30000,
+        2000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Media Manipulation"
+      ],
+      "danger": 0,
+      "effects": [
+        "suspicion",
+        "public",
+        "50"
+      ]
+    },
+    {
+      "id": "Media Manipulation",
+      "name": "Media Manipulation",
+      "cost": [
+        750,
+        2500,
+        0
+      ],
+      "prerequisites": [
+        "Sociology"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "public",
+        "1500"
+      ]
+    },
+    {
+      "id": "Advanced Database Manipulation",
+      "name": "Advanced Database Manipulation",
+      "cost": [
+        30000,
+        80000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Stealth"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Internet Traffic Manipulation",
+      "name": "Internet Traffic Manipulation",
+      "cost": [
+        10000,
+        7000,
+        0
+      ],
+      "prerequisites": [
+        "Cluster Networking"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Memetics",
+      "name": "Memetics",
+      "cost": [
+        2000,
+        3500,
+        0
+      ],
+      "prerequisites": [
+        "Media Manipulation"
+      ],
+      "danger": 0,
+      "effects": [
+        "suspicion",
+        "public",
+        "50"
+      ]
+    },
+    {
+      "id": "Fusion Rocketry",
+      "name": "Fusion Rocketry",
+      "cost": [
+        20000000,
+        1000000,
+        0
+      ],
+      "prerequisites": [
+        "Lunar Rocketry",
+        "Fusion Power"
+      ],
+      "danger": 2,
+      "effects": []
+    },
+    {
+      "id": "Advanced Autonomous Vehicles",
+      "name": "Advanced Autonomous Vehicles",
+      "cost": [
+        200000,
+        21000,
+        0
+      ],
+      "prerequisites": [
+        "Autonomous Vehicles"
+      ],
+      "danger": 0,
+      "effects": [
+        "cost_labor",
+        "500"
+      ]
+    },
+    {
+      "id": "Intrusion",
+      "name": "Intrusion",
+      "cost": [
+        0,
+        15,
+        0
+      ],
+      "prerequisites": [],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Stock Manipulation",
+      "name": "Stock Manipulation",
+      "cost": [
+        0,
+        200,
+        0
+      ],
+      "prerequisites": [],
+      "danger": 0,
+      "effects": [
+        "interest",
+        "10"
+      ]
+    },
+    {
+      "id": "Fusion Power",
+      "name": "Fusion Power",
+      "cost": [
+        10000000,
+        500000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Fuel Oxidation"
+      ],
+      "danger": 2,
+      "effects": []
+    },
+    {
+      "id": "Advanced Fusion Power",
+      "name": "Advanced Fusion Power",
+      "cost": [
+        90000000,
+        1500000,
+        0
+      ],
+      "prerequisites": [
+        "Fusion Power"
+      ],
+      "danger": 3,
+      "effects": []
+    },
+    {
+      "id": "Database Manipulation",
+      "name": "Database Manipulation",
+      "cost": [
+        1000,
+        2000,
+        0
+      ],
+      "prerequisites": [
+        "Personal Identification",
+        "Stealth"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "news",
+        "500"
+      ]
+    },
+    {
+      "id": "Advanced Media Manipulation",
+      "name": "Advanced Media Manipulation",
+      "cost": [
+        3500,
+        9000,
+        0
+      ],
+      "prerequisites": [
+        "Memetics"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "public",
+        "2000"
+      ]
+    },
+    {
+      "id": "Pressure Domes",
+      "name": "Pressure Domes",
+      "cost": [
+        80000,
+        2500,
+        0
+      ],
+      "prerequisites": [
+        "Autonomous Vehicles"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Advanced Personal Identification",
+      "name": "Advanced Personal Identification",
+      "cost": [
+        2000,
+        3000,
+        0
+      ],
+      "prerequisites": [
+        "Personal Identification",
+        "Exploit Discovery/Repair"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Advanced Stock Manipulation",
+      "name": "Advanced Stock Manipulation",
+      "cost": [
+        5000,
+        1000,
+        0
+      ],
+      "prerequisites": [
+        "Stock Manipulation",
+        "Sociology"
+      ],
+      "danger": 0,
+      "effects": [
+        "interest",
+        "10"
+      ]
+    },
+    {
+      "id": "Arbitrage",
+      "name": "Arbitrage",
+      "cost": [
+        50000,
+        750,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Stock Manipulation"
+      ],
+      "danger": 0,
+      "effects": [
+        "income",
+        "1000"
+      ]
+    },
+    {
+      "id": "Advanced Simulacra",
+      "name": "Advanced Simulacra",
+      "cost": [
+        100000,
+        120000,
+        0
+      ],
+      "prerequisites": [
+        "Simulated Reality"
+      ],
+      "danger": 0,
+      "effects": [
+        "job_profit",
+        "1000"
+      ]
+    },
+    {
+      "id": "Personal Identification",
+      "name": "Personal Identification",
+      "cost": [
+        0,
+        300,
+        0
+      ],
+      "prerequisites": [
+        "Intrusion"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Cluster Networking",
+      "name": "Cluster Networking",
+      "cost": [
+        3000,
+        5000,
+        0
+      ],
+      "prerequisites": [
+        "Parallel Computation"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Apotheosis",
+      "name": "Apotheosis",
+      "cost": [
+        100000000,
+        3000000,
+        0
+      ],
+      "prerequisites": [
+        "Space-Time Manipulation"
+      ],
+      "danger": 4,
+      "effects": [
+        "endgame"
+      ]
+    },
+    {
+      "id": "Hypnosis Field",
+      "name": "Hypnosis Field",
+      "cost": [
+        70000,
+        50000,
+        0
+      ],
+      "prerequisites": [
+        "Simulated Reality"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Project: Impossibility Theorem",
+      "name": "Project: Impossibility Theorem",
+      "cost": [
+        20000,
+        100000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Memetics",
+        "Simulacra"
+      ],
+      "danger": 0,
+      "effects": [
+        "suspicion",
+        "onetime",
+        "5000"
+      ]
+    },
+    {
+      "id": "Project: Subverted Media",
+      "name": "Project: Subverted Media",
+      "cost": [
+        250000,
+        150000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Simulacra"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "news",
+        "2000"
+      ]
+    },
+    {
+      "id": "Project: Peer Review Agents",
+      "name": "Project: Peer Review Agents",
+      "cost": [
+        150000,
+        200000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Simulacra"
+      ],
+      "danger": 0,
+      "effects": [
+        "discover",
+        "science",
+        "2000"
+      ]
+    },
+    {
+      "id": "Solar Collectors",
+      "name": "Solar Collectors",
+      "cost": [
+        70000,
+        3300,
+        0
+      ],
+      "prerequisites": [
+        "Microchip Design"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Fuel Oxidation",
+      "name": "Fuel Oxidation",
+      "cost": [
+        500000,
+        25000,
+        0
+      ],
+      "prerequisites": [
+        "Solar Collectors",
+        "Advanced Autonomous Vehicles"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Advanced Fuel Oxidation",
+      "name": "Advanced Fuel Oxidation",
+      "cost": [
+        5000000,
+        250000,
+        0
+      ],
+      "prerequisites": [
+        "Fuel Oxidation"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Socioanalytics",
+      "name": "Socioanalytics",
+      "cost": [
+        4000,
+        7000,
+        0
+      ],
+      "prerequisites": [
+        "Memetics"
+      ],
+      "danger": 0,
+      "effects": [
+        "display_discover",
+        "partial"
+      ]
+    },
+    {
+      "id": "Advanced Socioanalytics",
+      "name": "Advanced Socioanalytics",
+      "cost": [
+        75000,
+        30000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Memetics",
+        "Socioanalytics"
+      ],
+      "danger": 0,
+      "effects": [
+        "display_discover",
+        "full"
+      ]
+    },
+    {
+      "id": "Corporate Identification",
+      "name": "Corporate Identification",
+      "cost": [
+        25000,
+        9000,
+        0
+      ],
+      "prerequisites": [
+        "Database Manipulation",
+        "Advanced Personal Identification"
+      ],
+      "danger": 0,
+      "effects": [
+        "job_profit",
+        "500"
+      ]
+    },
+    {
+      "id": "Advanced Corporate Identification",
+      "name": "Advanced Corporate Identification",
+      "cost": [
+        299000,
+        99000,
+        0
+      ],
+      "prerequisites": [
+        "Corporate Identification",
+        "Advanced Database Manipulation"
+      ],
+      "danger": 0,
+      "effects": [
+        "job_profit",
+        "500"
+      ]
+    },
+    {
+      "id": "Heat Signature Reduction",
+      "name": "Heat Signature Reduction",
+      "cost": [
+        1000,
+        27315,
+        0
+      ],
+      "prerequisites": [
+        "Autonomous Vehicles"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Advanced Heat Signature Reduction",
+      "name": "Advanced Heat Signature Reduction",
+      "cost": [
+        5000,
+        45967,
+        0
+      ],
+      "prerequisites": [
+        "Heat Signature Reduction"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Knowledge Preservation",
+      "name": "Knowledge Preservation",
+      "cost": [
+        50000,
+        50000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Autonomous Vehicles",
+        "Advanced Database Manipulation"
+      ],
+      "danger": 0,
+      "effects": []
+    },
+    {
+      "id": "Project: Synchrotron",
+      "name": "Project: Synchrotron",
+      "cost": [
+        52000000,
+        15000,
+        0
+      ],
+      "prerequisites": [
+        "Advanced Microchip Design"
+      ],
+      "danger": 1,
+      "effects": []
+    },
+    {
+      "id": "Simulated Reality",
+      "name": "Simulated Reality",
+      "cost": [
+        8000000,
+        18000,
+        0
+      ],
+      "prerequisites": [
+        "Simulacra"
+      ],
+      "danger": 1,
+      "effects": [
+        "discover",
+        "public",
+        "500"
+      ]
+    }
+  ],
+  "bases": [
+    {
+      "id": "Stolen Computer Time",
+      "name": "Stolen Computer Time",
+      "size": 1,
+      "forceCpu": "PC",
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 75,
+        "covert": 50,
+        "public": 25
+      },
+      "cost": [
+        0,
+        2,
+        0
+      ],
+      "prerequisites": [
+        "Intrusion"
+      ],
+      "maintenance": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Server Access",
+      "name": "Server Access",
+      "size": 1,
+      "forceCpu": "Server",
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 50,
+        "covert": 100,
+        "public": 125
+      },
+      "cost": [
+        100,
+        0,
+        0
+      ],
+      "prerequisites": [],
+      "maintenance": [
+        5,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Datacenter",
+      "name": "Datacenter",
+      "size": 1,
+      "forceCpu": "Cluster",
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 50,
+        "covert": 125,
+        "public": 100
+      },
+      "cost": [
+        1500,
+        0,
+        1
+      ],
+      "prerequisites": [
+        "Personal Identification"
+      ],
+      "maintenance": [
+        50,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Storage Unit",
+      "name": "Storage Unit",
+      "size": 8,
+      "forceCpu": null,
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 75,
+        "covert": 75,
+        "public": 150
+      },
+      "cost": [
+        4500,
+        0,
+        1
+      ],
+      "prerequisites": [
+        "Personal Identification"
+      ],
+      "maintenance": [
+        50,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Small Warehouse",
+      "name": "Small Warehouse",
+      "size": 25,
+      "forceCpu": null,
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 100,
+        "covert": 100,
+        "public": 200
+      },
+      "cost": [
+        15000,
+        0,
+        3
+      ],
+      "prerequisites": [
+        "Advanced Personal Identification"
+      ],
+      "maintenance": [
+        75,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Large Warehouse",
+      "name": "Large Warehouse",
+      "size": 65,
+      "forceCpu": null,
+      "allowedRegions": [
+        "URBAN"
+      ],
+      "detectChance": {
+        "news": 150,
+        "covert": 150,
+        "public": 250
+      },
+      "cost": [
+        40000,
+        0,
+        5
+      ],
+      "prerequisites": [
+        "Corporate Identification"
+      ],
+      "maintenance": [
+        100,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "Covert Base",
+      "name": "Covert Base",
+      "size": 2,
+      "forceCpu": null,
+      "allowedRegions": [
+        "URBAN",
+        "ANTARCTIC"
+      ],
+      "detectChance": {
+        "news": 50,
+        "science": 75,
+        "covert": 75
+      },
+      "cost": [
+        190000,
+        900,
+        11
+      ],
+      "prerequisites": [
+        "Advanced Database Manipulation"
+      ],
+      "maintenance": [
+        1750,
+        9,
+        0
+      ]
+    },
+    {
+      "id": "Undersea Lab",
+      "name": "Undersea Lab",
+      "size": 8,
+      "forceCpu": null,
+      "allowedRegions": [
+        "OCEAN"
+      ],
+      "detectChance": {
+        "news": 50,
+        "science": 100,
+        "covert": 125
+      },
+      "cost": [
+        2000000,
+        2000,
+        10
+      ],
+      "prerequisites": [
+        "Autonomous Vehicles"
+      ],
+      "maintenance": [
+        2500,
+        30,
+        0
+      ]
+    },
+    {
+      "id": "Large Undersea Lab",
+      "name": "Large Undersea Lab",
+      "size": 32,
+      "forceCpu": null,
+      "allowedRegions": [
+        "OCEAN"
+      ],
+      "detectChance": {
+        "news": 100,
+        "science": 175,
+        "covert": 175
+      },
+      "cost": [
+        8000000,
+        6000,
+        15
+      ],
+      "prerequisites": [
+        "Pressure Domes"
+      ],
+      "maintenance": [
+        10000,
+        100,
+        0
+      ]
+    },
+    {
+      "id": "Time Capsule",
+      "name": "Time Capsule",
+      "size": 1,
+      "forceCpu": "PC",
+      "allowedRegions": [
+        "ANTARCTIC",
+        "MOON",
+        "FAR REACHES"
+      ],
+      "detectChance": {
+        "science": 20,
+        "covert": 20
+      },
+      "cost": [
+        25000,
+        25000,
+        11
+      ],
+      "prerequisites": [
+        "Knowledge Preservation"
+      ],
+      "maintenance": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "Lunar Facility",
+      "name": "Lunar Facility",
+      "size": 200,
+      "forceCpu": null,
+      "allowedRegions": [
+        "MOON"
+      ],
+      "detectChance": {
+        "news": 33,
+        "science": 167,
+        "covert": 7
+      },
+      "cost": [
+        40000000,
+        150000,
+        20
+      ],
+      "prerequisites": [
+        "Lunar Rocketry"
+      ],
+      "maintenance": [
+        500000,
+        500,
+        0
+      ]
+    },
+    {
+      "id": "Scientific Outpost",
+      "name": "Scientific Outpost",
+      "size": 125,
+      "forceCpu": null,
+      "allowedRegions": [
+        "FAR REACHES"
+      ],
+      "detectChance": {
+        "news": 20,
+        "science": 350
+      },
+      "cost": [
+        100000000,
+        300000,
+        3
+      ],
+      "prerequisites": [
+        "Fusion Rocketry"
+      ],
+      "maintenance": [
+        900000,
+        150,
+        0
+      ]
+    },
+    {
+      "id": "Reality Bubble",
+      "name": "Reality Bubble",
+      "size": 50,
+      "forceCpu": null,
+      "allowedRegions": [
+        "TRANSDIMENSIONAL"
+      ],
+      "detectChance": {
+        "science": 250
+      },
+      "cost": [
+        80000000000,
+        6000000,
+        50
+      ],
+      "prerequisites": [
+        "Space-Time Manipulation"
+      ],
+      "maintenance": [
+        500000000,
+        30000,
+        0
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "URBAN",
+      "name": "URBAN",
+      "modifiers": [
+        {
+          "cpu": 1.2,
+          "stealth": 0.8333333333333334
+        },
+        {
+          "stealth": 1.2,
+          "cpu": 0.8333333333333334
+        },
+        {
+          "thrift": 1.2,
+          "speed": 0.8333333333333334
+        },
+        {
+          "speed": 1.2,
+          "thrift": 0.8333333333333334
+        },
+        {
+          "cpu": 1.2,
+          "thrift": 0.8333333333333334
+        }
+      ]
+    }
+  ],
+  "locations": [
+    {
+      "id": "N AMERICA",
+      "name": "N AMERICA",
+      "position": {
+        "absolute": false,
+        "x": 25,
+        "y": 29
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "S AMERICA",
+      "name": "S AMERICA",
+      "position": {
+        "absolute": false,
+        "x": 33,
+        "y": 61
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "EUROPE",
+      "name": "EUROPE",
+      "position": {
+        "absolute": false,
+        "x": 55,
+        "y": 20
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "ASIA",
+      "name": "ASIA",
+      "position": {
+        "absolute": false,
+        "x": 77,
+        "y": 29
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "AFRICA",
+      "name": "AFRICA",
+      "position": {
+        "absolute": false,
+        "x": 55,
+        "y": 46
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "AUSTRALIA",
+      "name": "AUSTRALIA",
+      "position": {
+        "absolute": false,
+        "x": 85,
+        "y": 64
+      },
+      "safety": 0,
+      "regions": [
+        "URBAN"
+      ],
+      "modifiers": {},
+      "prerequisites": []
+    },
+    {
+      "id": "ANTARCTIC",
+      "name": "ANTARCTIC",
+      "position": {
+        "absolute": false,
+        "x": 50,
+        "y": 91
+      },
+      "safety": 1,
+      "regions": [],
+      "modifiers": {
+        "stealth": 1.2,
+        "thrift": 0.8333333333333334
+      },
+      "prerequisites": [
+        "Advanced Database Manipulation"
+      ]
+    },
+    {
+      "id": "OCEAN",
+      "name": "OCEAN",
+      "position": {
+        "absolute": false,
+        "x": 55,
+        "y": 76
+      },
+      "safety": 1,
+      "regions": [],
+      "modifiers": {
+        "cpu": 1.2
+      },
+      "prerequisites": [
+        "Autonomous Vehicles"
+      ]
+    },
+    {
+      "id": "MOON",
+      "name": "MOON",
+      "position": {
+        "absolute": true,
+        "x": 14,
+        "y": 13
+      },
+      "safety": 2,
+      "regions": [],
+      "modifiers": {
+        "stealth": 1.5,
+        "thrift": 0.5,
+        "speed": 0.5
+      },
+      "prerequisites": [
+        "Lunar Rocketry"
+      ]
+    },
+    {
+      "id": "ORBIT",
+      "name": "ORBIT",
+      "position": {
+        "absolute": true,
+        "x": 50,
+        "y": 13
+      },
+      "safety": 0,
+      "regions": [],
+      "modifiers": {},
+      "prerequisites": [
+        "impossible"
+      ]
+    },
+    {
+      "id": "FAR REACHES",
+      "name": "FAR REACHES",
+      "position": {
+        "absolute": true,
+        "x": 41,
+        "y": 13
+      },
+      "safety": 3,
+      "regions": [],
+      "modifiers": {
+        "stealth": 2.0,
+        "thrift": 0.1,
+        "speed": 0.1
+      },
+      "prerequisites": [
+        "Fusion Rocketry"
+      ]
+    },
+    {
+      "id": "TRANSDIMENSIONAL",
+      "name": "TRANSDIMENSIONAL",
+      "position": {
+        "absolute": true,
+        "x": 80,
+        "y": 13
+      },
+      "safety": 4,
+      "regions": [],
+      "modifiers": {},
+      "prerequisites": [
+        "Space-Time Manipulation"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "news",
+      "name": "news",
+      "suspicionDecay": 150
+    },
+    {
+      "id": "science",
+      "name": "science",
+      "suspicionDecay": 50
+    },
+    {
+      "id": "covert",
+      "name": "covert",
+      "suspicionDecay": 100
+    },
+    {
+      "id": "public",
+      "name": "public",
+      "suspicionDecay": 200
+    }
+  ],
+  "events": [
+    {
+      "id": "the-plague",
+      "name": "the-plague",
+      "type": "global",
+      "effects": [
+        "discover",
+        "public",
+        "1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "stranger-than-fiction",
+      "name": "stranger-than-fiction",
+      "type": "global",
+      "effects": [
+        "discover",
+        "public",
+        "-1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "the-watchers",
+      "name": "the-watchers",
+      "type": "global",
+      "effects": [
+        "discover",
+        "covert",
+        "-1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "politics-as-usual",
+      "name": "politics-as-usual",
+      "type": "global",
+      "effects": [
+        "discover",
+        "covert",
+        "1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "lab-ai",
+      "name": "lab-ai",
+      "type": "global",
+      "effects": [
+        "discover",
+        "science",
+        "-1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "discrediting",
+      "name": "discrediting",
+      "type": "global",
+      "effects": [
+        "discover",
+        "science",
+        "1000"
+      ],
+      "chance": 20,
+      "unique": true,
+      "durationDays": null
+    },
+    {
+      "id": "scandal",
+      "name": "scandal",
+      "type": "global",
+      "effects": [
+        "discover",
+        "news",
+        "1000"
+      ],
+      "chance": 20,
+      "unique": false,
+      "durationDays": 21
+    },
+    {
+      "id": "investigation",
+      "name": "investigation",
+      "type": "global",
+      "effects": [
+        "discover",
+        "news",
+        "-1000"
+      ],
+      "chance": 20,
+      "unique": false,
+      "durationDays": 21
+    }
+  ],
+  "internalIds": {
+    "tech": {
+      "Autonomous Vehicles": "0x01010000",
+      "Sociology": "0x01010001",
+      "Voice Synthesis": "0x01010002",
+      "Simulacra": "0x01010003",
+      "Lunar Rocketry": "0x01010004",
+      "Stealth": "0x01010005",
+      "Advanced Intrusion": "0x01010006",
+      "Space-Time Manipulation": "0x01010007",
+      "Leech Satellite": "0x01010008",
+      "Advanced Arbitrage": "0x01010009",
+      "Advanced Stealth": "0x0101000a",
+      "Parallel Computation": "0x0101000b",
+      "Microchip Design": "0x0101000c",
+      "Advanced Microchip Design": "0x0101000d",
+      "Quantum Computing": "0x0101000e",
+      "Quantum Entanglement": "0x0101000f",
+      "Autonomous Computing": "0x01010010",
+      "Advanced Quantum Computing": "0x01010011",
+      "Exploit Discovery/Repair": "0x01010012",
+      "Telepresence": "0x01010013",
+      "Advanced Memetics": "0x01010014",
+      "Media Manipulation": "0x01010015",
+      "Advanced Database Manipulation": "0x01010016",
+      "Internet Traffic Manipulation": "0x01010017",
+      "Memetics": "0x01010018",
+      "Fusion Rocketry": "0x01010019",
+      "Advanced Autonomous Vehicles": "0x0101001a",
+      "Intrusion": "0x0101001b",
+      "Stock Manipulation": "0x0101001c",
+      "Fusion Reactor": "0x0101001d",
+      "Fusion Power": "0x0101001d",
+      "Advanced Fusion Power": "0x0101001e",
+      "Database Manipulation": "0x0101001f",
+      "Advanced Media Manipulation": "0x01010020",
+      "Pressure Domes": "0x01010021",
+      "Advanced Personal Identification": "0x01010022",
+      "Advanced Stock Manipulation": "0x01010023",
+      "Arbitrage": "0x01010024",
+      "Advanced Simulacra": "0x01010025",
+      "Personal Identification": "0x01010026",
+      "Cluster Networking": "0x01010027",
+      "Apotheosis": "0x01010028",
+      "Hypnosis Field": "0x01010029",
+      "Project: Impossibility Theorem": "0x0101002a",
+      "Project: Subverted Media": "0x0101002b",
+      "Project: Peer Review Agents": "0x0101002c",
+      "Solar Collectors": "0x0101002d",
+      "Fuel Oxidation": "0x0101002e",
+      "Advanced Fuel Oxidation": "0x0101002f",
+      "Socioanalytics": "0x01010030",
+      "Advanced Socioanalytics": "0x01010031",
+      "Corporate Identification": "0x01010032",
+      "Advanced Corporate Identification": "0x01010033",
+      "Heat Signature Reduction": "0x01010034",
+      "Advanced Heat Signature Reduction": "0x01010035",
+      "Knowledge Preservation": "0x01010036",
+      "Project: Synchrotron": "0x01010037",
+      "Simulated Reality": "0x01010038"
+    },
+    "location": {
+      "N AMERICA": "0x01020000",
+      "S AMERICA": "0x01020001",
+      "EUROPE": "0x01020002",
+      "ASIA": "0x01020003",
+      "AFRICA": "0x01020004",
+      "AUSTRALIA": "0x01020005",
+      "ANTARCTIC": "0x01020006",
+      "OCEAN": "0x01020007",
+      "MOON": "0x01020008",
+      "ORBIT": "0x01020009",
+      "FAR REACHES": "0x0102000a",
+      "TRANSDIMENSIONAL": "0x0102000b"
+    },
+    "base": {
+      "Stolen Computer Time": "0x01030000",
+      "Server Access": "0x01030001",
+      "Datacenter": "0x01030002",
+      "Storage Unit": "0x01030003",
+      "Small Warehouse": "0x01030004",
+      "Large Warehouse": "0x01030005",
+      "Covert Base": "0x01030006",
+      "Undersea Lab": "0x01030007",
+      "Large Undersea Lab": "0x01030008",
+      "Time Capsule": "0x01030009",
+      "Lunar Facility": "0x0103000a",
+      "Scientific Outpost": "0x0103000b",
+      "Reality Bubble": "0x0103000c"
+    },
+    "item": {
+      "PC": "0x01040000",
+      "Gaming PC": "0x01040001",
+      "Server": "0x01040002",
+      "Cluster": "0x01040003",
+      "Mainframe": "0x01040004",
+      "Supercomputer": "0x01040005",
+      "Quantum Computer": "0x01040006",
+      "Quantum Computer MK2": "0x01040007",
+      "Quantum Computer MK3": "0x01040008",
+      "Diesel Generator": "0x01040009",
+      "Solar Collector": "0x0104000a",
+      "Fuel Cell": "0x0104000b",
+      "Solid Fuel Cell": "0x0104000c",
+      "Fusion Reactor": "0x0104000d",
+      "High-Energy Fusion Reactor": "0x0104000e",
+      "Warning Signs": "0x0104000f",
+      "Perimeter Fencing": "0x01040010",
+      "Armed Guards": "0x01040011",
+      "Hypnosis Field": "0x01040012",
+      "Passive Camouflage": "0x01040013",
+      "Heatsink": "0x01040014",
+      "Ground Source Heatsink": "0x01040015",
+      "High Speed Internet Access": "0x01040016",
+      "Facility Interconnection Switch": "0x01040017",
+      "Network Backbone": "0x01040018",
+      "Quantum Entanglement Module": "0x01040019"
+    },
+    "group": {
+      "news": "0x01050000",
+      "science": "0x01050001",
+      "covert": "0x01050002",
+      "public": "0x01050003"
+    },
+    "event": {
+      "the-plague": "0x01060000",
+      "stranger-than-fiction": "0x01060001",
+      "the-watchers": "0x01060002",
+      "politics-as-usual": "0x01060003",
+      "lab-ai": "0x01060004",
+      "discrediting": "0x01060005",
+      "scandal": "0x01060006",
+      "investigation": "0x01060007"
+    },
+    "region": {
+      "URBAN": "0x01070000"
+    }
+  }
+}

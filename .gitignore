@@ -18,3 +18,6 @@ singularity/i18n/*.po.sha1
 singularity/i18n/locale/
 singularity-*.tar.gz
 singularity-*.tar.gz.asc
+
+webapp/dist/
+webapp/node_modules/
