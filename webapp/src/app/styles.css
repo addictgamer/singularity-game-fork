@@ -1156,6 +1156,54 @@ h3 {
   font-size: 1.1rem;
 }
 
+.location-sidebar-stack {
+  min-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.story-watch-card {
+  margin-top: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.7rem 0.75rem;
+  box-shadow: 0 2px 6px rgba(73, 41, 16, 0.08);
+}
+
+.story-watch-card h3 {
+  margin: 0;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6f5040;
+}
+
+.story-watch-line {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: #47352d;
+}
+
+.story-watch-ok {
+  margin: 0.38rem 0 0;
+  font-size: 0.76rem;
+  color: #2f6943;
+  font-weight: 600;
+}
+
+.story-watch-alerts {
+  margin: 0.4rem 0 0;
+  padding-left: 1rem;
+  font-size: 0.76rem;
+  color: #7b3029;
+}
+
+.story-watch-alerts li + li {
+  margin-top: 0.12rem;
+}
+
 /* Modal Styles */
 
 .modal-overlay {

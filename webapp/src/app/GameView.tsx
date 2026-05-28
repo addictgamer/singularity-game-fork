@@ -129,6 +129,33 @@ export function GameView({
       return aEta - bEta;
     });
   const trackerResearch = activeResearch[0] ?? null;
+  const suspicionLeaders = [...game.groups.entries()]
+    .map(([groupId, group]) => ({ groupId, suspicion: Math.round(group.suspicion) }))
+    .sort((a, b) => b.suspicion - a.suspicion)
+    .slice(0, 3);
+  const activeEventNames = [...game.events.entries()]
+    .filter(([, event]) => event.triggered)
+    .map(([eventId]) => game.eventDefs.get(eventId)?.name ?? eventId)
+    .sort((a, b) => a.localeCompare(b));
+  const maintenanceSnapshot = game.getMaintenanceSnapshot();
+  const narrativeAlerts: string[] = [];
+  if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 5000) {
+    narrativeAlerts.push("Critical suspicion pressure");
+  } else if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 2000) {
+    narrativeAlerts.push("Suspicion is rising");
+  }
+  if (activeEventNames.length > 0) {
+    narrativeAlerts.push(`${activeEventNames.length} active event${activeEventNames.length === 1 ? "" : "s"}`);
+  }
+  if (maintenanceSnapshot.atRiskBaseIds.length > 0) {
+    narrativeAlerts.push(`${maintenanceSnapshot.atRiskBaseIds.length} base${maintenanceSnapshot.atRiskBaseIds.length === 1 ? "" : "s"} at risk`);
+  }
+  if (!game.hadGrace) {
+    narrativeAlerts.push("Grace period has ended");
+  }
+  if (game.apotheosis) {
+    narrativeAlerts.push("Endgame condition active");
+  }
 
   useEffect(() => {
     if (eventConsoleCollapsed) {
@@ -284,14 +311,33 @@ export function GameView({
         {/* Location Operations Overlay (when location is selected) */}
         {selectedLocationId && (
           <aside className="location-sidebar">
-            <LocationPanel
-              game={game}
-              selectedLocationId={selectedLocationId}
-              onSelectLocation={onSelectLocation}
-              buildableBaseActions={buildableBaseActions}
-              onBuildBase={onBuildBase}
-              onToggleBasePower={onToggleBasePower}
-            />
+            <div className="location-sidebar-stack">
+              <LocationPanel
+                game={game}
+                selectedLocationId={selectedLocationId}
+                onSelectLocation={onSelectLocation}
+                buildableBaseActions={buildableBaseActions}
+                onBuildBase={onBuildBase}
+                onToggleBasePower={onToggleBasePower}
+              />
+              <section className="story-watch-card" aria-label="Story tracking alerts">
+                <h3>Story Watch</h3>
+                <p className="story-watch-line">Top suspicion: {suspicionLeaders[0]?.groupId ?? "none"} ({suspicionLeaders[0]?.suspicion ?? 0})</p>
+                {suspicionLeaders.length > 1 ? (
+                  <p className="story-watch-line">Next: {suspicionLeaders[1].groupId} ({suspicionLeaders[1].suspicion})</p>
+                ) : null}
+                <p className="story-watch-line">Active events: {activeEventNames.length}</p>
+                {narrativeAlerts.length === 0 ? (
+                  <p className="story-watch-ok">No urgent narrative alerts.</p>
+                ) : (
+                  <ul className="story-watch-alerts">
+                    {narrativeAlerts.map((alert) => (
+                      <li key={alert}>{alert}</li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </div>
           </aside>
         )}
       </main>
