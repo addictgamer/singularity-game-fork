@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 82%
+Overall completion estimate: 84%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -265,6 +265,9 @@ Completed in this phase slice (previous work):
 - Redesigned entire app layout to make map the hero viewport with persistent sidebar and modal dialogs (fixes "looks like web forms" issue)
 - Separated main menu into dedicated full-screen view distinct from gameplay
 - Implemented app-screen state machine to manage main-menu vs game transitions
+- Transformed main menu into cinematic title screen with earth background image and two-column layout (new game / continue)
+- Integrated art assets (earth.jpg, earth-night.jpg) from original game to enhance UI visual hierarchy
+- Added earth imagery as subtle textured backgrounds to sidebar, location panel, and modal dialogs for visual cohesion
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -272,6 +275,8 @@ Remaining work:
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
 - Sidebar compact/expand toggle for responsive narrow screens
+- Location/base card visual previews with thematic imagery (location-specific maps/icons)
+- Tech/research visual indicators and danger-level color coding
 - Reports additional parity polish (desktop fixture alignment)
 - Log screen additional parity polish (persistent archival storage behavior)
 - Knowledge/story additional parity polish (desktop narrative trigger alignment)
