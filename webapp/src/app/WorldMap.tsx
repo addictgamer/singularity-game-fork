@@ -83,9 +83,37 @@ export function WorldMap({
   const timeOfDay = ((rawSec % SECONDS_PER_DAY) + SECONDS_PER_DAY) % SECONDS_PER_DAY;
   const dayPercent = timeOfDay / SECONDS_PER_DAY;
 
+  const selectableRegionIds = useMemo(() => {
+    const selectable = new Set<string>();
+    for (const region of CLICK_REGIONS) {
+      for (const location of sorted) {
+        if (!isLocationAvailable(location.id)) continue;
+        if (pointInPolygon(location.position.x, location.position.y, region.points)) {
+          selectable.add(region.id);
+          break;
+        }
+      }
+      if (selectable.has(region.id)) continue;
+
+      // Keep coarse-region fallback aligned with click behavior.
+      const b = region.bounds;
+      for (const location of sorted) {
+        if (!isLocationAvailable(location.id)) continue;
+        const inBounds =
+          location.position.x >= b.x_min - 5 && location.position.x <= b.x_max + 5 &&
+          location.position.y >= b.y_min - 5 && location.position.y <= b.y_max + 5;
+        if (inBounds) {
+          selectable.add(region.id);
+          break;
+        }
+      }
+    }
+    return selectable;
+  }, [isLocationAvailable, sorted]);
+
   useEffect(() => {
     const img = new Image();
-    img.src = '/earth.jpg';
+    img.src = "/earth.jpg";
     img.onload = () => {
       earthImageRef.current = img;
     };
@@ -132,8 +160,10 @@ export function WorldMap({
         context.fillRect(0, 0, width, height);
       }
 
-      // Draw all continent boundaries — faint gray at rest, golden glow on hover
+      // Draw only selectable region boundaries.
       for (const region of CLICK_REGIONS) {
+        if (!selectableRegionIds.has(region.id)) continue;
+
         const isHovered = region.id === hoveredContinentId;
         context.save();
         context.beginPath();
@@ -162,10 +192,16 @@ export function WorldMap({
       context.globalAlpha = 0.1;
       context.strokeStyle = "#ffffff";
       for (let x = 0; x <= width; x += Math.max(48, width / 12)) {
-        context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke();
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+        context.stroke();
       }
       for (let y = 0; y <= height; y += Math.max(42, height / 8)) {
-        context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke();
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+        context.stroke();
       }
       context.globalAlpha = 1;
 
@@ -184,7 +220,8 @@ export function WorldMap({
         context.fillRect(xStart, 0, bandWidth, height);
       };
       if (nightLeft > terminatorX) {
-        drawNightBand(nightLeft, width); drawNightBand(0, terminatorX);
+        drawNightBand(nightLeft, width);
+        drawNightBand(0, terminatorX);
       } else {
         drawNightBand(nightLeft, terminatorX);
       }
@@ -224,8 +261,10 @@ export function WorldMap({
     };
 
     draw();
-    return () => { resizeObserver.disconnect(); };
-  }, [dayPercent, hoveredContinentId, hoveredLocationId, isLocationAvailable, selectedLocationId, sorted]);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [dayPercent, hoveredContinentId, hoveredLocationId, isLocationAvailable, selectableRegionIds, selectedLocationId, sorted]);
 
   const getContinentAtPointer = (clientX: number, clientY: number): string | null => {
     const canvas = canvasRef.current;
@@ -237,6 +276,7 @@ export function WorldMap({
     const ny = (y / rect.height) * 100;
 
     for (const region of CLICK_REGIONS) {
+      if (!selectableRegionIds.has(region.id)) continue;
       const b = region.bounds;
       if (nx < b.x_min - 1 || nx > b.x_max + 1 || ny < b.y_min - 1 || ny > b.y_max + 1) continue;
       if (pointInPolygon(nx, ny, region.points)) return region.id;
@@ -263,7 +303,9 @@ export function WorldMap({
 
   /** Find nearest available location within the same continent region. */
   const getNearestLocationInContinent = (
-    clientX: number, clientY: number, continentId: string
+    clientX: number,
+    clientY: number,
+    continentId: string
   ): string | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
@@ -282,7 +324,10 @@ export function WorldMap({
       const inRegion = pointInPolygon(location.position.x, location.position.y, region.points);
       if (!inRegion) continue;
       const dist = Math.hypot(lx - mx, ly - my);
-      if (dist < nearestDist) { nearestDist = dist; nearest = location.id; }
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = location.id;
+      }
     }
 
     // Fallback for tiny/coarse regions where no location center lands strictly inside polygon.
@@ -297,7 +342,10 @@ export function WorldMap({
           location.position.y >= b.y_min - 5 && location.position.y <= b.y_max + 5;
         if (!inBounds) continue;
         const dist = Math.hypot(lx - mx, ly - my);
-        if (dist < nearestDist) { nearestDist = dist; nearest = location.id; }
+        if (dist < nearestDist) {
+          nearestDist = dist;
+          nearest = location.id;
+        }
       }
     }
 
@@ -324,10 +372,16 @@ export function WorldMap({
             setHoveredContinentId(null);
           }
         }}
-        onMouseLeave={() => { setHoveredLocationId(null); setHoveredContinentId(null); }}
+        onMouseLeave={() => {
+          setHoveredLocationId(null);
+          setHoveredContinentId(null);
+        }}
         onClick={(event) => {
           const locId = getLocationAtPointer(event.clientX, event.clientY);
-          if (locId) { onSelect(locId); return; }
+          if (locId) {
+            onSelect(locId);
+            return;
+          }
           const continentId = getContinentAtPointer(event.clientX, event.clientY);
           if (continentId) {
             const nearest = getNearestLocationInContinent(event.clientX, event.clientY, continentId);
@@ -343,10 +397,8 @@ export function WorldMap({
           ? `${hoveredLocation.name} (${isLocationAvailable(hoveredLocation.id) ? "available" : "locked"})`
           : hoveredContinentId
             ? `${CLICK_REGIONS.find((c) => c.id === hoveredContinentId)?.name ?? hoveredContinentId} — click to select nearest`
-          : "Hover a node or region"}
+            : "Hover a node or region"}
       </div>
     </div>
   );
 }
-
-
