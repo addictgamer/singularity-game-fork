@@ -955,6 +955,68 @@ h3 {
   z-index: 2;
 }
 
+.research-tracker {
+  position: absolute;
+  top: 3.25rem;
+  left: 1rem;
+  z-index: 7;
+  width: min(290px, calc(100% - 2rem));
+  padding: 0.6rem 0.7rem;
+  border: 1px solid rgba(225, 237, 255, 0.45);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(14, 25, 43, 0.78), rgba(11, 18, 33, 0.84));
+  color: #e7f2ff;
+  box-shadow: 0 8px 26px rgba(2, 8, 19, 0.38);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.research-tracker:hover,
+.research-tracker:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(2, 8, 19, 0.48);
+  outline: none;
+}
+
+.research-tracker h3 {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #a9d4ff;
+}
+
+.research-tracker-name {
+  margin: 0.28rem 0 0;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #f8fcff;
+}
+
+.research-tracker-meta,
+.research-tracker-extra,
+.research-tracker-empty {
+  margin: 0.24rem 0 0;
+  font-size: 0.74rem;
+  color: rgba(218, 235, 255, 0.9);
+}
+
+.research-tracker-progress {
+  margin-top: 0.36rem;
+  height: 7px;
+  width: 100%;
+  background: rgba(159, 198, 235, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.research-tracker-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #78b5ff, #4bf0d8);
+  border-radius: inherit;
+}
+
 .world-map {
   width: 100%;
   height: 100%;

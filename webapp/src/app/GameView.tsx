@@ -11,6 +11,7 @@ import { KnowledgePanel } from "./KnowledgePanel";
 import { SavePanel } from "./SavePanel";
 import { SaveSummary, ReportHistoryRecord } from "../store/persistence";
 import { AppSettings } from "../store/persistence";
+import { RESOURCE_CPU, RESOURCE_CASH, SECONDS_PER_DAY } from "../engine/constants";
 
 type ModalId = "research" | "reports" | "save" | "log" | "knowledge" | "options" | null;
 
@@ -94,6 +95,35 @@ export function GameView({
   );
   const idleCpu = game.effectiveCpuPool();
   const ownedCpu = game.bases.reduce((sum, base) => sum + base.cpuProvided, 0);
+  const activeResearch = Array.from(game.techs.values())
+    .filter((tech) => !tech.done)
+    .map((tech) => {
+      const allocation = game.getAllocatedCpuFor(tech.id);
+      const totalCpuCost = Math.max(1, tech.totalCost[RESOURCE_CPU]);
+      const cpuProgressPercent = Math.max(0, Math.min(100, 100 - (tech.costLeft[RESOURCE_CPU] / totalCpuCost) * 100));
+      const hasCpuEta = allocation > 0 && tech.costLeft[RESOURCE_CPU] > 0;
+      const etaDays = hasCpuEta ? tech.costLeft[RESOURCE_CPU] / (allocation * SECONDS_PER_DAY) : null;
+      const waitingOnCash = tech.costLeft[RESOURCE_CPU] <= 0 && tech.costLeft[RESOURCE_CASH] > 0;
+      return {
+        id: tech.id,
+        name: tech.name,
+        allocation,
+        cpuProgressPercent,
+        etaDays,
+        waitingOnCash,
+      };
+    })
+    .filter((tech) => tech.allocation > 0)
+    .sort((a, b) => {
+      const allocationDiff = b.allocation - a.allocation;
+      if (allocationDiff !== 0) {
+        return allocationDiff;
+      }
+      const aEta = a.etaDays ?? Number.POSITIVE_INFINITY;
+      const bEta = b.etaDays ?? Number.POSITIVE_INFINITY;
+      return aEta - bEta;
+    });
+  const trackerResearch = activeResearch[0] ?? null;
 
   return (
     <div className="game-view">
@@ -162,6 +192,42 @@ export function GameView({
       {/* Main Map Viewport */}
       <main className="map-viewport">
         <section className="map-container">
+          {trackerResearch ? (
+            <aside
+              className="research-tracker"
+              aria-live="polite"
+              aria-label="Research progress tracker"
+              role="button"
+              tabIndex={0}
+              onClick={() => setOpenModal("research")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setOpenModal("research");
+                }
+              }}
+            >
+              <h3>Research Tracker</h3>
+              <p className="research-tracker-name">{trackerResearch.name}</p>
+              <p className="research-tracker-meta">Assigned CPU: {trackerResearch.allocation}</p>
+              <div className="research-tracker-progress" aria-hidden="true">
+                <div
+                  className="research-tracker-progress-fill"
+                  style={{ width: `${trackerResearch.cpuProgressPercent.toFixed(1)}%` }}
+                />
+              </div>
+              <p className="research-tracker-meta">
+                {trackerResearch.waitingOnCash
+                  ? "ETA: Awaiting cash"
+                  : trackerResearch.etaDays === null
+                    ? "ETA: --"
+                    : `ETA: ${trackerResearch.etaDays.toFixed(1)} days`}
+              </p>
+              {activeResearch.length > 1 ? (
+                <p className="research-tracker-extra">+{activeResearch.length - 1} more queued</p>
+              ) : null}
+            </aside>
+          ) : null}
           <WorldMap
             locations={Array.from(game.locations.values())}
             selectedLocationId={selectedLocationId}
