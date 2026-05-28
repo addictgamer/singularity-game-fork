@@ -282,6 +282,9 @@ Completed in this phase slice (previous work):
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
+- Full tooltip coverage pass across all gameplay and menu surfaces (status stats, controls, map overlays, modals, form fields, and destructive actions)
+- Tooltip content standardization (what it means, why it matters, and side effects where applicable)
+- Tooltip consistency and discoverability pass (desktop hover + keyboard focus, mobile-safe alternatives)
 - Research screen advanced metadata (danger ratings, effects display)
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
@@ -297,6 +300,8 @@ Remaining work:
 Deliverables:
 - Dedicated components/routes for each screen
 - Shared UI primitives for lists/dialogs/sliders/tooltips
+- Tooltip coverage checklist and content map for all major UI labels/buttons/indicators
+- Accessibility-aligned tooltip behavior notes (focus, timing, and fallback text)
 
 Recently completed implementation notes:
 - Map fidelity and interaction pass:
@@ -319,6 +324,10 @@ Recently completed implementation notes:
   - Added allocation persistence across UI states (buttons use row.allocation as base)
   - Added helpful tooltips explaining why buttons are disabled
   - Clear button now only enabled when there's actually an allocation to clear
+- Tooltip foundation pass (2026-05-28):
+  - Added tooltip help text for CPU Availability semantics (idle vs owned)
+  - Added tooltip hint on idle CPUs in research context (idle CPUs can run jobs for cash)
+  - Established baseline pattern for expanding tooltip coverage to all major controls
 - Data conversion validation harness (2026-05-28):
   - Created 22 comprehensive data validation tests covering schema, references, and ranges
   - Validates all core domains: difficulties, techs, bases, locations, groups, events
@@ -453,6 +462,7 @@ Not yet validated:
 - Mobile UX parity
 - Offline end-to-end user flows
 - Accessibility conformance
+- Tooltip coverage completeness and wording consistency across all screens
 
 ## Immediate Next Priorities
 
@@ -461,6 +471,7 @@ Not yet validated:
 3. Integrate translations and audio systems (M13 + M14)
 4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
 5. Performance profiling and optimization (M17)
+6. Complete full tooltip coverage pass for all major UI labels/buttons/indicators and document coverage checklist (M11 + M12)
 
 ## Execution Checklist To 100% Port (Ordered + Estimated)
 
