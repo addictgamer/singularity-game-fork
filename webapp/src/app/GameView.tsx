@@ -74,6 +74,7 @@ export function GameView({
 }: GameViewProps) {
   const [openModal, setOpenModal] = useState<ModalId>(null);
   const [eventConsoleCollapsed, setEventConsoleCollapsed] = useState(false);
+  const [severeAlertsCollapsed, setSevereAlertsCollapsed] = useState(false);
   const [floatingNotices, setFloatingNotices] = useState<FloatingNotice[]>([]);
   const eventConsoleBodyRef = useRef<HTMLDivElement | null>(null);
   const processedLogCountRef = useRef<number | null>(null);
@@ -192,12 +193,6 @@ export function GameView({
     severeAlerts.push({
       id: "critical-suspicion",
       summary: "Critical suspicion pressure",
-    });
-  }
-  if (!game.hadGrace) {
-    severeAlerts.push({
-      id: "grace-ended",
-      summary: "Grace period has ended",
     });
   }
 
@@ -335,9 +330,20 @@ export function GameView({
             </section>
           ) : null}
 
-          {severeAlerts.length > 0 ? (
+          {severeAlerts.length > 0 && !severeAlertsCollapsed ? (
             <section className="severe-alert-panel" aria-label="Severe alerts">
-              <h3>Critical Alerts</h3>
+              <header className="severe-alert-header">
+                <h3>Critical Alerts</h3>
+                <button
+                  type="button"
+                  className="severe-alert-toggle"
+                  onClick={() => setSevereAlertsCollapsed(true)}
+                  aria-label="Minimize critical alerts"
+                  title="Minimize critical alerts"
+                >
+                  _
+                </button>
+              </header>
               <ul>
                 {severeAlerts.map((alert) => (
                   <li key={alert.id}>
@@ -347,6 +353,18 @@ export function GameView({
                 ))}
               </ul>
             </section>
+          ) : null}
+
+          {severeAlerts.length > 0 && severeAlertsCollapsed ? (
+            <button
+              type="button"
+              className="severe-alert-unminimize"
+              onClick={() => setSevereAlertsCollapsed(false)}
+              aria-label="Show critical alerts"
+              title="Show critical alerts"
+            >
+              Show Critical Alerts ({severeAlerts.length})
+            </button>
           ) : null}
 
           {trackerResearch ? (

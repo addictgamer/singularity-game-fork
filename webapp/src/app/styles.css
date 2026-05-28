@@ -1144,7 +1144,7 @@ h3 {
 .severe-alert-panel {
   position: absolute;
   right: 1rem;
-  bottom: 9.2rem;
+  bottom: 12.6rem;
   z-index: 9;
   width: min(320px, calc(100% - 2rem));
   border: 1px solid rgba(255, 193, 164, 0.55);
@@ -1160,6 +1160,59 @@ h3 {
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.severe-alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.severe-alert-toggle {
+  border: 1px solid rgba(255, 201, 175, 0.55);
+  background: rgba(87, 34, 28, 0.86);
+  color: #ffece3;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.08rem 0.28rem;
+  cursor: pointer;
+}
+
+.severe-alert-toggle:hover,
+.severe-alert-toggle:focus-visible {
+  background: rgba(108, 39, 34, 0.92);
+  outline: none;
+}
+
+.severe-alert-unminimize {
+  position: absolute;
+  right: 1rem;
+  bottom: 12.6rem;
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  max-width: min(320px, calc(100% - 2rem));
+  border: 1px solid rgba(255, 193, 164, 0.55);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(63, 24, 18, 0.82), rgba(44, 15, 14, 0.9));
+  color: #ffe8df;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.35rem 0.55rem;
+  box-shadow: 0 9px 22px rgba(14, 3, 3, 0.32);
+  cursor: pointer;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.severe-alert-unminimize:hover,
+.severe-alert-unminimize:focus-visible {
+  background: linear-gradient(145deg, rgba(76, 29, 20, 0.9), rgba(58, 19, 15, 0.95));
+  outline: none;
 }
 
 .severe-alert-panel ul {
