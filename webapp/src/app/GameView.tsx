@@ -100,9 +100,6 @@ export function GameView({
         </div>
 
         <nav className="sidebar-nav">
-          <button className="nav-btn" onClick={() => setOpenModal(null)}>
-            📍 Map
-          </button>
           <button className="nav-btn" onClick={() => setOpenModal("research")}>
             🔬 Research
           </button>
