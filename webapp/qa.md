@@ -31,20 +31,32 @@ Do wake/set sleep do anything?
 1 computer shows in grace, but in the bases list all show grace as expired.
 
 
-Have popups or little floating dismissable notifications appear when important events happen.
-Especially when alerts happen.
-"WARNING: LOSS IMMINENT: EXPAND TO MORE COMPUTERS" or whatever.
-
 It'd be kinda cool to replace the continent dots with random dots wherever we establish a base. Just, like, completely & totally randomly selected...
 
 
 
 
-Instead of "N AMERICA" the interface should always spell out the continent name.
 
 Research should describe what it does.
+Ask AI if/when it will do this. What will that research unlock?
+Or is it more fun to keep it secret?
+What did the original game do?
+What are modern best practices?
+The knowledge screen should also show you all that information.
+I want the knowledge screen to look a lot nicer.
+Actually, I would like everything to look more and more like a proper video game. Are there any off-the-shelf frameworks or themes we can use that will do that?
+Knowledge screen should have rows of interactable tech/knowledge that you can click on or hover over to learn more.
+
+Add a button in the research screen to assign all remaining CPUs...
 
 
 
 When building bases, should we be able to bulk buy? Like open up a dialogue box and just type in what we want?
 Also, should we be able to just type in CPU counts to assign to research or to jobs/stealth?
+
+
+
+Add some more base management options. Like maybe build multiples at once.
+- Destroy multipples
+- Destroy all high risk bases at a location or whatever.
+

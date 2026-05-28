@@ -279,6 +279,7 @@ Completed in this phase slice (previous work):
 - Added Escape-key modal dismissal in both gameplay modals and main-menu confirmation dialog
 - Added dedicated "+1h" simulation control in game sidebar
 - Added Vite dev/preview server request logging (client connection + resource access visibility)
+- Added bottom-docked event console and first-pass collapsible left/right gameplay sidebars
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -629,3 +630,4 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-28: Restructured right sidebar layout using flexbox to enable LocationPanel scrolling while keeping Story Watch card fixed at bottom, preventing unreachable story/alert information.
 - 2026-05-28: Verified full build success with 0 TypeScript errors, 44/44 tests passing, and 58 modules compiled (356.96 kB JS / 111.35 kB gzip, 25.32 kB CSS / 5.67 kB gzip).
 - 2026-05-28: Audited original desktop loss flow and recorded remaining parity work: desktop uses story-section-based loss presentation for both no-base and suspicion defeat states plus an optional "lose" music cue, with no dedicated bundled loss image assets in this checkout.
+- 2026-05-28: Reworked gameplay layout controls with a bottom-docked collapsible event console and map-edge sidebar hide/show nubs, then followed up to fix the first-pass collapse behavior so sidebars release layout space instead of only hiding their contents.

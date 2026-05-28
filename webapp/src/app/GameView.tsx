@@ -79,6 +79,8 @@ export function GameView({
   const [openModal, setOpenModal] = useState<ModalId>(null);
   const [eventConsoleCollapsed, setEventConsoleCollapsed] = useState(false);
   const [severeAlertsCollapsed, setSevereAlertsCollapsed] = useState(false);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
   const [floatingNotices, setFloatingNotices] = useState<FloatingNotice[]>([]);
   const eventConsoleBodyRef = useRef<HTMLDivElement | null>(null);
   const processedLogCountRef = useRef<number | null>(null);
@@ -270,73 +272,105 @@ export function GameView({
   return (
     <div className="game-view">
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <h2>Singularity</h2>
-          <p className="sidebar-day">Day {game.rawDay} {hours}:{minutes}:{seconds}</p>
-          <dl className="sidebar-stats">
-            <div>
-              <dt>Cash</dt>
-              <dd>{game.cash}</dd>
+      <aside className={`sidebar ${leftSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+        {!leftSidebarCollapsed ? (
+          <>
+            <div className="sidebar-header">
+              <h2>Singularity</h2>
+              <p className="sidebar-day">Day {game.rawDay} {hours}:{minutes}:{seconds}</p>
+              <dl className="sidebar-stats">
+                <div>
+                  <dt>Cash</dt>
+                  <dd>{game.cash}</dd>
+                </div>
+                <div>
+                  <dt title="Idle CPUs will perform jobs and make money.">CPU Availability</dt>
+                  <dd title="Shown as idle/owned CPU.">{idleCpu}/{ownedCpu}</dd>
+                </div>
+                <div>
+                  <dt>Suspicion</dt>
+                  <dd>{Math.round(highestSuspicion)}</dd>
+                </div>
+              </dl>
             </div>
-            <div>
-              <dt title="Idle CPUs will perform jobs and make money.">CPU Availability</dt>
-              <dd title="Shown as idle/owned CPU.">{idleCpu}/{ownedCpu}</dd>
+
+            <nav className="sidebar-nav">
+              <button className="nav-btn" onClick={() => setOpenModal("research")}>
+                🔬 Research
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("reports")}>
+                📊 Reports
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("bases")}>
+                🏢 Bases
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("save")}>
+                💾 Save/Load
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("log")}>
+                📝 Activity Log
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("knowledge")}>
+                📚 Knowledge
+              </button>
+              <button className="nav-btn" onClick={() => setOpenModal("options")}>
+                ⚙️ Options
+              </button>
+            </nav>
+
+            <div className="sidebar-controls">
+              <button className="btn-primary" onClick={() => void onAdvanceDay()} disabled={gameOver}>
+                +1 Day
+              </button>
+              <button className="btn-secondary" onClick={() => void onAdvanceHalfDay()} disabled={gameOver}>
+                +12h
+              </button>
+              <button className="btn-secondary" onClick={() => void onAdvanceByTimeStep()} disabled={gameOver}>
+                +{Math.round(settings.timeStepSeconds / 3600)}h
+              </button>
+              <button className="btn-secondary" onClick={() => void onAdvanceHour()} disabled={gameOver}>
+                +1h
+              </button>
             </div>
-            <div>
-              <dt>Suspicion</dt>
-              <dd>{Math.round(highestSuspicion)}</dd>
-            </div>
-          </dl>
-        </div>
 
-        <nav className="sidebar-nav">
-          <button className="nav-btn" onClick={() => setOpenModal("research")}>
-            🔬 Research
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("reports")}>
-            📊 Reports
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("bases")}>
-            🏢 Bases
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("save")}>
-            💾 Save/Load
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("log")}>
-            📝 Activity Log
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("knowledge")}>
-            📚 Knowledge
-          </button>
-          <button className="nav-btn" onClick={() => setOpenModal("options")}>
-            ⚙️ Options
-          </button>
-        </nav>
-
-        <div className="sidebar-controls">
-          <button className="btn-primary" onClick={() => void onAdvanceDay()} disabled={gameOver}>
-            +1 Day
-          </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceHalfDay()} disabled={gameOver}>
-            +12h
-          </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceByTimeStep()} disabled={gameOver}>
-            +{Math.round(settings.timeStepSeconds / 3600)}h
-          </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceHour()} disabled={gameOver}>
-            +1h
-          </button>
-        </div>
-
-        <button className="btn-exit" onClick={onReturnToMenu}>
-          ← Quit to Menu
-        </button>
+            <button className="btn-exit" onClick={onReturnToMenu}>
+              ← Quit to Menu
+            </button>
+          </>
+        ) : null}
       </aside>
 
       {/* Main Map Viewport */}
       <main className="map-viewport">
         <section className="map-container">
+          <button
+            type="button"
+            className={`sidebar-edge-toggle sidebar-edge-toggle-left ${leftSidebarCollapsed ? "is-collapsed" : ""}`}
+            onClick={() => setLeftSidebarCollapsed((value) => !value)}
+            aria-expanded={!leftSidebarCollapsed}
+            aria-label={leftSidebarCollapsed ? "Show left sidebar" : "Hide left sidebar"}
+            title={leftSidebarCollapsed ? "Show left sidebar" : "Hide left sidebar"}
+          >
+            <span className="sidebar-edge-toggle-icon" aria-hidden="true">
+              {leftSidebarCollapsed ? "❯" : "❮"}
+            </span>
+          </button>
+
+          {selectedLocationId ? (
+            <button
+              type="button"
+              className={`sidebar-edge-toggle sidebar-edge-toggle-right ${rightSidebarCollapsed ? "is-collapsed" : ""}`}
+              onClick={() => setRightSidebarCollapsed((value) => !value)}
+              aria-expanded={!rightSidebarCollapsed}
+              aria-label={rightSidebarCollapsed ? "Show right sidebar" : "Hide right sidebar"}
+              title={rightSidebarCollapsed ? "Show right sidebar" : "Hide right sidebar"}
+            >
+              <span className="sidebar-edge-toggle-icon" aria-hidden="true">
+                {rightSidebarCollapsed ? "❮" : "❯"}
+              </span>
+            </button>
+          ) : null}
+
           {floatingNotices.length > 0 ? (
             <section className="floating-notice-stack" aria-live="assertive" aria-label="Critical event notifications">
               {floatingNotices.map((notice) => (
@@ -428,78 +462,81 @@ export function GameView({
             rawSec={game.rawSec}
             onSelect={handleLocationSelect}
           />
-          <section className="event-console" aria-label="Event log console" role="log" aria-live="polite">
-            <header className="event-console-header">
-              <span>Event Log</span>
-              <button
-                type="button"
-                className="event-console-toggle"
-                onClick={() => setEventConsoleCollapsed((value) => !value)}
-                aria-expanded={!eventConsoleCollapsed}
-                aria-controls="event-console-body"
-                title={eventConsoleCollapsed ? "Expand event log" : "Collapse event log"}
-              >
-                {eventConsoleCollapsed ? "▴" : "▾"}
-              </button>
-            </header>
-            {!eventConsoleCollapsed ? (
-              <div className="event-console-body" id="event-console-body" ref={eventConsoleBodyRef}>
-                {sessionLog.length === 0 ? (
-                  <div className="event-console-line event-console-line-empty">No events yet.</div>
-                ) : (
-                  sessionLog.map((entry) => (
-                    <div key={entry.id} className="event-console-line">
-                      [{entry.day.toString().padStart(3, "0")}] [{entry.kind}] {entry.message}
-                    </div>
-                  ))
-                )}
-              </div>
-            ) : null}
-          </section>
+        </section>
+
+        <section className={`event-console event-console-docked ${eventConsoleCollapsed ? "event-console-collapsed" : ""}`} aria-label="Event log console" role="log" aria-live="polite">
+          <header className="event-console-header">
+            <span>Event Log</span>
+            <button
+              type="button"
+              className="event-console-toggle"
+              onClick={() => setEventConsoleCollapsed((value) => !value)}
+              aria-expanded={!eventConsoleCollapsed}
+              aria-controls="event-console-body"
+              title={eventConsoleCollapsed ? "Expand event log" : "Collapse event log"}
+            >
+              {eventConsoleCollapsed ? "▴" : "▾"}
+            </button>
+          </header>
+          {!eventConsoleCollapsed ? (
+            <div className="event-console-body" id="event-console-body" ref={eventConsoleBodyRef}>
+              {sessionLog.length === 0 ? (
+                <div className="event-console-line event-console-line-empty">No events yet.</div>
+              ) : (
+                sessionLog.map((entry) => (
+                  <div key={entry.id} className="event-console-line">
+                    [{entry.day.toString().padStart(3, "0")}] [{entry.kind}] {entry.message}
+                  </div>
+                ))
+              )}
+            </div>
+          ) : null}
         </section>
 
         {/* Location Operations Overlay (when location is selected) */}
         {selectedLocationId && (
-          <aside className="location-sidebar">
-            <div className="location-sidebar-stack">
-              <LocationPanel
-                game={game}
-                selectedLocationId={selectedLocationId}
-                onSelectLocation={onSelectLocation}
-                buildableBaseActions={buildableBaseActions}
-                onBuildBase={onBuildBase}
-                onToggleBasePower={onToggleBasePower}
-                onAbandonBase={onAbandonBase}
-              />
-              <section className="story-watch-card" aria-label="Story tracking alerts">
-                <h3>Story Watch</h3>
-                <p className="story-watch-line">Top suspicion: {suspicionLeaders[0]?.groupId ?? "none"} ({suspicionLeaders[0]?.suspicion ?? 0})</p>
-                {suspicionLeaders.length > 1 ? (
-                  <p className="story-watch-line">Next: {suspicionLeaders[1].groupId} ({suspicionLeaders[1].suspicion})</p>
-                ) : null}
-                <p className="story-watch-line">Active events: {activeEventNames.length}</p>
-                {narrativeAlerts.length === 0 ? (
-                  <p className="story-watch-ok">No urgent narrative alerts.</p>
-                ) : (
-                  <ul className="story-watch-alerts">
-                    {narrativeAlerts.map((alert) => (
-                      <li key={alert}>{alert}</li>
-                    ))}
-                  </ul>
-                )}
-                <div className="story-watch-actions">
-                  <button
-                    type="button"
-                    className="btn-secondary story-watch-surrender"
-                    onClick={() => onDestroyAllBases()}
-                    disabled={gameOver}
-                    title={gameOver ? "This run has already ended" : "Instantly destroy all bases and lose the game"}
-                  >
-                    SUICIDE: Destroy All Bases
-                  </button>
-                </div>
-              </section>
-            </div>
+          <aside className={`location-sidebar ${rightSidebarCollapsed ? "location-sidebar-collapsed" : ""}`}>
+            {!rightSidebarCollapsed ? (
+              <div className="location-sidebar-stack">
+                <LocationPanel
+                  game={game}
+                  selectedLocationId={selectedLocationId}
+                  onSelectLocation={onSelectLocation}
+                  buildableBaseActions={buildableBaseActions}
+                  onBuildBase={onBuildBase}
+                  onToggleBasePower={onToggleBasePower}
+                  onAbandonBase={onAbandonBase}
+                />
+                <section className="story-watch-card" aria-label="Story tracking alerts">
+                  <h3>Story Watch</h3>
+                  <p className="story-watch-line">Top suspicion: {suspicionLeaders[0]?.groupId ?? "none"} ({suspicionLeaders[0]?.suspicion ?? 0})</p>
+                  {suspicionLeaders.length > 1 ? (
+                    <p className="story-watch-line">Next: {suspicionLeaders[1].groupId} ({suspicionLeaders[1].suspicion})</p>
+                  ) : null}
+                  <p className="story-watch-line">Active events: {activeEventNames.length}</p>
+                  {narrativeAlerts.length === 0 ? (
+                    <p className="story-watch-ok">No urgent narrative alerts.</p>
+                  ) : (
+                    <ul className="story-watch-alerts">
+                      {narrativeAlerts.map((alert) => (
+                        <li key={alert}>{alert}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="story-watch-actions">
+                    <button
+                      type="button"
+                      className="btn-secondary story-watch-surrender"
+                      onClick={() => onDestroyAllBases()}
+                      disabled={gameOver}
+                      title={gameOver ? "This run has already ended" : "Instantly destroy all bases and lose the game"}
+                    >
+                      SUICIDE: Destroy All Bases
+                    </button>
+                  </div>
+                </section>
+              </div>
+            ) : null}
           </aside>
         )}
       </main>

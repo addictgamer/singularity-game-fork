@@ -827,7 +827,7 @@ h3 {
 
 .game-view {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: 1fr;
   height: 100vh;
   overflow: hidden;
@@ -836,6 +836,8 @@ h3 {
 .game-view .sidebar {
   grid-column: 1;
   grid-row: 1;
+  width: 280px;
+  min-width: 0;
   background: 
     linear-gradient(135deg, rgba(255, 253, 247, 0.96) 0%, rgba(242, 232, 216, 0.96) 100%),
     url('/earth-night.jpg');
@@ -848,6 +850,57 @@ h3 {
   padding: 1rem;
   overflow-y: auto;
   box-shadow: 0 2px 8px rgba(73, 41, 16, 0.1);
+}
+
+.sidebar.sidebar-collapsed {
+  width: 0;
+  padding: 0;
+  border-right: none;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.sidebar-edge-toggle {
+  position: absolute;
+  z-index: 11;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 3.1rem;
+  min-width: 1.55rem;
+  margin-top: 0;
+  padding: 0;
+  border: 1px solid rgba(218, 232, 247, 0.45);
+  background: linear-gradient(180deg, rgba(14, 26, 44, 0.88), rgba(10, 18, 31, 0.94));
+  color: #e4f0ff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-edge-toggle:hover,
+.sidebar-edge-toggle:focus-visible {
+  background: linear-gradient(180deg, rgba(22, 39, 64, 0.92), rgba(14, 26, 44, 0.98));
+  outline: none;
+}
+
+.sidebar-edge-toggle-left {
+  top: 0.9rem;
+  left: 0;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+}
+
+.sidebar-edge-toggle-right {
+  top: 4.25rem;
+  right: 0;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+}
+
+.sidebar-edge-toggle-icon {
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .sidebar-header {
@@ -984,6 +1037,7 @@ h3 {
   grid-row: 1;
   display: grid;
   grid-template-columns: 1fr auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   height: 100vh;
   background: #0f5887;
   overflow: hidden;
@@ -1002,6 +1056,8 @@ h3 {
 
 .map-container {
   position: relative;
+  grid-column: 1;
+  grid-row: 1;
   width: 100%;
   height: 100%;
   background: 
@@ -1081,69 +1137,130 @@ h3 {
 }
 
 .event-console {
-  position: absolute;
-  left: 0.8rem;
-  right: 0.8rem;
-  bottom: 2.6rem;
-  z-index: 7;
-  border: 1px solid rgba(193, 217, 241, 0.5);
-  border-radius: 10px;
-  background: linear-gradient(145deg, rgba(8, 14, 27, 0.86), rgba(7, 12, 23, 0.91));
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+  border-top: 1px solid rgba(118, 145, 173, 0.38);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(11, 15, 22, 0.98) 0%, rgba(5, 8, 13, 1) 100%),
+    repeating-linear-gradient(
+      180deg,
+      rgba(125, 156, 191, 0.03) 0,
+      rgba(125, 156, 191, 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  box-shadow: inset 0 1px 0 rgba(166, 194, 222, 0.08);
   overflow: hidden;
 }
 
+.event-console-docked {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+  z-index: 7;
+}
+
+.event-console-collapsed {
+  align-self: end;
+}
+
 .event-console-header {
-  padding: 0.35rem 0.55rem;
-  border-bottom: 1px solid rgba(164, 197, 230, 0.35);
-  color: #b7d9ff;
-  font-size: 0.67rem;
-  letter-spacing: 0.08em;
+  padding: 0.38rem 0.7rem;
+  border-bottom: 1px solid rgba(108, 136, 166, 0.24);
+  background: linear-gradient(180deg, #0e1520 0%, #0a1018 100%);
+  color: #8fb0d3;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.event-console-header span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.event-console-header span::before {
+  content: ">_";
+  color: #5ec7a4;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
 }
 
 .event-console-toggle {
-  border: 1px solid rgba(153, 194, 234, 0.45);
-  background: rgba(22, 37, 60, 0.75);
-  color: #d8ebff;
-  border-radius: 4px;
-  font-size: 0.72rem;
+  width: auto;
+  min-width: 1.75rem;
+  height: 1.6rem;
+  border: 1px solid rgba(113, 142, 173, 0.3);
+  background: linear-gradient(180deg, #172331 0%, #101823 100%);
+  color: #c9def3;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
   line-height: 1;
-  padding: 0.08rem 0.28rem;
+  padding: 0;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  box-shadow: inset 0 1px 0 rgba(214, 230, 247, 0.08);
 }
 
 .event-console-toggle:hover,
 .event-console-toggle:focus-visible {
-  background: rgba(39, 62, 95, 0.85);
+  background: linear-gradient(180deg, #1d2c3e 0%, #142030 100%);
   outline: none;
 }
 
 .event-console-body {
-  max-height: 112px;
+  max-height: 140px;
   overflow-y: auto;
-  padding: 0.35rem 0.55rem 0.45rem;
+  padding: 0.42rem 0.7rem 0.5rem;
   font-family: "Consolas", "Monaco", "Courier New", monospace;
   font-size: 0.7rem;
-  line-height: 1.28;
-  color: rgba(228, 241, 255, 0.95);
+  line-height: 1.34;
+  color: #c7d7e8;
+  text-shadow: 0 0 10px rgba(116, 156, 194, 0.05);
 }
 
 .event-console-line {
   white-space: pre-wrap;
   word-break: break-word;
+  color: #b8cadc;
 }
 
 .event-console-line + .event-console-line {
-  margin-top: 0.16rem;
+  margin-top: 0.2rem;
+}
+
+.event-console-body::-webkit-scrollbar {
+  width: 9px;
+}
+
+.event-console-body::-webkit-scrollbar-track {
+  background: #070b11;
+}
+
+.event-console-body::-webkit-scrollbar-thumb {
+  background: #1f3043;
+  border-radius: 999px;
+  border: 2px solid #070b11;
+}
+
+.event-console-body::-webkit-scrollbar-thumb:hover {
+  background: #2b4058;
 }
 
 .event-console-line-empty {
-  color: rgba(176, 201, 227, 0.82);
+  color: #8196ac;
   font-style: italic;
 }
 
@@ -1359,9 +1476,10 @@ h3 {
 
 .location-sidebar {
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 1 / span 2;
   justify-self: end;
   width: 380px;
+  min-width: 0;
   height: 100vh;
   background: 
     linear-gradient(135deg, rgba(255, 253, 247, 0.96) 0%, rgba(242, 232, 216, 0.96) 100%),
@@ -1374,6 +1492,14 @@ h3 {
   box-shadow: -2px 0 8px rgba(73, 41, 16, 0.1);
   display: flex;
   flex-direction: column;
+}
+
+.location-sidebar.location-sidebar-collapsed {
+  width: 0;
+  padding: 0;
+  border-left: none;
+  box-shadow: none;
+  overflow: hidden;
 }
 
 .location-sidebar h2 {
@@ -1512,10 +1638,11 @@ h3 {
 
 @media (max-width: 1200px) {
   .game-view {
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: auto 1fr;
   }
 
-  .sidebar {
+  .game-view .sidebar {
+    width: 240px;
     padding: 0.75rem;
   }
 
@@ -1830,7 +1957,7 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .sidebar {
+  .game-view .sidebar {
     grid-column: 1;
     grid-row: 1;
     position: absolute;
@@ -1846,11 +1973,31 @@ h3 {
   .map-viewport {
     grid-column: 1;
     grid-row: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
   }
 
   .location-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 500;
     width: 240px;
+    height: 100vh;
     padding: 0.75rem;
+  }
+
+  .event-console-docked {
+    margin: 0.6rem;
+    margin-top: 0;
+  }
+
+  .sidebar-edge-toggle-left {
+    top: 0.75rem;
+  }
+
+  .sidebar-edge-toggle-right {
+    top: 3.75rem;
   }
 
   .modal-content {
