@@ -284,11 +284,32 @@ describe("GameState", () => {
     // Set minimal cost and complete
     intrusion.costLeft = [1, 0, 0];
     game.setAllocatedCpuFor("Intrusion", 10);
-    expect(game.getAllocatedCpuFor("Intrusion")).toBe(10);
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(1);
 
     game.giveTime(1);
 
     // Allocation should be cleared automatically
     expect(game.getAllocatedCpuFor("Intrusion")).toBe(0);
+  });
+
+  it("caps research cpu allocation to available pool", () => {
+    const game = new GameState(gameData, "impossible");
+
+    expect(game.availableCpus[0]).toBe(1);
+    game.setAllocatedCpuFor("Intrusion", 500);
+
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(1);
+    expect(game.effectiveCpuPool()).toBe(0);
+  });
+
+  it("caps combined allocations across jobs and research", () => {
+    const game = new GameState(gameData, "impossible");
+
+    game.setAllocatedCpuFor("jobs", 1);
+    game.setAllocatedCpuFor("Intrusion", 10);
+
+    expect(game.getAllocatedCpuFor("jobs")).toBe(1);
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(0);
+    expect(game.effectiveCpuPool()).toBe(0);
   });
 });

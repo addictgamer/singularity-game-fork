@@ -677,7 +677,19 @@ export class GameState {
       }
       effective -= assignedCpu;
     }
-    return effective;
+    return Math.max(0, effective);
+  }
+
+  private maxAssignableCpuFor(taskId: string): number {
+    const totalCpu = Math.max(0, this.availableCpus[0]);
+    let allocatedElsewhere = 0;
+    for (const [otherTaskId, assignedCpu] of this.cpuUsage) {
+      if (otherTaskId === "cpu_pool" || otherTaskId === taskId) {
+        continue;
+      }
+      allocatedElsewhere += Math.max(0, assignedCpu);
+    }
+    return Math.max(0, totalCpu - allocatedElsewhere);
   }
 
   setAllocatedCpuFor(taskId: string, amount: number): void {
@@ -698,7 +710,13 @@ export class GameState {
       }
     }
 
-    this.cpuUsage.set(taskId, amount);
+    const cappedAmount = Math.min(amount, this.maxAssignableCpuFor(taskId));
+    if (cappedAmount <= 0) {
+      this.cpuUsage.delete(taskId);
+      return;
+    }
+
+    this.cpuUsage.set(taskId, cappedAmount);
   }
 
   getAllocatedCpuFor(taskId: string): number {

@@ -51,4 +51,37 @@ describe("ResearchPanel", () => {
     }
     expect(within(rowAfter).getByText(`CPU left: ${cpuAfter}`)).toBeTruthy();
   });
+
+  it("disables +CPU buttons that would exceed available budget", () => {
+    const game = new GameState(gameData, "impossible");
+    game.setAllocatedCpuFor("jobs", 1);
+
+    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+
+    const articles = getAllByRole("article");
+    const row = articles.find((article) => {
+      const strong = article.querySelector("header strong");
+      return strong?.textContent === "Intrusion";
+    });
+    if (!row) {
+      throw new Error("Intrusion row missing");
+    }
+
+    const add1 = within(row).getByRole("button", { name: "+1 CPU" }) as HTMLButtonElement;
+    const add5 = within(row).getByRole("button", { name: "+5 CPU" }) as HTMLButtonElement;
+    const add10 = within(row).getByRole("button", { name: "+10 CPU" }) as HTMLButtonElement;
+
+    expect(add1.disabled).toBe(true);
+    expect(add5.disabled).toBe(true);
+    expect(add10.disabled).toBe(true);
+    expect(within(row).getByText("CPU assigned: 0")).toBeTruthy();
+  });
+
+  it("shows idle cpu indicator for research", () => {
+    const game = new GameState(gameData, "impossible");
+    game.setAllocatedCpuFor("jobs", 1);
+
+    const { getAllByText } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    expect(getAllByText("Idle CPUs available for research: 0").length).toBeGreaterThan(0);
+  });
 });

@@ -10,6 +10,14 @@ interface ResearchPanelProps {
 export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
   const [visibilityFilter, setVisibilityFilter] = useState<"all" | "available" | "locked" | "done">("all");
   const [sortMode, setSortMode] = useState<"status" | "name" | "cash-left" | "cpu-left">("status");
+  const totalAvailableCpu = Math.max(0, game.availableCpus[0]);
+  const totalAllocatedCpu = Array.from(game.cpuUsage.entries()).reduce((sum, [taskId, amount]) => {
+    if (taskId === "cpu_pool") {
+      return sum;
+    }
+    return sum + Math.max(0, amount);
+  }, 0);
+  const freeCpu = Math.max(0, totalAvailableCpu - totalAllocatedCpu);
 
   const techRows = Array.from(game.techs.values())
     .map((tech) => {
@@ -70,6 +78,7 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
       <p className="muted">
         Available technologies can receive CPU allocation. Completed techs are read-only.
       </p>
+      <p className="muted">Idle CPUs available for research: {freeCpu}</p>
       <div className="toolbar-row">
         <label>
           Filter
@@ -91,8 +100,14 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
         </label>
       </div>
       <div className="research-list">
-        {techRows.map((row) => (
-          <article key={row.id} className={`research-row ${row.done ? "done" : row.available ? "available" : "locked"}`}>
+        {techRows.map((row) => {
+          const maxAllocForRow = Math.max(0, totalAvailableCpu - (totalAllocatedCpu - row.allocation));
+          const canIncrease = row.available && !row.done;
+          const canAssignDelta = (delta: number) => canIncrease && row.allocation + delta <= maxAllocForRow;
+          const blockedByBudget = !row.done && row.available && row.allocation >= maxAllocForRow;
+
+          return (
+            <article key={row.id} className={`research-row ${row.done ? "done" : row.available ? "available" : "locked"}`}>
             <header>
               <strong>{row.name}</strong>
               <span className="muted">
@@ -133,23 +148,47 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
             ) : null}
             <div className="research-actions">
               <button
-                disabled={!row.available || row.done}
+                disabled={!canAssignDelta(1)}
                 onClick={() => onAssignCpu(row.id, row.allocation + 1)}
-                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 1 CPU"}
+                title={
+                  row.done
+                    ? "Completed - cannot assign"
+                    : !row.available
+                      ? "Locked - prerequisites not met"
+                      : blockedByBudget
+                        ? "Not enough free CPU"
+                        : "Increase allocation by 1 CPU"
+                }
               >
                 +1 CPU
               </button>
               <button
-                disabled={!row.available || row.done}
+                disabled={!canAssignDelta(5)}
                 onClick={() => onAssignCpu(row.id, row.allocation + 5)}
-                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 5 CPUs"}
+                title={
+                  row.done
+                    ? "Completed - cannot assign"
+                    : !row.available
+                      ? "Locked - prerequisites not met"
+                      : row.allocation + 5 > maxAllocForRow
+                        ? "Not enough free CPU"
+                        : "Increase allocation by 5 CPUs"
+                }
               >
                 +5 CPU
               </button>
               <button
-                disabled={!row.available || row.done}
+                disabled={!canAssignDelta(10)}
                 onClick={() => onAssignCpu(row.id, row.allocation + 10)}
-                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 10 CPUs"}
+                title={
+                  row.done
+                    ? "Completed - cannot assign"
+                    : !row.available
+                      ? "Locked - prerequisites not met"
+                      : row.allocation + 10 > maxAllocForRow
+                        ? "Not enough free CPU"
+                        : "Increase allocation by 10 CPUs"
+                }
               >
                 +10 CPU
               </button>
@@ -161,8 +200,9 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
                 Clear
               </button>
             </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

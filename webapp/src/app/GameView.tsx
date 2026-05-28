@@ -92,6 +92,8 @@ export function GameView({
     0,
     ...Array.from(game.groups.values()).map((g) => g.suspicion)
   );
+  const idleCpu = game.effectiveCpuPool();
+  const ownedCpu = game.bases.reduce((sum, base) => sum + base.cpuProvided, 0);
 
   return (
     <div className="game-view">
@@ -106,8 +108,8 @@ export function GameView({
               <dd>{game.cash}</dd>
             </div>
             <div>
-              <dt>CPU</dt>
-              <dd>{game.availableCpus[0]}</dd>
+              <dt>CPU Availability</dt>
+              <dd>{idleCpu}/{ownedCpu}</dd>
             </div>
             <div>
               <dt>Suspicion</dt>
