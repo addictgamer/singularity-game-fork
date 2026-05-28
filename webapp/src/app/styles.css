@@ -1307,9 +1307,10 @@ h3 {
   background-position: center;
   background-attachment: scroll;
   border-left: 1px solid var(--line);
-  overflow-y: auto;
-  box-shadow: -2px 0 8px rgba(73, 41, 16, 0.1);
   padding: 1rem;
+  box-shadow: -2px 0 8px rgba(73, 41, 16, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .location-sidebar h2 {
@@ -1318,14 +1319,39 @@ h3 {
 }
 
 .location-sidebar-stack {
-  min-height: calc(100vh - 2rem);
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.location-sidebar-stack > .card {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin-bottom: 0;
+}
+
+.location-sidebar-stack > .card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.location-sidebar-stack > .card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.location-sidebar-stack > .card::-webkit-scrollbar-thumb {
+  background: rgba(73, 41, 16, 0.2);
+  border-radius: 3px;
+}
+
+.location-sidebar-stack > .card::-webkit-scrollbar-thumb:hover {
+  background: rgba(73, 41, 16, 0.35);
 }
 
 .story-watch-card {
-  margin-top: auto;
+  flex: 0 0 auto;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.78);
