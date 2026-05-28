@@ -1,6 +1,57 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LocationDef } from "../engine/types";
 import { SECONDS_PER_DAY } from "../engine/constants";
+import continentDataRaw from "../generated/continentData.json";
+
+interface ContinentEntry {
+  id: string;
+  name: string;
+  boundary: Array<[number, number]>;
+  bounds: { x_min: number; x_max: number; y_min: number; y_max: number; center_x: number; center_y: number };
+}
+
+interface ClickRegion {
+  id: string;
+  name: string;
+  points: Array<[number, number]>;
+  bounds: { x_min: number; x_max: number; y_min: number; y_max: number };
+}
+
+const CONTINENTS: ContinentEntry[] = (continentDataRaw.continents as unknown as ContinentEntry[]).filter(
+  (c) => c.boundary && c.boundary.length > 2
+);
+
+const CLICK_REGIONS: ClickRegion[] = CONTINENTS.map((continent) => {
+  let xMin = Infinity;
+  let xMax = -Infinity;
+  let yMin = Infinity;
+  let yMax = -Infinity;
+  for (const [x, y] of continent.boundary) {
+    if (x < xMin) xMin = x;
+    if (x > xMax) xMax = x;
+    if (y < yMin) yMin = y;
+    if (y > yMax) yMax = y;
+  }
+  return {
+    id: continent.id,
+    name: continent.name,
+    points: continent.boundary,
+    bounds: { x_min: xMin, x_max: xMax, y_min: yMin, y_max: yMax },
+  };
+});
+
+/** Ray-casting point-in-polygon test in normalized 0-100 map space. */
+function pointInPolygon(px: number, py: number, polygon: Array<[number, number]>): boolean {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i][0], yi = polygon[i][1];
+    const xj = polygon[j][0], yj = polygon[j][1];
+    if (((yi > py) !== (yj > py)) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
 
 interface WorldMapProps {
   locations: LocationDef[];
@@ -20,6 +71,7 @@ export function WorldMap({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
+  const [hoveredContinentId, setHoveredContinentId] = useState<string | null>(null);
   const earthImageRef = useRef<HTMLImageElement | null>(null);
 
   const sorted = useMemo(() => [...locations].sort((a, b) => a.name.localeCompare(b.name)), [locations]);
@@ -42,14 +94,9 @@ export function WorldMap({
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) {
-      return;
-    }
-
+    if (!canvas || !container) return;
     const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
+    if (!context) return;
 
     const resizeObserver = new ResizeObserver(() => {
       const rect = container.getBoundingClientRect();
@@ -65,13 +112,11 @@ export function WorldMap({
     const draw = () => {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
-
       context.clearRect(0, 0, width, height);
 
-      // Draw earth image as background if loaded
+      // Earth image base layer
       if (earthImageRef.current) {
         context.drawImage(earthImageRef.current, 0, 0, width, height);
-        // Add overlay gradient on top of earth
         const overlayGradient = context.createLinearGradient(0, 0, width, height);
         overlayGradient.addColorStop(0, "rgba(44, 182, 255, 0.25)");
         overlayGradient.addColorStop(0.5, "rgba(26, 125, 184, 0.35)");
@@ -79,7 +124,6 @@ export function WorldMap({
         context.fillStyle = overlayGradient;
         context.fillRect(0, 0, width, height);
       } else {
-        // Fallback to original ocean gradient if image not loaded
         const oceanGradient = context.createLinearGradient(0, 0, width, height);
         oceanGradient.addColorStop(0, "#2cb6ff");
         oceanGradient.addColorStop(0.5, "#1a7db8");
@@ -88,107 +132,50 @@ export function WorldMap({
         context.fillRect(0, 0, width, height);
       }
 
-      context.globalAlpha = 0.16;
+      // Draw all continent boundaries — faint gray at rest, golden glow on hover
+      for (const region of CLICK_REGIONS) {
+        const isHovered = region.id === hoveredContinentId;
+        context.save();
+        context.beginPath();
+        for (let i = 0; i < region.points.length; i++) {
+          const [bx, by] = region.points[i];
+          const px = (bx / 100) * width;
+          const py = (by / 100) * height;
+          if (i === 0) context.moveTo(px, py);
+          else context.lineTo(px, py);
+        }
+        if (isHovered) {
+          context.strokeStyle = "rgba(255, 216, 97, 0.72)";
+          context.lineWidth = 2.2;
+          context.shadowColor = "rgba(255, 216, 97, 0.65)";
+          context.shadowBlur = 8;
+        } else {
+          context.strokeStyle = "rgba(200, 200, 200, 0.28)";
+          context.lineWidth = 1.1;
+          context.shadowBlur = 0;
+        }
+        context.stroke();
+        context.restore();
+      }
+
+      // Grid overlay
+      context.globalAlpha = 0.1;
       context.strokeStyle = "#ffffff";
       for (let x = 0; x <= width; x += Math.max(48, width / 12)) {
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x, height);
-        context.stroke();
+        context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke();
       }
       for (let y = 0; y <= height; y += Math.max(42, height / 8)) {
-        context.beginPath();
-        context.moveTo(0, y);
-        context.lineTo(width, y);
-        context.stroke();
+        context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke();
       }
       context.globalAlpha = 1;
 
-      const drawLandMass = (points: Array<[number, number]>, fill: string) => {
-        context.beginPath();
-        for (let index = 0; index < points.length; index += 1) {
-          const [x, y] = points[index];
-          if (index === 0) {
-            context.moveTo(x * width, y * height);
-          } else {
-            context.lineTo(x * width, y * height);
-          }
-        }
-        context.closePath();
-        context.fillStyle = fill;
-        context.fill();
-      };
-
-      drawLandMass(
-        [
-          [0.07, 0.2],
-          [0.17, 0.16],
-          [0.23, 0.24],
-          [0.19, 0.36],
-          [0.11, 0.37],
-          [0.06, 0.3],
-        ],
-        "#92bf80"
-      );
-      drawLandMass(
-        [
-          [0.2, 0.48],
-          [0.26, 0.43],
-          [0.29, 0.52],
-          [0.24, 0.67],
-          [0.18, 0.64],
-        ],
-        "#7baa6b"
-      );
-      drawLandMass(
-        [
-          [0.43, 0.19],
-          [0.63, 0.16],
-          [0.7, 0.28],
-          [0.62, 0.38],
-          [0.47, 0.35],
-        ],
-        "#86b575"
-      );
-      drawLandMass(
-        [
-          [0.5, 0.42],
-          [0.6, 0.41],
-          [0.66, 0.58],
-          [0.56, 0.68],
-          [0.47, 0.56],
-        ],
-        "#739f63"
-      );
-      drawLandMass(
-        [
-          [0.72, 0.22],
-          [0.9, 0.26],
-          [0.92, 0.42],
-          [0.81, 0.46],
-          [0.71, 0.37],
-        ],
-        "#8aba78"
-      );
-      drawLandMass(
-        [
-          [0.82, 0.58],
-          [0.89, 0.62],
-          [0.86, 0.75],
-          [0.78, 0.71],
-        ],
-        "#6f9a5f"
-      );
-
+      // Night terminator
       const terminatorX = (dayPercent * width + width * 0.1) % width;
       const dayWidth = width * 0.55;
       const nightLeft = (terminatorX + dayWidth) % width;
-
       const drawNightBand = (xStart: number, xEnd: number) => {
         const bandWidth = xEnd - xStart;
-        if (bandWidth <= 0) {
-          return;
-        }
+        if (bandWidth <= 0) return;
         const gradient = context.createLinearGradient(xStart, 0, xEnd, 0);
         gradient.addColorStop(0, "rgba(7, 12, 30, 0.05)");
         gradient.addColorStop(0.25, "rgba(7, 12, 30, 0.3)");
@@ -196,25 +183,33 @@ export function WorldMap({
         context.fillStyle = gradient;
         context.fillRect(xStart, 0, bandWidth, height);
       };
-
       if (nightLeft > terminatorX) {
-        drawNightBand(nightLeft, width);
-        drawNightBand(0, terminatorX);
+        drawNightBand(nightLeft, width); drawNightBand(0, terminatorX);
       } else {
         drawNightBand(nightLeft, terminatorX);
       }
 
+      // Location markers
       for (const location of sorted) {
         const available = isLocationAvailable(location.id);
         const selected = selectedLocationId === location.id;
         const hovered = hoveredLocationId === location.id;
-
         const x = (location.position.x / 100) * width;
         const y = (location.position.y / 100) * height;
         const radius = selected ? 6 : 4.5;
 
+        if (hovered || selected) {
+          context.beginPath();
+          context.arc(x, y, radius + 8, 0, Math.PI * 2);
+          context.fillStyle = available ? "rgba(255, 216, 97, 0.2)" : "rgba(183, 194, 213, 0.2)";
+          context.shadowColor = available ? "rgba(255, 216, 97, 0.6)" : "rgba(183, 194, 213, 0.4)";
+          context.shadowBlur = 12;
+          context.fill();
+          context.shadowBlur = 0;
+        }
+
         context.beginPath();
-        context.arc(x, y, radius + (hovered ? 2 : 0), 0, Math.PI * 2);
+        context.arc(x, y, radius, 0, Math.PI * 2);
         context.fillStyle = available ? "#ffd861" : "#b7c2d5";
         context.fill();
 
@@ -229,31 +224,84 @@ export function WorldMap({
     };
 
     draw();
+    return () => { resizeObserver.disconnect(); };
+  }, [dayPercent, hoveredContinentId, hoveredLocationId, isLocationAvailable, selectedLocationId, sorted]);
 
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [dayPercent, hoveredLocationId, isLocationAvailable, selectedLocationId, sorted]);
-
-  const getLocationAtPointer = (clientX: number, clientY: number): string | null => {
+  const getContinentAtPointer = (clientX: number, clientY: number): string | null => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      return null;
-    }
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
+    const nx = (x / rect.width) * 100;
+    const ny = (y / rect.height) * 100;
 
+    for (const region of CLICK_REGIONS) {
+      const b = region.bounds;
+      if (nx < b.x_min - 1 || nx > b.x_max + 1 || ny < b.y_min - 1 || ny > b.y_max + 1) continue;
+      if (pointInPolygon(nx, ny, region.points)) return region.id;
+    }
+
+    return null;
+  };
+
+  const getLocationAtPointer = (clientX: number, clientY: number): string | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     for (const location of sorted) {
       const lx = (location.position.x / 100) * rect.width;
       const ly = (location.position.y / 100) * rect.height;
       const dx = lx - x;
       const dy = ly - y;
-      if (dx * dx + dy * dy <= 10 * 10) {
-        return location.id;
-      }
+      if (dx * dx + dy * dy <= 12 * 12) return location.id;
     }
     return null;
+  };
+
+  /** Find nearest available location within the same continent region. */
+  const getNearestLocationInContinent = (
+    clientX: number, clientY: number, continentId: string
+  ): string | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
+    const region = CLICK_REGIONS.find((c) => c.id === continentId);
+    if (!region) return null;
+
+    let nearest: string | null = null;
+    let nearestDist = Infinity;
+    for (const location of sorted) {
+      if (!isLocationAvailable(location.id)) continue;
+      const lx = (location.position.x / 100) * rect.width;
+      const ly = (location.position.y / 100) * rect.height;
+      const inRegion = pointInPolygon(location.position.x, location.position.y, region.points);
+      if (!inRegion) continue;
+      const dist = Math.hypot(lx - mx, ly - my);
+      if (dist < nearestDist) { nearestDist = dist; nearest = location.id; }
+    }
+
+    // Fallback for tiny/coarse regions where no location center lands strictly inside polygon.
+    if (!nearest) {
+      const b = region.bounds;
+      for (const location of sorted) {
+        if (!isLocationAvailable(location.id)) continue;
+        const lx = (location.position.x / 100) * rect.width;
+        const ly = (location.position.y / 100) * rect.height;
+        const inBounds =
+          location.position.x >= b.x_min - 5 && location.position.x <= b.x_max + 5 &&
+          location.position.y >= b.y_min - 5 && location.position.y <= b.y_max + 5;
+        if (!inBounds) continue;
+        const dist = Math.hypot(lx - mx, ly - my);
+        if (dist < nearestDist) { nearestDist = dist; nearest = location.id; }
+      }
+    }
+
+    return nearest;
   };
 
   return (
@@ -262,25 +310,43 @@ export function WorldMap({
         ref={canvasRef}
         className="world-map-canvas"
         onMouseMove={(event) => {
-          setHoveredLocationId(getLocationAtPointer(event.clientX, event.clientY));
+          const locId = getLocationAtPointer(event.clientX, event.clientY);
+          setHoveredLocationId(locId);
+          if (!locId) {
+            const continentId = getContinentAtPointer(event.clientX, event.clientY);
+            if (!continentId) {
+              setHoveredContinentId(null);
+            } else {
+              const nearest = getNearestLocationInContinent(event.clientX, event.clientY, continentId);
+              setHoveredContinentId(nearest ? continentId : null);
+            }
+          } else {
+            setHoveredContinentId(null);
+          }
         }}
-        onMouseLeave={() => setHoveredLocationId(null)}
+        onMouseLeave={() => { setHoveredLocationId(null); setHoveredContinentId(null); }}
         onClick={(event) => {
-          const id = getLocationAtPointer(event.clientX, event.clientY);
-          if (id) {
-            onSelect(id);
+          const locId = getLocationAtPointer(event.clientX, event.clientY);
+          if (locId) { onSelect(locId); return; }
+          const continentId = getContinentAtPointer(event.clientX, event.clientY);
+          if (continentId) {
+            const nearest = getNearestLocationInContinent(event.clientX, event.clientY, continentId);
+            if (nearest) onSelect(nearest);
           }
         }}
       />
-
-      <div className="world-map-hud top-left">Simulation day {Math.max(0, Math.floor(rawSec / SECONDS_PER_DAY))}</div>
-      <div className="world-map-hud top-right">Solar terminator: {Math.round(dayPercent * 100)}%</div>
-      <div className="world-map-hud bottom-left">{sorted.length} mapped nodes</div>
+      <div className="world-map-hud top-left">Day {Math.max(0, Math.floor(rawSec / SECONDS_PER_DAY))}</div>
+      <div className="world-map-hud top-right">Solar {Math.round(dayPercent * 100)}%</div>
+      <div className="world-map-hud bottom-left">{sorted.length} nodes</div>
       <div className="world-map-hud bottom-right">
         {hoveredLocation
           ? `${hoveredLocation.name} (${isLocationAvailable(hoveredLocation.id) ? "available" : "locked"})`
-          : "Hover a node for details"}
+          : hoveredContinentId
+            ? `${CLICK_REGIONS.find((c) => c.id === hoveredContinentId)?.name ?? hoveredContinentId} — click to select nearest`
+          : "Hover a node or region"}
       </div>
     </div>
   );
 }
+
+
