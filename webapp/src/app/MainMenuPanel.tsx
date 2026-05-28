@@ -57,7 +57,7 @@ export function MainMenuPanel({
         
         <div className="hero-content">
           <h1 className="game-title">Endgame: Singularity</h1>
-          <p className="game-tagline">A Game of Strategic Hacking</p>
+          <p className="game-tagline">A Game of Strategic Hacking for your Survival</p>
         </div>
       </section>
 

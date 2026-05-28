@@ -90,27 +90,27 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
       </div>
 
       <dl className="stats">
-        <div>
+        <div title="Total bases matching current filters">
           <dt>Visible Bases</dt>
           <dd>{rows.length}</dd>
         </div>
-        <div>
+        <div title="Bases currently generating CPU and performing jobs">
           <dt>Power Active</dt>
           <dd>{activeCount}</dd>
         </div>
-        <div>
+        <div title="Bases in sleep mode (not performing jobs, not detected)">
           <dt>Power Sleep</dt>
           <dd>{sleepingCount}</dd>
         </div>
-        <div>
+        <div title="Total CPU provided by visible, active bases">
           <dt>Visible CPU</dt>
           <dd>{totalCpu}</dd>
         </div>
-        <div>
+        <div title="Daily cash maintenance cost for visible, active bases">
           <dt>Visible Maint Cash</dt>
-          <dd>{filteredMaintenance.cash}</dd>
+          <dd>${filteredMaintenance.cash}</dd>
         </div>
-        <div>
+        <div title="Continuous CPU maintenance drain for visible, active bases">
           <dt>Visible Maint CPU</dt>
           <dd>{filteredMaintenance.cpu}</dd>
         </div>
@@ -132,10 +132,10 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
             <div className="base-table-head">Name</div>
             <div className="base-table-head">Location</div>
             <div className="base-table-head">CPU</div>
-            <div className="base-table-head">Maint</div>
-            <div className="base-table-head">Power</div>
+            <div className="base-table-head" title="Daily cash and CPU cost to keep this base running">Maint</div>
+            <div className="base-table-head" title="Active = generating CPU and vulnerable to detection. Sleep = hidden but not productive.">Power</div>
             <div className="base-table-head" title="Per-base grace window (independent of global grace period). Each base has a grace period after construction based on its cost.">Grace Window</div>
-            <div className="base-table-head">Risk</div>
+            <div className="base-table-head" title="Risk: High = high suspicion from at least one group. Low = manageable threat level.">Risk</div>
             <div className="base-table-head">Actions</div>
           </div>
           {rows.map((base) => {
@@ -148,15 +148,15 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
               <div key={base.id} className="base-table-row">
                 <div className={atRisk.has(base.id) ? "warning" : ""}>{base.name}</div>
                 <div>{location?.name ?? base.locationId}</div>
-                <div>{base.cpuProvided}</div>
-                <div>${maintenanceCash}/d + {maintenanceCpu} cpu/s</div>
-                <div>
+                <div title={`CPU from this base: ${base.cpuProvided}`}>{base.cpuProvided}</div>
+                <div title={`Daily: $${maintenanceCash}, Continuous: ${maintenanceCpu} cpu/s`}>${maintenanceCash}/d + {maintenanceCpu} cpu/s</div>
+                <div title={base.powerState === "active" ? "Active: generating CPU and vulnerable to detection" : "Sleep: hidden and safe but not productive"}>
                   <span className={`status-chip ${base.powerState === "active" ? "active" : "sleep"}`}>
                     {base.powerState}
                   </span>
                 </div>
                 <div title="Time remaining in this base's personal grace window. Global grace period is separate.">{graceLeft === null ? "—" : `${graceLeft}m`}</div>
-                <div>{atRisk.has(base.id) ? "high" : "low"}</div>
+                <div title={atRisk.has(base.id) ? "High risk: this base may be targeted for forced sleep by suspicion-based events" : "Low risk: this base is not currently prioritized for destruction"}>{atRisk.has(base.id) ? "high" : "low"}</div>
                 <div className="stacked-actions">
                   <button className="inline-action" onClick={() => onSelectLocation(base.locationId)}>
                     Focus
