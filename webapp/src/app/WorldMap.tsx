@@ -72,6 +72,7 @@ export function WorldMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
   const [hoveredContinentId, setHoveredContinentId] = useState<string | null>(null);
+  const [mapReady, setMapReady] = useState(false);
   const earthImageRef = useRef<HTMLImageElement | null>(null);
 
   const sorted = useMemo(() => [...locations].sort((a, b) => a.name.localeCompare(b.name)), [locations]);
@@ -112,10 +113,36 @@ export function WorldMap({
   }, [isLocationAvailable, sorted]);
 
   useEffect(() => {
+    let cancelled = false;
     const img = new Image();
-    img.src = "/earth.jpg";
-    img.onload = () => {
+    img.decoding = "async";
+
+    const finalizeReady = () => {
+      if (cancelled) return;
       earthImageRef.current = img;
+      setMapReady(true);
+    };
+
+    const onLoaded = () => {
+      // Edge can fire onload before decode is fully done for immediate draw.
+      void img.decode().catch(() => undefined).finally(finalizeReady);
+    };
+
+    img.onload = onLoaded;
+    img.onerror = () => {
+      if (cancelled) return;
+      // Do not block map interactions forever if image fails to load.
+      setMapReady(true);
+    };
+    img.src = "/earth.jpg";
+
+    // Handle already-cached images where load event may be immediate.
+    if (img.complete && img.naturalWidth > 0) {
+      onLoaded();
+    }
+
+    return () => {
+      cancelled = true;
     };
   }, []);
 
@@ -264,7 +291,7 @@ export function WorldMap({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [dayPercent, hoveredContinentId, hoveredLocationId, isLocationAvailable, selectableRegionIds, selectedLocationId, sorted]);
+  }, [dayPercent, hoveredContinentId, hoveredLocationId, isLocationAvailable, mapReady, selectableRegionIds, selectedLocationId, sorted]);
 
   const getContinentAtPointer = (clientX: number, clientY: number): string | null => {
     const canvas = canvasRef.current;
@@ -389,6 +416,12 @@ export function WorldMap({
           }
         }}
       />
+      {!mapReady && (
+        <div className="map-loading-overlay" aria-live="polite" aria-busy="true">
+          <div className="map-loading-spinner" />
+          <div className="map-loading-text">Loading map assets...</div>
+        </div>
+      )}
       <div className="world-map-hud top-left">Day {Math.max(0, Math.floor(rawSec / SECONDS_PER_DAY))}</div>
       <div className="world-map-hud top-right">Solar {Math.round(dayPercent * 100)}%</div>
       <div className="world-map-hud bottom-left">{sorted.length} nodes</div>
