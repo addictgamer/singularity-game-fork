@@ -222,7 +222,26 @@ Deliverables:
 ### M11. Screen-by-Screen UI Parity
 Status: in progress
 
-Completed in this phase slice:
+**CRITICAL REDESIGN: Main Menu + Game View Separation**
+Current state: Tab-based layout; main menu is one tab among many—doesn't feel like game intro.
+Target layout:
+  - Main menu screen: Full-screen entry point (new game, load game, options, difficulty selection)
+  - Game view screen: Only shown after starting/loading a game
+    - Sidebar (left, persistent): Navigation, quick status (day/cash/CPU/suspicion)
+    - Map hero (center, fills space): Full canvas-based world map
+    - Modal dialogs: Research, reports, save/load, log, knowledge, options
+    - Location/base operations: Modal or side panel (details TBD during implementation)
+  
+Implementation plan:
+1. Add `appScreen: "main-menu" | "game"` to store to track which view to show
+2. Refactor App.tsx to render MainMenu or GameView based on appScreen
+3. Create GameView layout component: sidebar + map + modal system
+4. Update startNewGame/loadFromSlot to set appScreen to "game"
+5. Create modal wrapper system for secondary screens
+6. Migrate existing screen panels to modals
+7. Add return-to-menu option in options screen
+
+Completed in this phase slice (previous work):
 - Added dedicated Main Menu panel with difficulty selection and continue/new game actions
 - Added dedicated Base Management panel with per-base upkeep and power controls
 - Added dedicated Activity Log panel backed by runtime session log entries
