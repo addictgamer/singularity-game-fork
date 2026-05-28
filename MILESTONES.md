@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 75%
+Overall completion estimate: 76%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -243,6 +243,7 @@ Completed in this phase slice:
 - Deepened main menu with difficulty parameter details and new game confirmation flow
 - Deepened knowledge/story screen with tech progress metrics, researched/available/locked categorization, and expanded world state details
 - Deepened options panel with organized settings sections (simulation, display) and help text
+- Cleaned app shell screen routing so each tab renders only relevant panels (removed always-on setup/simulation/snapshot/map/location cards)
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -516,4 +517,4 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Deepened phase 3 knowledge/story screen with tech research progress metrics, researched/available/locked tech categorization, and richer world state summaries.
 - 2026-05-27: Deepened phase 3 options panel with organized setting sections (simulation, display) and descriptive help text for each option.
 - 2026-05-27: Added research danger rating display with color-coded badges (low/medium/high threat levels) for each tech to enhance player decision-making.
-- 2026-05-27: Deepened phase 3 research screen with prerequisite visibility badges showing tech dependency chains and completion status.
+- 2026-05-27: Cleaned phase 3 app shell composition so each tab only shows its intended panel(s), removing persistent cross-screen scaffolding.

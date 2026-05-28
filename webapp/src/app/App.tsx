@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useGameStore } from "../store/gameStore";
-import { RESOURCE_CPU, RESOURCE_CASH } from "../engine/constants";
 import { WorldMap } from "./WorldMap";
 import { ResearchPanel } from "./ResearchPanel";
 import { ReportsPanel } from "./ReportsPanel";
@@ -49,7 +48,6 @@ export function App() {
     void initializeSettings();
   }, [initializeSettings]);
 
-  const stealth = game?.techs.get("Stealth");
   const buildableBaseActions = !game
     ? []
     : availableBuildableBaseIds().map((baseId) => {
@@ -100,29 +98,23 @@ export function App() {
           />
         ) : null}
 
-        <section className="card">
-          <h2>Game Setup</h2>
-          <label htmlFor="difficulty">Difficulty</label>
-          <select
-            id="difficulty"
-            value={selectedDifficultyId}
-            onChange={(event) => setDifficulty(event.target.value)}
-          >
-            {availableDifficulties.map((difficulty) => (
-              <option key={difficulty.id} value={difficulty.id}>
-                {difficulty.name}
-              </option>
-            ))}
-          </select>
-          <button onClick={startNewGame}>Start New Game</button>
-        </section>
-
-        <section className="card">
-          <h2>Simulation ({screen})</h2>
-          {!game ? (
-            <p>No active game yet.</p>
-          ) : (
-            <>
+        {game && screen === "map" ? (
+          <>
+            <section className="card card-span-2">
+              <h2>World Map</h2>
+              <WorldMap
+                locations={Array.from(game.locations.values())}
+                selectedLocationId={selectedLocationId}
+                isLocationAvailable={(locationId) => game.locationAvailable(locationId)}
+                rawSec={game.rawSec}
+                onSelect={setSelectedLocation}
+              />
+              <p className="muted">
+                Click markers to select a location. Locked locations require additional technologies.
+              </p>
+            </section>
+            <section className="card card-span-2">
+              <h2>Simulation</h2>
               <dl className="stats">
                 <div>
                   <dt>Difficulty</dt>
@@ -137,24 +129,11 @@ export function App() {
                   <dd>{game.cash}</dd>
                 </div>
                 <div>
-                  <dt>Partial Cash</dt>
-                  <dd>{game.partialCash}</dd>
-                </div>
-                <div>
                   <dt>CPU Pool</dt>
                   <dd>{game.availableCpus[0]}</dd>
                 </div>
-                <div>
-                  <dt>Effective CPU Pool</dt>
-                  <dd>{game.effectiveCpuPool()}</dd>
-                </div>
               </dl>
-
               <div className="actions">
-                <button onClick={() => assignCpu("jobs", 1)}>Assign 1 CPU to jobs</button>
-                <button onClick={() => assignCpu("jobs", 0)}>Clear jobs CPU</button>
-                <button onClick={() => assignCpu("Stealth", 1)}>Assign 1 CPU to Stealth</button>
-                <button onClick={() => assignCpu("Stealth", 0)}>Clear Stealth CPU</button>
                 <button onClick={() => void advanceByCurrentTimeStep()}>
                   Advance ({Math.round(settings.timeStepSeconds / 3600)}h)
                 </button>
@@ -162,42 +141,14 @@ export function App() {
                 <button onClick={advanceDay}>Advance 24h</button>
                 <button onClick={() => setScreen("save")}>Open Save Manager</button>
               </div>
-            </>
-          )}
-        </section>
+            </section>
+          </>
+        ) : null}
 
-        <section className="card">
-          <h2>Tech Snapshot</h2>
-          {!game || !stealth || screen !== "research" ? (
-            <p>Start a game to inspect technology progression.</p>
-          ) : (
-            <dl className="stats">
-              <div>
-                <dt>Stealth Available</dt>
-                <dd>{stealth.available(game) ? "yes" : "no"}</dd>
-              </div>
-              <div>
-                <dt>Stealth Done</dt>
-                <dd>{stealth.done ? "yes" : "no"}</dd>
-              </div>
-              <div>
-                <dt>CPU Left</dt>
-                <dd>{stealth.costLeft[RESOURCE_CPU]}</dd>
-              </div>
-              <div>
-                <dt>Cash Left</dt>
-                <dd>{stealth.costLeft[RESOURCE_CASH]}</dd>
-              </div>
-            </dl>
-          )}
-        </section>
-
-        <section className="card">
-          <h2>World Map</h2>
-          {!game || (screen !== "map" && screen !== "location") ? (
-            <p>Start a game to open the world map.</p>
-          ) : (
-            <>
+        {game && screen === "location" ? (
+          <>
+            <section className="card card-span-2">
+              <h2>World Map</h2>
               <WorldMap
                 locations={Array.from(game.locations.values())}
                 selectedLocationId={selectedLocationId}
@@ -208,25 +159,17 @@ export function App() {
               <p className="muted">
                 Click markers to select a location. Locked locations require additional technologies.
               </p>
-            </>
-          )}
-        </section>
-
-        {!game || (screen !== "map" && screen !== "location") ? (
-          <section className="card">
-            <h2>Location Operations</h2>
-            <p>Start a game to manage bases and regions.</p>
-          </section>
-        ) : (
-          <LocationPanel
-            game={game}
-            selectedLocationId={selectedLocationId}
-            onSelectLocation={setSelectedLocation}
-            buildableBaseActions={buildableBaseActions}
-            onBuildBase={buildBaseAtSelectedLocation}
-            onToggleBasePower={toggleBasePower}
-          />
-        )}
+            </section>
+            <LocationPanel
+              game={game}
+              selectedLocationId={selectedLocationId}
+              onSelectLocation={setSelectedLocation}
+              buildableBaseActions={buildableBaseActions}
+              onBuildBase={buildBaseAtSelectedLocation}
+              onToggleBasePower={toggleBasePower}
+            />
+          </>
+        ) : null}
 
         {game && screen === "base" ? (
           <BasePanel
@@ -265,6 +208,14 @@ export function App() {
             settingsLoaded={settingsLoaded}
             onUpdateSettings={updateSettings}
           />
+        ) : null}
+
+        {!game && screen !== "main-menu" ? (
+          <section className="card card-span-2">
+            <h2>No Active Game</h2>
+            <p>Start a new game from Main Menu to use this screen.</p>
+            <button onClick={() => setScreen("main-menu")}>Go To Main Menu</button>
+          </section>
         ) : null}
       </main>
     </div>
