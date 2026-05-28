@@ -21,3 +21,8 @@ singularity-*.tar.gz.asc
 
 webapp/dist/
 webapp/node_modules/
+webapp/package-lock.json
+webapp/tsconfig.node.tsbuildinfo
+webapp/tsconfig.tsbuildinfo
+webapp/vite.config.d.ts
+webapp/vite.config.js

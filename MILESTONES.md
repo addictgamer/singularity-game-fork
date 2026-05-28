@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 64%
+Overall completion estimate: 67%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -235,6 +235,8 @@ Completed in this phase slice:
 - Added dedicated Save Manager screen with slot-1/slot-2/slot-3/autosave workflows
 - Added slot actions for save/load/delete with synchronized metadata refresh
 - Consolidated import/export workflows under the Save Manager screen
+- Expanded reports with activity breakdowns, per-day timeline rollups, and suspicion/event watch summaries
+- Expanded log workflows with kind filter, text search, and minimum-day filtering
 
 Remaining work:
 - Main menu flow deep parity (submenus, campaign start messaging, credits/help flows)
@@ -242,7 +244,7 @@ Remaining work:
 - Location screen deep parity (full base lifecycle actions and warnings)
 - Base screen deep parity for item construction and management
 - Reports deep parity and detailed data views
-- Log screen deep parity (filters, categories, persistent archival behavior)
+- Log screen deep parity (persistent archival behavior and richer categorization semantics)
 - Knowledge/story deep parity (story progression sections and narrative triggers)
 - Options deep parity with full settings coverage
 - Save/load UX parity around slots, metadata, and management workflows
@@ -415,6 +417,8 @@ Delivered so far:
 - Main menu panel and start/continue flow skeleton
 - Save-slot metadata cards for primary continue workflows
 - Dedicated save manager workflows (slot save/load/delete + import/export)
+- Reports screen with activity analytics and watch summaries
+- Log screen with multi-factor filtering controls
 - Base management screen with upkeep and power actions
 - Log screen with runtime action feed and type filtering
 - Knowledge/story screen with researched techs, locations, active events, and world-state summary
@@ -496,3 +500,4 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Added component regression test for research panel live progress updates after time advancement to prevent stale-status regressions.
 - 2026-05-27: Fixed engine bug where completed research tasks could retain CPU assignment; added regression coverage to ensure CPU auto-unassign on research completion.
 - 2026-05-27: Expanded phase 3 save/load UX with a dedicated Save Manager screen, multi-slot actions (save/load/delete), and centralized import/export workflows.
+- 2026-05-27: Expanded phase 3 reports/log parity with activity breakdowns, timeline summaries, suspicion/event watch reporting, and richer log filtering/search workflows.

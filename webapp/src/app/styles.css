@@ -101,13 +101,15 @@ h1 {
 
 label,
 select,
-button {
+button,
+input {
   display: block;
   width: 100%;
 }
 
 select,
-button {
+button,
+input {
   font: inherit;
   padding: 0.55rem 0.7rem;
   border-radius: 10px;
@@ -366,6 +368,22 @@ button {
   overflow: auto;
   display: grid;
   gap: 0.35rem;
+}
+
+.log-summary-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.4rem;
+}
+
+.log-summary-list li {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.3rem 0.55rem;
+  list-style: none;
 }
 
 .knowledge-grid {

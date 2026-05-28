@@ -234,7 +234,7 @@ export function App() {
           <ResearchPanel game={game} onAssignCpu={assignCpu} />
         ) : null}
 
-        {game && screen === "reports" ? <ReportsPanel game={game} /> : null}
+        {game && screen === "reports" ? <ReportsPanel game={game} entries={sessionLog} /> : null}
 
         {screen === "save" ? (
           <SavePanel
