@@ -60,3 +60,4 @@ Add some more base management options. Like maybe build multiples at once.
 - Destroy multipples
 - Destroy all high risk bases at a location or whatever.
 
+Antartica doesn't have the hover overlay and is clicable over the entire region to select it.
