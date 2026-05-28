@@ -346,19 +346,56 @@ button {
   gap: 0.55rem;
 }
 
+.base-table-header-row {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0 0.35rem;
+}
+
 .base-table-head {
-  display: none;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6f5040;
+  font-weight: 700;
 }
 
 .base-table-row {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 0.5rem;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.75);
   padding: 0.5rem;
   align-items: center;
+}
+
+.status-chip {
+  display: inline-block;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-chip.active {
+  background: rgba(33, 106, 42, 0.18);
+  color: #1f6a29;
+  border: 1px solid rgba(33, 106, 42, 0.35);
+}
+
+.status-chip.sleep {
+  background: rgba(111, 80, 64, 0.14);
+  color: #6f5040;
+  border: 1px solid rgba(111, 80, 64, 0.28);
+}
+
+.stacked-actions {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .log-list {
@@ -469,6 +506,10 @@ h3 {
 
   .base-table-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .base-table-header-row {
+    display: none;
   }
 
   .save-row-card {

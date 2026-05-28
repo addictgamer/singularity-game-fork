@@ -228,7 +228,13 @@ export function App() {
           />
         )}
 
-        {game && screen === "base" ? <BasePanel game={game} onToggleBasePower={toggleBasePower} /> : null}
+        {game && screen === "base" ? (
+          <BasePanel
+            game={game}
+            onToggleBasePower={toggleBasePower}
+            onSelectLocation={setSelectedLocation}
+          />
+        ) : null}
 
         {game && screen === "research" ? (
           <ResearchPanel game={game} onAssignCpu={assignCpu} />

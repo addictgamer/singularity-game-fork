@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 67%
+Overall completion estimate: 69%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -237,6 +237,7 @@ Completed in this phase slice:
 - Consolidated import/export workflows under the Save Manager screen
 - Expanded reports with activity breakdowns, per-day timeline rollups, and suspicion/event watch summaries
 - Expanded log workflows with kind filter, text search, and minimum-day filtering
+- Deepened base management workflows with location/power filters, grace/risk visibility, and quick location focus actions
 
 Remaining work:
 - Main menu flow deep parity (submenus, campaign start messaging, credits/help flows)
@@ -420,6 +421,7 @@ Delivered so far:
 - Reports screen with activity analytics and watch summaries
 - Log screen with multi-factor filtering controls
 - Base management screen with upkeep and power actions
+- Base management screen with operational filters and risk/grace monitoring details
 - Log screen with runtime action feed and type filtering
 - Knowledge/story screen with researched techs, locations, active events, and world-state summary
 - Research screen filtering and sorting controls
@@ -501,3 +503,5 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Fixed engine bug where completed research tasks could retain CPU assignment; added regression coverage to ensure CPU auto-unassign on research completion.
 - 2026-05-27: Expanded phase 3 save/load UX with a dedicated Save Manager screen, multi-slot actions (save/load/delete), and centralized import/export workflows.
 - 2026-05-27: Expanded phase 3 reports/log parity with activity breakdowns, timeline summaries, suspicion/event watch reporting, and richer log filtering/search workflows.
+- 2026-05-27: Expanded phase 3 base-management depth with location/power filtering, maintenance risk visibility, grace tracking, and quick location focus actions.
+- 2026-05-27: Fixed base management table headers rendering so column labels are visible on desktop layouts.
