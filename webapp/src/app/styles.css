@@ -539,6 +539,35 @@ button {
   list-style: none;
 }
 
+.log-archive-block {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.log-archive-block summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.log-day-groups {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.log-day-group {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.55rem;
+}
+
+.log-day-group h3 {
+  margin: 0 0 0.35rem;
+}
+
 .knowledge-grid {
   display: grid;
   gap: 0.8rem;

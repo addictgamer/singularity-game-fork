@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 77%
+Overall completion estimate: 78%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -245,6 +245,7 @@ Completed in this phase slice:
 - Deepened options panel with organized settings sections (simulation, display) and help text
 - Cleaned app shell screen routing so each tab renders only relevant panels (removed always-on setup/simulation/snapshot/map/location cards)
 - Deepened save/load UX with current session summary, quick save/load actions, and guarded overwrite/delete/load confirmations
+- Deepened log workflows with semantic categories, day-group timeline rendering, archival controls, and filtered export
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -252,7 +253,7 @@ Remaining work:
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
 - Reports deep parity and detailed data views
-- Log screen deep parity (persistent archival behavior and richer categorization semantics)
+- Log screen additional parity polish (persistent archival storage behavior)
 - Knowledge/story additional depth (narrative story triggers, tech descriptions)
 - Options additional features (audio volume, language selection, performance tuning)
 - Save/load UX additional parity polish (slot sorting/grouping, richer archival semantics)
@@ -520,3 +521,4 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Added research danger rating display with color-coded badges (low/medium/high threat levels) for each tech to enhance player decision-making.
 - 2026-05-27: Cleaned phase 3 app shell composition so each tab only shows its intended panel(s), removing persistent cross-screen scaffolding.
 - 2026-05-27: Deepened phase 3 save/load workflows with current-session metadata, quick recovery actions, empty-slot filtering, and confirm guards for destructive/overwrite operations.
+- 2026-05-27: Deepened phase 3 log workflows with semantic category filters, day-group timeline view, archive-before-day controls, archived preview block, and filtered JSON export.
