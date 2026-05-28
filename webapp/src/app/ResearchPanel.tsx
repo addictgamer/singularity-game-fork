@@ -25,6 +25,7 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
       return {
         id: tech.id,
         name: tech.name,
+        danger: tech.danger,
         done: tech.done,
         available,
         allocation,
@@ -102,10 +103,34 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
               <span>CPU left: {row.cpuLeft}</span>
               <span>Cash left: {row.cashLeft}</span>
               <span>CPU assigned: {row.allocation}</span>
+              <span className={`danger-level danger-${row.danger}`}>Danger: {row.danger}</span>
             </div>
             <div className="progress-track" aria-label={`${row.name} cpu progress`}>
               <div className="progress-fill" style={{ width: `${row.cpuProgress}%` }} />
             </div>
+            {Array.from(game.techs.values())
+              .filter((tech) => tech.id === row.id)
+              .flatMap((tech) => tech.prerequisites)
+              .length > 0 ? (
+              <div className="research-prerequisites">
+                <strong className="muted">Requires:</strong>
+                {Array.from(game.techs.values())
+                  .filter((tech) => tech.id === row.id)
+                  .flatMap((tech) => tech.prerequisites)
+                  .map((prereqId) => {
+                    const prereq = game.techs.get(prereqId);
+                    if (!prereq) return null;
+                    return (
+                      <span
+                        key={prereqId}
+                        className={`prerequisite-badge ${prereq.done ? "done" : "pending"}`}
+                      >
+                        {prereq.name}
+                      </span>
+                    );
+                  })}
+              </div>
+            ) : null}
             <div className="research-actions">
               <button
                 disabled={!row.available || row.done}

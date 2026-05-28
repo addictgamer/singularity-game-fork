@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 69%
+Overall completion estimate: 75%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -238,16 +238,21 @@ Completed in this phase slice:
 - Expanded reports with activity breakdowns, per-day timeline rollups, and suspicion/event watch summaries
 - Expanded log workflows with kind filter, text search, and minimum-day filtering
 - Deepened base management workflows with location/power filters, grace/risk visibility, and quick location focus actions
+- Deepened research screen with prerequisite visibility showing tech dependency chains
+- Deepened location operations view with per-base grace timers, risk indicators, and maintenance breakdowns
+- Deepened main menu with difficulty parameter details and new game confirmation flow
+- Deepened knowledge/story screen with tech progress metrics, researched/available/locked categorization, and expanded world state details
+- Deepened options panel with organized settings sections (simulation, display) and help text
 
 Remaining work:
-- Main menu flow deep parity (submenus, campaign start messaging, credits/help flows)
-- Research screen deep parity (advanced sorting/filtering/metadata)
-- Location screen deep parity (full base lifecycle actions and warnings)
+- Main menu flow additional depth (submenus, campaign story intro, credits/help)
+- Research screen advanced metadata (danger ratings, effects display)
+- Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
 - Reports deep parity and detailed data views
 - Log screen deep parity (persistent archival behavior and richer categorization semantics)
-- Knowledge/story deep parity (story progression sections and narrative triggers)
-- Options deep parity with full settings coverage
+- Knowledge/story additional depth (narrative story triggers, tech descriptions)
+- Options additional features (audio volume, language selection, performance tuning)
 - Save/load UX parity around slots, metadata, and management workflows
 
 Deliverables:
@@ -505,3 +510,10 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Expanded phase 3 reports/log parity with activity breakdowns, timeline summaries, suspicion/event watch reporting, and richer log filtering/search workflows.
 - 2026-05-27: Expanded phase 3 base-management depth with location/power filtering, maintenance risk visibility, grace tracking, and quick location focus actions.
 - 2026-05-27: Fixed base management table headers rendering so column labels are visible on desktop layouts.
+- 2026-05-27: Deepened phase 3 research screen with prerequisite visibility badges showing tech dependency chains and completion status.
+- 2026-05-27: Deepened phase 3 location operations view with per-base grace timers, risk indicators, and filtered maintenance breakdown stats.
+- 2026-05-27: Deepened phase 3 main menu with difficulty parameter details (starting cash, interest rate, grace period, discovery risk) and new game confirmation modal.
+- 2026-05-27: Deepened phase 3 knowledge/story screen with tech research progress metrics, researched/available/locked tech categorization, and richer world state summaries.
+- 2026-05-27: Deepened phase 3 options panel with organized setting sections (simulation, display) and descriptive help text for each option.
+- 2026-05-27: Added research danger rating display with color-coded badges (low/medium/high threat levels) for each tech to enhance player decision-making.
+- 2026-05-27: Deepened phase 3 research screen with prerequisite visibility badges showing tech dependency chains and completion status.

@@ -259,6 +259,67 @@ button {
   gap: 0.3rem;
 }
 
+.location-bases-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.location-base-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.65rem;
+}
+
+.location-base-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.location-base-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+  align-items: center;
+}
+
+.grace-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+  background: rgba(111, 80, 64, 0.1);
+  color: #6f5040;
+  border: 1px solid rgba(111, 80, 64, 0.2);
+  font-size: 0.7rem;
+}
+
+.risk-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  border: 1px solid transparent;
+}
+
+.risk-badge.high {
+  background: rgba(163, 15, 15, 0.14);
+  color: #a30f0f;
+  border-color: rgba(163, 15, 15, 0.25);
+}
+
+.risk-badge.low {
+  background: rgba(33, 106, 42, 0.14);
+  color: #1f6a29;
+  border-color: rgba(33, 106, 42, 0.25);
+}
+
 .base-row {
   display: flex;
   align-items: center;
@@ -309,6 +370,61 @@ button {
   gap: 0.75rem;
   font-size: 0.86rem;
   margin: 0.4rem 0;
+}
+
+.research-prerequisites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  font-size: 0.75rem;
+  margin: 0.4rem 0;
+}
+
+.prerequisite-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.prerequisite-badge.done {
+  background: rgba(33, 106, 42, 0.14);
+  color: #1f6a29;
+  border-color: rgba(33, 106, 42, 0.35);
+}
+
+.prerequisite-badge.pending {
+  background: rgba(111, 80, 64, 0.1);
+  color: #6f5040;
+  border-color: rgba(111, 80, 64, 0.25);
+}
+
+.danger-level {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid transparent;
+}
+
+.danger-0, .danger-1, .danger-2 {
+  background: rgba(33, 106, 42, 0.16);
+  color: #1f6a29;
+}
+
+.danger-3, .danger-4 {
+  background: rgba(255, 193, 7, 0.18);
+  color: #9b7c00;
+}
+
+.danger-5, .danger-6, .danger-7, .danger-8, .danger-9, .danger-10 {
+  background: rgba(163, 15, 15, 0.16);
+  color: #a30f0f;
 }
 
 .progress-track {
@@ -493,6 +609,32 @@ button {
 
 h3 {
   margin-bottom: 0.4rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(43, 29, 23, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.5rem;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(73, 41, 16, 0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
 }
 
 @media (max-width: 640px) {

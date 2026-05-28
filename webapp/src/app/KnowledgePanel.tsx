@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { GameState } from "../engine/game";
 
 interface KnowledgePanelProps {
@@ -6,6 +7,22 @@ interface KnowledgePanelProps {
 
 export function KnowledgePanel({ game }: KnowledgePanelProps) {
   const researched = [...game.researchedTechs].sort((a, b) => a.localeCompare(b));
+  const available = useMemo(
+    () =>
+      Array.from(game.techs.values())
+        .filter((tech) => tech.available(game) && !tech.done)
+        .map((tech) => tech.id)
+        .sort((a, b) => a.localeCompare(b)),
+    [game]
+  );
+  const locked = useMemo(
+    () =>
+      Array.from(game.techs.values())
+        .filter((tech) => !tech.available(game) && !tech.done)
+        .map((tech) => tech.id)
+        .sort((a, b) => a.localeCompare(b)),
+    [game]
+  );
   const activeEvents = [...game.events.entries()]
     .filter(([, state]) => state.triggered)
     .map(([id]) => id)
@@ -17,28 +34,67 @@ export function KnowledgePanel({ game }: KnowledgePanelProps) {
   const highestSuspicion = [...game.groups.entries()]
     .map(([id, group]) => ({ id, suspicion: group.suspicion }))
     .sort((a, b) => b.suspicion - a.suspicion)[0];
+  
+  const inGracePeriod = game.difficulty.gracePeriodCpu < 0 || game.usedCpu <= game.difficulty.gracePeriodCpu * 86400;
 
   return (
     <section className="card card-span-2">
       <h2>Knowledge and Story</h2>
+      
+      <dl className="stats">
+        <div>
+          <dt>Total Tech</dt>
+          <dd>{game.techs.size}</dd>
+        </div>
+        <div>
+          <dt>Researched</dt>
+          <dd>{researched.length}</dd>
+        </div>
+        <div>
+          <dt>Available</dt>
+          <dd>{available.length}</dd>
+        </div>
+        <div>
+          <dt>Locked</dt>
+          <dd>{locked.length}</dd>
+        </div>
+        <div>
+          <dt>Known Locations</dt>
+          <dd>{discoveredLocations.length} / {game.locations.size}</dd>
+        </div>
+        <div>
+          <dt>Active Events</dt>
+          <dd>{activeEvents.length}</dd>
+        </div>
+      </dl>
+
       <div className="knowledge-grid">
         <article>
-          <h3>Researched Technologies</h3>
+          <h3>Researched Technologies ({researched.length})</h3>
           {researched.length === 0 ? <p>None yet.</p> : <ul>{researched.map((id) => <li key={id}>{id}</li>)}</ul>}
         </article>
         <article>
-          <h3>Known Locations</h3>
+          <h3>Available Technologies ({available.length})</h3>
+          {available.length === 0 ? <p>None available.</p> : <ul>{available.map((id) => <li key={id}>{id}</li>)}</ul>}
+        </article>
+        <article>
+          <h3>Locked Technologies ({locked.length})</h3>
+          {locked.length === 0 ? <p>All unlocked.</p> : <ul>{locked.slice(0, 5).map((id) => <li key={id}>{id}</li>)}{locked.length > 5 && <li>... and {locked.length - 5} more</li>}</ul>}
+        </article>
+        <article>
+          <h3>Known Locations ({discoveredLocations.length})</h3>
           {discoveredLocations.length === 0 ? <p>No known locations.</p> : <ul>{discoveredLocations.map((name) => <li key={name}>{name}</li>)}</ul>}
         </article>
         <article>
-          <h3>Active Global Events</h3>
+          <h3>Active Global Events ({activeEvents.length})</h3>
           {activeEvents.length === 0 ? <p>No active events.</p> : <ul>{activeEvents.map((id) => <li key={id}>{id}</li>)}</ul>}
         </article>
         <article>
           <h3>World State</h3>
           <ul>
-            <li>Detection display: {game.displayDiscover}</li>
-            <li>Endgame state: {game.apotheosis ? "apotheosis reached" : "not yet"}</li>
+            <li>Detection: {game.displayDiscover}</li>
+            <li>Grace period: {inGracePeriod ? "active" : "expired"}</li>
+            <li>Apotheosis: {game.apotheosis ? "reached" : "pending"}</li>
             <li>
               Highest suspicion: {highestSuspicion ? `${highestSuspicion.id} (${highestSuspicion.suspicion})` : "none"}
             </li>

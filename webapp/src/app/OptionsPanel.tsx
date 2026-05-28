@@ -20,50 +20,60 @@ export function OptionsPanel({ settings, settingsLoaded, onUpdateSettings }: Opt
       {!settingsLoaded ? (
         <p>Loading settings...</p>
       ) : (
-        <div className="options-grid">
-          <label>
-            Time step
-            <select
-              value={settings.timeStepSeconds}
-              onChange={(event) =>
-                void onUpdateSettings({ timeStepSeconds: Number.parseInt(event.target.value, 10) })
-              }
-            >
-              {TIME_STEPS.map((step) => (
-                <option key={step.value} value={step.value}>
-                  {step.label}
-                </option>
-              ))}
-            </select>
-          </label>
+        <>
+          <h3>Simulation Settings</h3>
+          <div className="options-grid">
+            <label>
+              Time step
+              <select
+                value={settings.timeStepSeconds}
+                onChange={(event) =>
+                  void onUpdateSettings({ timeStepSeconds: Number.parseInt(event.target.value, 10) })
+                }
+              >
+                {TIME_STEPS.map((step) => (
+                  <option key={step.value} value={step.value}>
+                    {step.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={settings.autosaveEnabled}
-              onChange={(event) => void onUpdateSettings({ autosaveEnabled: event.target.checked })}
-            />
-            Enable autosave every 3 in-game days
-          </label>
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.autosaveEnabled}
+                onChange={(event) => void onUpdateSettings({ autosaveEnabled: event.target.checked })}
+              />
+              Enable autosave every 3 in-game days
+            </label>
+          </div>
 
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={settings.compactCards}
-              onChange={(event) => void onUpdateSettings({ compactCards: event.target.checked })}
-            />
-            Compact card layout
-          </label>
+          <h3>Display Settings</h3>
+          <div className="options-grid">
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.compactCards}
+                onChange={(event) => void onUpdateSettings({ compactCards: event.target.checked })}
+              />
+              Compact card layout (smaller padding and gaps)
+            </label>
 
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={settings.confirmImport}
-              onChange={(event) => void onUpdateSettings({ confirmImport: event.target.checked })}
-            />
-            Confirm before importing save
-          </label>
-        </div>
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.confirmImport}
+                onChange={(event) => void onUpdateSettings({ confirmImport: event.target.checked })}
+              />
+              Confirm before importing save files
+            </label>
+          </div>
+
+          <p className="muted" style={{ fontSize: "0.85rem", marginTop: "1rem" }}>
+            Settings are saved automatically to your browser's local storage and will persist across sessions.
+          </p>
+        </>
       )}
     </section>
   );

@@ -22,9 +22,14 @@ describe("ResearchPanel", () => {
     }
 
     const cpuBefore = stealth.costLeft[1];
-    const { rerender, getByText } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    const { rerender, getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
 
-    const rowBefore = getByText("Stealth").closest("article");
+    // Find the Stealth row by matching the header strong element
+    const articles = getAllByRole("article");
+    const rowBefore = articles.find((article) => {
+      const strong = article.querySelector("header strong");
+      return strong?.textContent === "Stealth";
+    });
     if (!rowBefore) {
       throw new Error("Stealth row missing");
     }
@@ -36,7 +41,11 @@ describe("ResearchPanel", () => {
     const cpuAfter = stealth.costLeft[1];
     expect(cpuAfter).toBeLessThan(cpuBefore);
 
-    const rowAfter = getByText("Stealth").closest("article");
+    const articlesAfter = getAllByRole("article");
+    const rowAfter = articlesAfter.find((article) => {
+      const strong = article.querySelector("header strong");
+      return strong?.textContent === "Stealth";
+    });
     if (!rowAfter) {
       throw new Error("Stealth row missing after rerender");
     }

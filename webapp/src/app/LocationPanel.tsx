@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { GameState } from "../engine/game";
+import { RESOURCE_LABOR } from "../engine/constants";
 
 interface LocationBuildAction {
   id: string;
@@ -27,9 +29,32 @@ export function LocationPanel({
 }: LocationPanelProps) {
   const locationBases = game.getBasesAtLocation(selectedLocationId);
   const maintenance = game.getMaintenanceSnapshot();
-  const locationRiskBases = locationBases.filter((base) =>
-    maintenance.atRiskBaseIds.includes(base.id)
-  );
+  const atRisk = new Set(maintenance.atRiskBaseIds);
+
+  const graceRemainingMinutes = (baseId: string): number | null => {
+    const base = locationBases.find((entry) => entry.id === baseId);
+    if (!base || base.graceOver) {
+      return null;
+    }
+    const definition = game.baseDefs.get(base.specId);
+    if (!definition) {
+      return null;
+    }
+    const age = game.rawMin - (base.startedAtMin ?? 0);
+    const graceWindow = (definition.cost[RESOURCE_LABOR] * game.difficulty.baseGraceMultiplier) / 10000;
+    if (age >= graceWindow) {
+      return null;
+    }
+    return Math.max(0, Math.ceil(graceWindow - age));
+  };
+
+  const riskBreakdown = useMemo(() => {
+    return {
+      total: locationBases.length,
+      atRisk: locationBases.filter((base) => atRisk.has(base.id)).length,
+      inGrace: locationBases.filter((base) => !base.graceOver).length,
+    };
+  }, [locationBases, atRisk]);
 
   return (
     <section className="card">
@@ -53,10 +78,27 @@ export function LocationPanel({
 
       {maintenance.cashDeficit || maintenance.cpuDeficit ? (
         <p className="warning">
-          Upkeep pressure is high. {locationRiskBases.length > 0
-            ? `${locationRiskBases.length} base(s) at this location are in the sleep-risk queue.`
+          Upkeep pressure is high. {riskBreakdown.atRisk > 0
+            ? `${riskBreakdown.atRisk} base(s) at this location are in the sleep-risk queue.`
             : "This location is not first in the sleep-risk queue."}
         </p>
+      ) : null}
+
+      {locationBases.length > 0 ? (
+        <dl className="stats">
+          <div>
+            <dt>Bases Here</dt>
+            <dd>{riskBreakdown.total}</dd>
+          </div>
+          <div>
+            <dt>At Risk</dt>
+            <dd>{riskBreakdown.atRisk}</dd>
+          </div>
+          <div>
+            <dt>In Grace</dt>
+            <dd>{riskBreakdown.inGrace}</dd>
+          </div>
+        </dl>
       ) : null}
 
       <h3>Buildable Bases</h3>
@@ -77,21 +119,39 @@ export function LocationPanel({
       {locationBases.length === 0 ? (
         <p>No bases at this location yet.</p>
       ) : (
-        <ul className="base-list">
-          {locationBases.map((base) => (
-            <li key={base.id} className="base-row">
-              <span>
-                {base.name} ({base.specId}) - CPU {base.cpuProvided}
-              </span>
-              <button
-                className="inline-action"
-                onClick={() => onToggleBasePower(base.id)}
-                title={`Toggle power (currently ${base.powerState})`}
-              >
-                {base.powerState === "active" ? "Set Sleep" : "Wake"}
-              </button>
-            </li>
-          ))}
+        <ul className="location-bases-list">
+          {locationBases.map((base) => {
+            const graceLeft = graceRemainingMinutes(base.id);
+            return (
+              <li key={base.id} className="location-base-card">
+                <div className="location-base-header">
+                  <strong>{base.name}</strong>
+                  <span className="muted">({base.specId})</span>
+                </div>
+                <div className="location-base-details">
+                  <span>CPU: {base.cpuProvided}</span>
+                  <span className={`status-chip ${base.powerState === "active" ? "active" : "sleep"}`}>
+                    {base.powerState}
+                  </span>
+                  <span className="grace-badge">
+                    {graceLeft === null ? "grace expired" : `${graceLeft}m grace left`}
+                  </span>
+                  {atRisk.has(base.id) ? (
+                    <span className="risk-badge high">risk: high</span>
+                  ) : (
+                    <span className="risk-badge low">risk: low</span>
+                  )}
+                </div>
+                <button
+                  className="inline-action"
+                  onClick={() => onToggleBasePower(base.id)}
+                  title={`Toggle power (currently ${base.powerState})`}
+                >
+                  {base.powerState === "active" ? "Set Sleep" : "Wake"}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
