@@ -13,8 +13,41 @@ if (!("crypto" in globalThis)) {
 const nodeMajor = Number.parseInt(process.versions.node.split(".")[0], 10);
 const canUsePwaPlugin = Number.isFinite(nodeMajor) && nodeMajor >= 20;
 
+function requestLoggingPlugin() {
+  const seenClients = new Set<string>();
+
+  const logRequest = (req: { method?: string; url?: string; socket?: { remoteAddress?: string } }) => {
+    const ip = req.socket?.remoteAddress ?? "unknown";
+    if (!seenClients.has(ip)) {
+      seenClients.add(ip);
+      console.log(`[server] client connected: ${ip}`);
+    }
+
+    const method = req.method ?? "GET";
+    const url = req.url ?? "/";
+    console.log(`[server] resource request: ${ip} ${method} ${url}`);
+  };
+
+  return {
+    name: "request-logging",
+    configureServer(server: { middlewares: { use: (handler: (req: any, _res: any, next: () => void) => void) => void } }) {
+      server.middlewares.use((req, _res, next) => {
+        logRequest(req);
+        next();
+      });
+    },
+    configurePreviewServer(server: { middlewares: { use: (handler: (req: any, _res: any, next: () => void) => void) => void } }) {
+      server.middlewares.use((req, _res, next) => {
+        logRequest(req);
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
+    requestLoggingPlugin(),
     react(),
     ...(canUsePwaPlugin
       ? [
