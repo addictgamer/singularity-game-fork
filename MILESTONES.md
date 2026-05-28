@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 78%
+Overall completion estimate: 79%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -246,15 +246,18 @@ Completed in this phase slice:
 - Cleaned app shell screen routing so each tab renders only relevant panels (removed always-on setup/simulation/snapshot/map/location cards)
 - Deepened save/load UX with current session summary, quick save/load actions, and guarded overwrite/delete/load confirmations
 - Deepened log workflows with semantic categories, day-group timeline rendering, archival controls, and filtered export
+- Deepened knowledge/story with story phases, milestone tracking, narrative journal, and tech dossiers
+- Deepened reports with operational pressure details, resource outlook, CPU allocation breakdown, and event-duration insight
+- Updated new-game flow to jump directly to Map tab after start for immediate gameplay feedback
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Research screen advanced metadata (danger ratings, effects display)
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
-- Reports deep parity and detailed data views
+- Reports additional parity polish (historical persistence and desktop fixture alignment)
 - Log screen additional parity polish (persistent archival storage behavior)
-- Knowledge/story additional depth (narrative story triggers, tech descriptions)
+- Knowledge/story additional parity polish (desktop narrative trigger alignment)
 - Options additional features (audio volume, language selection, performance tuning)
 - Save/load UX additional parity polish (slot sorting/grouping, richer archival semantics)
 
@@ -522,3 +525,6 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Cleaned phase 3 app shell composition so each tab only shows its intended panel(s), removing persistent cross-screen scaffolding.
 - 2026-05-27: Deepened phase 3 save/load workflows with current-session metadata, quick recovery actions, empty-slot filtering, and confirm guards for destructive/overwrite operations.
 - 2026-05-27: Deepened phase 3 log workflows with semantic category filters, day-group timeline view, archive-before-day controls, archived preview block, and filtered JSON export.
+- 2026-05-27: Deepened phase 3 knowledge/story with narrative phase progression, milestone checklist, story journal from meaningful session events, and researched tech dossiers.
+- 2026-05-27: Deepened phase 3 reports with risk-base details, net cash/CPU outlook, CPU allocation breakdown, and active-event remaining-duration reporting.
+- 2026-05-27: Updated new-game UX flow to switch to the Map tab immediately after starting a run.

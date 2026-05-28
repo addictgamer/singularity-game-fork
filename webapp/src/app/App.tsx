@@ -60,6 +60,12 @@ export function App() {
           maintenanceCpu: base?.maintenance[1] ?? 0,
         };
       });
+
+  const handleStartNewGame = () => {
+    startNewGame();
+    setScreen("map");
+  };
+
   return (
     <div className={`app-shell ${settings.compactCards ? "compact" : ""}`}>
       <header className="hero">
@@ -91,7 +97,7 @@ export function App() {
             selectedDifficultyId={selectedDifficultyId}
             saveSummaries={saveSummaries}
             onSetDifficulty={setDifficulty}
-            onStartNewGame={startNewGame}
+            onStartNewGame={handleStartNewGame}
             onLoadSlot={async (slot) => {
               await loadFromSlot(slot);
             }}
@@ -211,7 +217,7 @@ export function App() {
 
         {screen === "log" ? <LogPanel entries={sessionLog} /> : null}
 
-        {game && screen === "knowledge" ? <KnowledgePanel game={game} /> : null}
+        {game && screen === "knowledge" ? <KnowledgePanel game={game} entries={sessionLog} /> : null}
 
         {screen === "options" ? (
           <OptionsPanel

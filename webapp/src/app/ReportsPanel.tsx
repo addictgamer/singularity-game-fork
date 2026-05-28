@@ -51,6 +51,43 @@ export function ReportsPanel({ game, entries }: ReportsPanelProps) {
     .map(([id]) => id)
     .sort((a, b) => a.localeCompare(b));
 
+  const cpuAssignments = Array.from(game.cpuUsage.entries())
+    .filter(([, amount]) => amount > 0)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+  const atRiskBaseDetails = maintenance.atRiskBaseIds.slice(0, 5).reduce<
+    Array<{ id: string; name: string; location: string; powerState: "active" | "sleep" | "offline" }>
+  >((acc, baseId) => {
+    const base = game.bases.find((entry) => entry.id === baseId);
+    if (!base) {
+      return acc;
+    }
+    const location = game.locations.get(base.locationId);
+    acc.push({
+      id: base.id,
+      name: base.name,
+      location: location?.name ?? base.locationId,
+      powerState: base.powerState,
+    });
+    return acc;
+  }, []);
+
+  const netCashOutlook = future.jobs + future.interest - maintenance.cashMaintenance;
+  const cpuHeadroom = game.effectiveCpuPool() - maintenance.cpuMaintenance;
+
+  const eventDurations = activeEvents.map((eventId) => {
+    const def = game.eventDefs.get(eventId);
+    const state = game.events.get(eventId);
+    if (!def || !state || def.durationDays === null) {
+      return { eventId, remainingDays: null as number | null };
+    }
+    const elapsedDays = (game.rawSec - state.triggeredAtSec) / (24 * 60 * 60);
+    return {
+      eventId,
+      remainingDays: Math.max(0, Math.ceil(def.durationDays - elapsedDays)),
+    };
+  });
+
   return (
     <section className="card card-span-2">
       <h2>Reports</h2>
@@ -142,6 +179,44 @@ export function ReportsPanel({ game, entries }: ReportsPanelProps) {
         </ul>
       )}
 
+      <h3>Operational Pressure</h3>
+      {atRiskBaseDetails.length === 0 ? (
+        <p className="ok">No high-risk bases currently flagged by maintenance queue.</p>
+      ) : (
+        <ul className="base-list">
+          {atRiskBaseDetails.map((base) => (
+            <li key={base.id}>
+              {base.name} ({base.location}) - power {base.powerState}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3>Resource Outlook</h3>
+      <ul className="base-list">
+        <li>
+          Net cash outlook (next day):
+          <strong className={netCashOutlook >= 0 ? "ok" : "warning"}> {netCashOutlook}</strong>
+        </li>
+        <li>
+          CPU headroom after maintenance:
+          <strong className={cpuHeadroom >= 0 ? "ok" : "warning"}> {cpuHeadroom}</strong>
+        </li>
+      </ul>
+
+      <h3>CPU Allocation Detail</h3>
+      {cpuAssignments.length === 0 ? (
+        <p>No active CPU allocations recorded.</p>
+      ) : (
+        <ul className="base-list">
+          {cpuAssignments.map(([taskId, amount]) => (
+            <li key={taskId}>
+              {taskId}: {amount}
+            </li>
+          ))}
+        </ul>
+      )}
+
       <h3>Detection and Event Watch</h3>
       <div className="knowledge-grid">
         <article>
@@ -160,12 +235,15 @@ export function ReportsPanel({ game, entries }: ReportsPanelProps) {
         </article>
         <article>
           <h4>Active Global Events</h4>
-          {activeEvents.length === 0 ? (
+          {eventDurations.length === 0 ? (
             <p>No active events.</p>
           ) : (
             <ul>
-              {activeEvents.map((eventId) => (
-                <li key={eventId}>{eventId}</li>
+              {eventDurations.map((event) => (
+                <li key={event.eventId}>
+                  {event.eventId}
+                  {event.remainingDays === null ? "" : ` (${event.remainingDays}d remaining)`}
+                </li>
               ))}
             </ul>
           )}
