@@ -195,7 +195,7 @@ export function KnowledgePanel({ game, entries }: KnowledgePanelProps) {
           <h3>World State</h3>
           <ul>
             <li>Detection: {game.displayDiscover}</li>
-            <li>Grace period: {inGracePeriod ? "active" : "expired"}</li>
+            <li title="Global grace period protects all bases from discovery. Separate from per-base grace windows.">Global grace: {inGracePeriod ? "active" : "expired"}</li>
             <li>Apotheosis: {game.apotheosis ? "reached" : "pending"}</li>
             <li>
               Highest suspicion: {highestSuspicion ? `${highestSuspicion.id} (${highestSuspicion.suspicion})` : "none"}

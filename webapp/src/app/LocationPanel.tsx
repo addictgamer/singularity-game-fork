@@ -94,8 +94,8 @@ export function LocationPanel({
             <dt>At Risk</dt>
             <dd>{riskBreakdown.atRisk}</dd>
           </div>
-          <div>
-            <dt>In Grace</dt>
+          <div title="Bases still within their personal grace window (not affected by global grace period)">
+            <dt>In Grace Window</dt>
             <dd>{riskBreakdown.inGrace}</dd>
           </div>
         </dl>
@@ -133,8 +133,8 @@ export function LocationPanel({
                   <span className={`status-chip ${base.powerState === "active" ? "active" : "sleep"}`}>
                     {base.powerState}
                   </span>
-                  <span className="grace-badge">
-                    {graceLeft === null ? "grace expired" : `${graceLeft}m grace left`}
+                  <span className="grace-badge" title="This base's personal grace window (independent of global grace period)">
+                    {graceLeft === null ? "grace window expired" : `${graceLeft}m grace left`}
                   </span>
                   {atRisk.has(base.id) ? (
                     <span className="risk-badge high">risk: high</span>

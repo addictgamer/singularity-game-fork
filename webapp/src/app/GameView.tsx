@@ -162,7 +162,7 @@ export function GameView({
     narrativeAlerts.push(`${maintenanceSnapshot.atRiskBaseIds.length} base${maintenanceSnapshot.atRiskBaseIds.length === 1 ? "" : "s"} at risk`);
   }
   if (!game.hadGrace) {
-    narrativeAlerts.push("Grace period has ended");
+    narrativeAlerts.push("Global grace period ended");
   }
   if (game.apotheosis) {
     narrativeAlerts.push("Endgame condition active");

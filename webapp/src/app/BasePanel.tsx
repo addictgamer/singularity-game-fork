@@ -134,7 +134,7 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
             <div className="base-table-head">CPU</div>
             <div className="base-table-head">Maint</div>
             <div className="base-table-head">Power</div>
-            <div className="base-table-head">Grace</div>
+            <div className="base-table-head" title="Per-base grace window (independent of global grace period). Each base has a grace period after construction based on its cost.">Grace Window</div>
             <div className="base-table-head">Risk</div>
             <div className="base-table-head">Actions</div>
           </div>
@@ -155,7 +155,7 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
                     {base.powerState}
                   </span>
                 </div>
-                <div>{graceLeft === null ? "expired" : `${graceLeft}m`}</div>
+                <div title="Time remaining in this base's personal grace window. Global grace period is separate.">{graceLeft === null ? "—" : `${graceLeft}m`}</div>
                 <div>{atRisk.has(base.id) ? "high" : "low"}</div>
                 <div className="stacked-actions">
                   <button className="inline-action" onClick={() => onSelectLocation(base.locationId)}>
