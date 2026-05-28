@@ -36,9 +36,22 @@ interface SettingsRecord {
   value: AppSettings;
 }
 
+export interface ReportHistoryRecord {
+  id?: number;
+  slot: string;
+  day: number;
+  activityByKind: Record<string, number>;
+  basesByLocation: Array<{ id: string; name: string; count: number }>;
+  suspicionSnapshot: Array<{ id: string; suspicion: number }>;
+  activeEventCount: number;
+  atRiskBaseCount: number;
+  resourceOutlook: { netCash: number; cpuHeadroom: number };
+}
+
 class SingularityWebDatabase extends Dexie {
   public saves!: Table<SavedGameRecord, number>;
   public settings!: Table<SettingsRecord, string>;
+  public reportHistory!: Table<ReportHistoryRecord, number>;
 
   constructor() {
     super("singularity_webapp");
@@ -48,6 +61,11 @@ class SingularityWebDatabase extends Dexie {
     this.version(2).stores({
       saves: "++id, slot, updatedAt",
       settings: "key",
+    });
+    this.version(3).stores({
+      saves: "++id, slot, updatedAt",
+      settings: "key",
+      reportHistory: "++id, [slot+day]",
     });
   }
 }
@@ -112,4 +130,20 @@ export async function saveAppSettings(settings: AppSettings): Promise<void> {
     key: "app",
     value: settings,
   });
+}
+
+export async function saveReportHistory(record: ReportHistoryRecord): Promise<void> {
+  await gameDb.reportHistory.add(record);
+}
+
+export async function loadReportHistoryForSlot(slot: string, days?: number): Promise<ReportHistoryRecord[]> {
+  const records = await gameDb.reportHistory.where("slot").equals(slot).toArray();
+  if (days !== undefined) {
+    return records.slice(-days);
+  }
+  return records;
+}
+
+export async function deleteReportHistoryForSlot(slot: string): Promise<void> {
+  await gameDb.reportHistory.where("slot").equals(slot).delete();
 }

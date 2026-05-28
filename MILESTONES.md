@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 79%
+Overall completion estimate: 80%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -249,13 +249,14 @@ Completed in this phase slice:
 - Deepened knowledge/story with story phases, milestone tracking, narrative journal, and tech dossiers
 - Deepened reports with operational pressure details, resource outlook, CPU allocation breakdown, and event-duration insight
 - Updated new-game flow to jump directly to Map tab after start for immediate gameplay feedback
+- Added reports historical persistence so deeper insights survive save/load cycles
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Research screen advanced metadata (danger ratings, effects display)
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
-- Reports additional parity polish (historical persistence and desktop fixture alignment)
+- Reports additional parity polish (desktop fixture alignment)
 - Log screen additional parity polish (persistent archival storage behavior)
 - Knowledge/story additional parity polish (desktop narrative trigger alignment)
 - Options additional features (audio volume, language selection, performance tuning)
@@ -528,3 +529,4 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Deepened phase 3 knowledge/story with narrative phase progression, milestone checklist, story journal from meaningful session events, and researched tech dossiers.
 - 2026-05-27: Deepened phase 3 reports with risk-base details, net cash/CPU outlook, CPU allocation breakdown, and active-event remaining-duration reporting.
 - 2026-05-27: Updated new-game UX flow to switch to the Map tab immediately after starting a run.
+- 2026-05-27: Added report history persistence to IndexedDB so operational insights (activity, base distribution, suspicion trends, resource outlook) persist across save/load cycles and rebuild on game reload.

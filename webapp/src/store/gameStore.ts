@@ -8,12 +8,16 @@ import {
   AppSettings,
   DEFAULT_APP_SETTINGS,
   SaveSummary,
+  ReportHistoryRecord,
   deleteGameFromSlot,
+  deleteReportHistoryForSlot,
   listSaveSummaries,
   loadAppSettings,
   loadGameFromSlot,
+  loadReportHistoryForSlot,
   saveAppSettings,
   saveGameToSlot,
+  saveReportHistory,
 } from "./persistence";
 
 interface GameStore {
@@ -24,8 +28,10 @@ interface GameStore {
   settings: AppSettings;
   settingsLoaded: boolean;
   lastAutosaveDay: number;
+  currentSlot: string | null;
   saveSummaries: SaveSummary[];
   sessionLog: Array<{ id: number; day: number; kind: string; message: string }>;
+  reportHistory: ReportHistoryRecord[];
   setDifficulty: (id: string) => void;
   setSelectedLocation: (id: string) => void;
   initializeSettings: () => Promise<void>;
@@ -56,8 +62,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   settings: DEFAULT_APP_SETTINGS,
   settingsLoaded: false,
   lastAutosaveDay: 0,
+  currentSlot: null,
   saveSummaries: [],
   sessionLog: [],
+  reportHistory: [],
   game: null,
   setDifficulty: (id) => set({ selectedDifficultyId: id }),
   setSelectedLocation: (id) => set({ selectedLocationId: id }),
@@ -80,7 +88,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const game = new GameState(typedGameData, state.selectedDifficultyId);
     set({
       game,
+      currentSlot: null,
       lastAutosaveDay: 0,
+      reportHistory: [],
       sessionLog: [
         {
           id: Date.now(),
@@ -175,6 +185,35 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (state.settings.autosaveEnabled && state.game.rawDay - state.lastAutosaveDay >= 3) {
       await saveGameToSlot("autosave", state.game.serialize());
       newLastAutosaveDay = state.game.rawDay;
+
+      if (state.currentSlot === "autosave" || state.currentSlot === null) {
+        const maintenance = state.game.getMaintenanceSnapshot();
+        const basesByLocation = Array.from(state.game.locations.values())
+          .map((location) => ({
+            id: location.id,
+            name: location.name,
+            count: state.game!.getBasesAtLocation(location.id).length,
+          }))
+          .filter((entry) => entry.count > 0)
+          .sort((a, b) => b.count - a.count);
+        const suspicionSnapshot = [...state.game.groups.entries()]
+          .map(([id, group]) => ({ id, suspicion: group.suspicion }))
+          .sort((a, b) => b.suspicion - a.suspicion)
+          .slice(0, 5);
+        await saveReportHistory({
+          slot: "autosave",
+          day: state.game.rawDay,
+          activityByKind: {},
+          basesByLocation,
+          suspicionSnapshot,
+          activeEventCount: [...state.game.events.entries()].filter(([, e]) => e.triggered).length,
+          atRiskBaseCount: maintenance.atRiskBaseIds.length,
+          resourceOutlook: {
+            netCash: state.game.computeFutureResourceFlow().jobs + state.game.computeFutureResourceFlow().interest - maintenance.cashMaintenance,
+            cpuHeadroom: state.game.effectiveCpuPool() - maintenance.cpuMaintenance,
+          },
+        });
+      }
     }
 
     const saveSummaries = newLastAutosaveDay !== state.lastAutosaveDay
@@ -234,9 +273,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
     const game = GameState.deserialize(typedGameData, saved);
     const saveSummaries = await listSaveSummaries();
+    const reportHistory = await loadReportHistoryForSlot(slot);
     set({
       game,
+      currentSlot: slot,
       lastAutosaveDay: game.rawDay,
+      reportHistory,
       saveSummaries,
       sessionLog: [
         ...state.sessionLog,
@@ -252,6 +294,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   deleteFromSlot: async (slot) => {
     const state = get();
     await deleteGameFromSlot(slot);
+    await deleteReportHistoryForSlot(slot);
     const saveSummaries = await listSaveSummaries();
     set({
       saveSummaries,
@@ -278,7 +321,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const game = importGameFromJson(typedGameData, serialized);
     set({
       game,
+      currentSlot: null,
       lastAutosaveDay: game.rawDay,
+      reportHistory: [],
       sessionLog: [
         ...state.sessionLog,
         {

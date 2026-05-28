@@ -23,6 +23,7 @@ export function App() {
     settingsLoaded,
     saveSummaries,
     sessionLog,
+    reportHistory,
     setDifficulty,
     setSelectedLocation,
     initializeSettings,
@@ -189,7 +190,7 @@ export function App() {
           <ResearchPanel game={game} onAssignCpu={assignCpu} />
         ) : null}
 
-        {game && screen === "reports" ? <ReportsPanel game={game} entries={sessionLog} /> : null}
+        {game && screen === "reports" ? <ReportsPanel game={game} entries={sessionLog} reportHistory={reportHistory} /> : null}
 
         {screen === "save" ? (
           <SavePanel

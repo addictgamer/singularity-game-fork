@@ -1,11 +1,13 @@
 import { GameState } from "../engine/game";
+import { ReportHistoryRecord } from "../store/persistence";
 
 interface ReportsPanelProps {
   game: GameState;
   entries: Array<{ id: number; day: number; kind: string; message: string }>;
+  reportHistory: ReportHistoryRecord[];
 }
 
-export function ReportsPanel({ game, entries }: ReportsPanelProps) {
+export function ReportsPanel({ game, entries, reportHistory }: ReportsPanelProps) {
   const researched = Array.from(game.techs.values()).filter((tech) => tech.done).length;
   const totalTech = game.techs.size;
   const availableLocations = Array.from(game.locations.keys()).filter((locationId) =>
@@ -212,6 +214,20 @@ export function ReportsPanel({ game, entries }: ReportsPanelProps) {
           {cpuAssignments.map(([taskId, amount]) => (
             <li key={taskId}>
               {taskId}: {amount}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3>Historical Trends</h3>
+      {reportHistory.length === 0 ? (
+        <p>No historical report data available yet.</p>
+      ) : (
+        <ul className="base-list">
+          {reportHistory.slice(-7).map((record) => (
+            <li key={`${record.day}`}>
+              Day {record.day}: {record.basesByLocation.length} regions, {record.activeEventCount} active events,
+              {record.atRiskBaseCount > 0 ? ` ${record.atRiskBaseCount} at risk,` : ""} net cash {record.resourceOutlook.netCash}
             </li>
           ))}
         </ul>
