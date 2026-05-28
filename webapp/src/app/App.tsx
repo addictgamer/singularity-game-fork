@@ -28,6 +28,7 @@ export function App() {
     toggleBasePower,
     availableBuildableBaseIds,
     advanceByCurrentTimeStep,
+    advanceHour,
     advanceHalfDay,
     advanceDay,
     saveToSlot,
@@ -131,6 +132,7 @@ export function App() {
             onBuildBase={buildBaseAtSelectedLocation}
             onToggleBasePower={toggleBasePower}
             onAdvanceByTimeStep={advanceByCurrentTimeStep}
+            onAdvanceHour={advanceHour}
             onAdvanceHalfDay={advanceHalfDay}
             onAdvanceDay={advanceDay}
             onSaveToSlot={saveToSlot}

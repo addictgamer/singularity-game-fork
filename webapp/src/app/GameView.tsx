@@ -28,6 +28,7 @@ interface GameViewProps {
   onBuildBase: (baseId: string) => boolean;
   onToggleBasePower: (baseId: string) => boolean;
   onAdvanceByTimeStep: () => Promise<void>;
+  onAdvanceHour: () => Promise<void>;
   onAdvanceHalfDay: () => Promise<void>;
   onAdvanceDay: () => void;
   onSaveToSlot: (slot: string) => Promise<void>;
@@ -53,6 +54,7 @@ export function GameView({
   onBuildBase,
   onToggleBasePower,
   onAdvanceByTimeStep,
+  onAdvanceHour,
   onAdvanceHalfDay,
   onAdvanceDay,
   onSaveToSlot,
@@ -144,6 +146,9 @@ export function GameView({
           </button>
           <button className="btn-secondary" onClick={() => void onAdvanceByTimeStep()}>
             +{Math.round(settings.timeStepSeconds / 3600)}h
+          </button>
+          <button className="btn-secondary" onClick={() => void onAdvanceHour()}>
+            +1h
           </button>
         </div>
 

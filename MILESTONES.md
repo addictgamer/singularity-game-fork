@@ -9,9 +9,9 @@ This file tracks:
 Scope target remains full gameplay parity in a browser-native webapp with desktop and mobile support, offline support, and no dependency on legacy desktop save import.
 
 ## Current Snapshot
-Status date: 2026-05-27
+Status date: 2026-05-28
 
-Overall completion estimate: 84%
+Overall completion estimate: 88%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -271,6 +271,14 @@ Completed in this phase slice (previous work):
 - Enhanced map viewport with earth.jpg background imagery and subtle radial gradient lighting effects for visual depth
 - Rendered earth.jpg on canvas map as base layer with overlay gradient (removes bland programmer-art appearance)
 - Changed new game default difficulty from "very easy" to "normal"
+- Added continent polygon extraction pipeline with seeded splitting for gameplay-aligned regions (North/South America, Europe, Asia, Africa, Australia)
+- Unified map interaction geometry so click/hover/render share the same region source
+- Removed non-selectable region outlines from map rendering for interaction clarity
+- Added loading UX for menu -> game transition with full-screen blocking loader until map assets decode
+- Added initial app bootstrap loader (black screen + spinner/text) before React mount to replace blank white startup
+- Added Escape-key modal dismissal in both gameplay modals and main-menu confirmation dialog
+- Added dedicated "+1h" simulation control in game sidebar
+- Added Vite dev/preview server request logging (client connection + resource access visibility)
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -289,6 +297,21 @@ Remaining work:
 Deliverables:
 - Dedicated components/routes for each screen
 - Shared UI primitives for lists/dialogs/sliders/tooltips
+
+Recently completed implementation notes:
+- Map fidelity and interaction pass:
+  - Canvas region boundaries now derive from shared click-region geometry
+  - Region extraction script updated to split connected landmasses via seeded assignment
+  - Non-interactive islands/regions hidden from render path
+- Loading and transition UX pass:
+  - App bootstrap loader added at static HTML layer
+  - Game-entry loader blocks GameView until key map assets are decoded
+  - Decode-aware preload path added for Edge timing stability
+- Input and control polish:
+  - Escape-to-close across gameplay/main-menu modals
+  - New "+1h" control added without removing existing timestep controls
+- Tooling visibility:
+  - Dev server logs now show first-seen client connections and resource requests
 
 ### M12. Mobile and Accessibility Parity
 Status: not started
@@ -406,10 +429,10 @@ Not yet validated:
 ## Immediate Next Priorities
 
 1. Deepen M11 screens to full workflow parity (research/location/base/log/knowledge/options)
-2. Add conversion validation and parity fixtures in automated tests (M8 + M16)
-3. Integrate translations and audio systems (M13 + M14)
-4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
-5. Continue engine edge-case parity validation and regression hardening (M9 + M16)
+2. Resolve remaining CPU-assignment UX/logic jank (post-completion cleanup and oversubscription guardrails)
+3. Add conversion validation and parity fixtures in automated tests (M8 + M16)
+4. Integrate translations and audio systems (M13 + M14)
+5. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
 
 ## Execution Checklist To 100% Port (Ordered + Estimated)
 

@@ -46,6 +46,7 @@ interface GameStore {
   availableBuildableBaseIds: () => string[];
   advanceBySeconds: (seconds: number) => Promise<void>;
   advanceByCurrentTimeStep: () => Promise<void>;
+  advanceHour: () => Promise<void>;
   advanceHalfDay: () => Promise<void>;
   advanceDay: () => Promise<void>;
   saveToSlot: (slot: string) => Promise<void>;
@@ -243,6 +244,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
   advanceByCurrentTimeStep: async () => {
     const state = get();
     await get().advanceBySeconds(state.settings.timeStepSeconds);
+  },
+  advanceHour: async () => {
+    await get().advanceBySeconds(60 * 60);
   },
   advanceHalfDay: async () => {
     await get().advanceBySeconds(SECONDS_PER_DAY / 2);
