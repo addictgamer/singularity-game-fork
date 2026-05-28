@@ -13,7 +13,7 @@ import { SaveSummary, ReportHistoryRecord } from "../store/persistence";
 import { AppSettings } from "../store/persistence";
 import { RESOURCE_CPU, RESOURCE_CASH, SECONDS_PER_DAY } from "../engine/constants";
 
-type ModalId = "research" | "reports" | "save" | "log" | "knowledge" | "options" | null;
+type ModalId = "research" | "reports" | "bases" | "save" | "log" | "knowledge" | "options" | null;
 
 type FloatingNotice = {
   id: number;
@@ -282,6 +282,9 @@ export function GameView({
           <button className="nav-btn" onClick={() => setOpenModal("reports")}>
             📊 Reports
           </button>
+          <button className="nav-btn" onClick={() => setOpenModal("bases")}>
+            🏢 Bases
+          </button>
           <button className="nav-btn" onClick={() => setOpenModal("save")}>
             💾 Save/Load
           </button>
@@ -489,6 +492,15 @@ export function GameView({
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
             <ReportsPanel game={game} entries={sessionLog} reportHistory={reportHistory} />
+          </div>
+        </div>
+      )}
+
+      {openModal === "bases" && (
+        <div className="modal-overlay" onClick={() => setOpenModal(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
+            <BasePanel game={game} onToggleBasePower={onToggleBasePower} onSelectLocation={onSelectLocation} />
           </div>
         </div>
       )}
