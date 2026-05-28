@@ -690,6 +690,9 @@ export class GameState {
       if (!tech) {
         throw new Error(`Unknown task ${taskId}`);
       }
+      if (tech.done) {
+        throw new Error(`Cannot allocate CPU to completed tech ${taskId}`);
+      }
       if (!tech.available(this)) {
         throw new Error(`Tech ${taskId} is not available`);
       }
@@ -775,7 +778,7 @@ export class GameState {
 
     for (const [taskId, assignedCpu] of this.cpuUsage) {
       if (taskId === "jobs") {
-        cpuPool -= assignedCpu * seconds;
+        cpuPool -= Math.max(0, assignedCpu * seconds);
         continue;
       }
       if (taskId === "cpu_pool") {
@@ -787,13 +790,14 @@ export class GameState {
         continue;
       }
 
-      cpuPool -= assignedCpu * seconds;
+      cpuPool -= Math.max(0, assignedCpu * seconds);
       const workBudget = Math.max(0, assignedCpu * seconds);
       const result = tech.workOn(this.cash, workBudget);
       this.cash -= result.spentCash;
       if (result.completed) {
         this.researchedTechs.add(taskId);
         this.applyTechEffects(taskId);
+        tech.done = true;
         this.cpuUsage.delete(taskId);
       }
     }

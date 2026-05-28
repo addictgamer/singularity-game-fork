@@ -134,11 +134,30 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
             <div className="research-actions">
               <button
                 disabled={!row.available || row.done}
-                onClick={() => onAssignCpu(row.id, 1)}
+                onClick={() => onAssignCpu(row.id, row.allocation + 1)}
+                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 1 CPU"}
               >
-                Assign 1 CPU
+                +1 CPU
               </button>
-              <button disabled={row.done} onClick={() => onAssignCpu(row.id, 0)}>
+              <button
+                disabled={!row.available || row.done}
+                onClick={() => onAssignCpu(row.id, row.allocation + 5)}
+                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 5 CPUs"}
+              >
+                +5 CPU
+              </button>
+              <button
+                disabled={!row.available || row.done}
+                onClick={() => onAssignCpu(row.id, row.allocation + 10)}
+                title={row.done ? "Completed - cannot assign" : !row.available ? "Locked - prerequisites not met" : "Increase allocation by 10 CPUs"}
+              >
+                +10 CPU
+              </button>
+              <button 
+                disabled={row.allocation === 0}
+                onClick={() => onAssignCpu(row.id, 0)}
+                title={row.allocation === 0 ? "No allocation to clear" : "Clear CPU allocation"}
+              >
                 Clear
               </button>
             </div>

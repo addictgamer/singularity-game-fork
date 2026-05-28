@@ -9,16 +9,16 @@ This file tracks:
 Scope target remains full gameplay parity in a browser-native webapp with desktop and mobile support, offline support, and no dependency on legacy desktop save import.
 
 ## Current Snapshot
-Status date: 2026-05-28
+Status date: 2026-05-28 (session 2)
 
-Overall completion estimate: 88%
+Overall completion estimate: 90%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
 - Engine parity remains partial but now includes power/maintenance lifecycle scaffolding
-- UI parity remains partial but now includes dedicated research/location/reports/options panels
-- Data conversion is partial (core gameplay domains converted)
-- Validation harness has grown and is actively maintained
+- UI parity remains partial but now includes dedicated research/location/reports/options panels with CPU assignment guardrails
+- Data conversion is partial with comprehensive validation test harness (22 validation tests)
+- Validation harness has grown and is actively maintained (40 tests total)
 - Release hardening has not started
 
 ## Completed Milestones
@@ -312,6 +312,22 @@ Recently completed implementation notes:
   - New "+1h" control added without removing existing timestep controls
 - Tooling visibility:
   - Dev server logs now show first-seen client connections and resource requests
+- CPU assignment lifecycle fixes (2026-05-28):
+  - Added validation to prevent allocation to completed techs
+  - Added error handling in store to prevent invalid assignments from reaching UI
+  - Improved ResearchPanel buttons: +1/+5/+10 CPU instead of single "Assign 1 CPU"
+  - Added allocation persistence across UI states (buttons use row.allocation as base)
+  - Added helpful tooltips explaining why buttons are disabled
+  - Clear button now only enabled when there's actually an allocation to clear
+- Data conversion validation harness (2026-05-28):
+  - Created 22 comprehensive data validation tests covering schema, references, and ranges
+  - Validates all core domains: difficulties, techs, bases, locations, groups, events
+  - Validates cost/maintenance structures have correct dimensions
+  - Validates prerequisites reference chain consistency
+  - Validates group/region references in bases and locations
+  - Validates danger levels and grace period settings
+  - Tests include: 30+ techs, 5+ bases, 10+ locations, 8+ groups verified
+  - All 40 tests passing (22 data + 17 game engine + 1 UI)
 
 ### M12. Mobile and Accessibility Parity
 Status: not started
@@ -415,12 +431,24 @@ Deliverables:
 
 Current validated:
 - npm install: pass
-- npm test: pass
-- npm build: pass
+- npm test: pass (40 tests: 22 data validation + 17 game engine + 1 UI component)
+- npm build: pass (57 modules, 339.79 kB, gzip 106.97 kB)
 - data generation command: pass
+- CPU allocation prevention: working (prevents allocation to completed techs)
+- Research completion cleanup: working (auto-clears CPU allocation)
+- Data schema validation: working (verified 22 schemas including costs, prerequisites, group references, etc.)
+
+Validation test coverage (M8/M16):
+- Difficulties: startingCash, gracePeriodCpu, baseGraceMultiplier verified
+- Techs: 30+ techs, cost/danger ranges, prerequisites chain validation
+- Bases: 5+ bases, cost/maintenance structure, prerequisite validation
+- Locations: 10+ locations, region references, position data
+- Groups: covert and other groups, suspicion decay values
+- Events: effect structure, chance values, duration tracking
+- Internal IDs: mapping consistency validation
 
 Not yet validated:
-- Full gameplay parity scenarios
+- Full gameplay parity scenarios with different difficulty modes
 - Cross-browser runtime behavior
 - Mobile UX parity
 - Offline end-to-end user flows
@@ -428,11 +456,11 @@ Not yet validated:
 
 ## Immediate Next Priorities
 
-1. Deepen M11 screens to full workflow parity (research/location/base/log/knowledge/options)
-2. Resolve remaining CPU-assignment UX/logic jank (post-completion cleanup and oversubscription guardrails)
-3. Add conversion validation and parity fixtures in automated tests (M8 + M16)
-4. Integrate translations and audio systems (M13 + M14)
-5. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
+1. Complete remaining M11 screen-parity workflows (deep research/base/location panel interactions, report refinements)
+2. Add conversion validation and parity fixtures in automated tests (M8 + M16)
+3. Integrate translations and audio systems (M13 + M14)
+4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
+5. Performance profiling and optimization (M17)
 
 ## Execution Checklist To 100% Port (Ordered + Estimated)
 

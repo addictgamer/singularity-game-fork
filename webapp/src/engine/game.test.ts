@@ -249,4 +249,46 @@ describe("GameState", () => {
     expect(game.events.get("temp-event")?.triggered).toBe(false);
     expect(news.changedDiscoverBonus).toBe(0);
   });
+
+  it("prevents cpu allocation to completed techs", () => {
+    const game = new GameState(gameData, "impossible");
+    game.cash = 100000;
+
+    const intrusion = game.techs.get("Intrusion");
+    if (!intrusion) {
+      throw new Error("Intrusion tech missing");
+    }
+
+    // Complete the tech
+    intrusion.costLeft = [1, 0, 0];
+    game.setAllocatedCpuFor("Intrusion", 1);
+    game.giveTime(1);
+
+    expect(intrusion.done).toBe(true);
+
+    // Attempt to allocate to completed tech should fail
+    expect(() => {
+      game.setAllocatedCpuFor("Intrusion", 5);
+    }).toThrow("Cannot allocate CPU to completed tech Intrusion");
+  });
+
+  it("auto-clears cpu allocation when research completes", () => {
+    const game = new GameState(gameData, "impossible");
+    game.cash = 100000;
+
+    const intrusion = game.techs.get("Intrusion");
+    if (!intrusion) {
+      throw new Error("Intrusion tech missing");
+    }
+
+    // Set minimal cost and complete
+    intrusion.costLeft = [1, 0, 0];
+    game.setAllocatedCpuFor("Intrusion", 10);
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(10);
+
+    game.giveTime(1);
+
+    // Allocation should be cleared automatically
+    expect(game.getAllocatedCpuFor("Intrusion")).toBe(0);
+  });
 });

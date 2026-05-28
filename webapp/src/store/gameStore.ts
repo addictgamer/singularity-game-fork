@@ -112,19 +112,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!state.game) {
       return;
     }
-    state.game.setAllocatedCpuFor(taskId, amount);
-    set({
-      game: state.game,
-      sessionLog: [
-        ...state.sessionLog,
-        {
-          id: Date.now(),
-          day: state.game.rawDay,
-          kind: "cpu",
-          message: `CPU assignment: ${taskId} -> ${amount}`,
-        },
-      ],
-    });
+    try {
+      state.game.setAllocatedCpuFor(taskId, amount);
+      set({
+        game: state.game,
+        sessionLog: [
+          ...state.sessionLog,
+          {
+            id: Date.now(),
+            day: state.game.rawDay,
+            kind: "cpu",
+            message: `CPU assignment: ${taskId} -> ${amount}`,
+          },
+        ],
+      });
+    } catch (error) {
+      console.warn(`CPU assignment failed: ${error instanceof Error ? error.message : String(error)}`);
+      // Silently fail - UI buttons should prevent invalid assignments
+    }
   },
   buildBaseAtSelectedLocation: (baseId) => {
     const state = get();
