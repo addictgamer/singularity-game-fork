@@ -268,6 +268,9 @@ Completed in this phase slice (previous work):
 - Transformed main menu into cinematic title screen with earth background image and two-column layout (new game / continue)
 - Integrated art assets (earth.jpg, earth-night.jpg) from original game to enhance UI visual hierarchy
 - Added earth imagery as subtle textured backgrounds to sidebar, location panel, and modal dialogs for visual cohesion
+- Enhanced map viewport with earth.jpg background imagery and subtle radial gradient lighting effects for visual depth
+- Rendered earth.jpg on canvas map as base layer with overlay gradient (removes bland programmer-art appearance)
+- Changed new game default difficulty from "very easy" to "normal"
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)

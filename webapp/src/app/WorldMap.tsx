@@ -20,6 +20,7 @@ export function WorldMap({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
+  const earthImageRef = useRef<HTMLImageElement | null>(null);
 
   const sorted = useMemo(() => [...locations].sort((a, b) => a.name.localeCompare(b.name)), [locations]);
 
@@ -29,6 +30,14 @@ export function WorldMap({
 
   const timeOfDay = ((rawSec % SECONDS_PER_DAY) + SECONDS_PER_DAY) % SECONDS_PER_DAY;
   const dayPercent = timeOfDay / SECONDS_PER_DAY;
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/earth.jpg';
+    img.onload = () => {
+      earthImageRef.current = img;
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -59,12 +68,25 @@ export function WorldMap({
 
       context.clearRect(0, 0, width, height);
 
-      const oceanGradient = context.createLinearGradient(0, 0, width, height);
-      oceanGradient.addColorStop(0, "#2cb6ff");
-      oceanGradient.addColorStop(0.5, "#1a7db8");
-      oceanGradient.addColorStop(1, "#0d3f66");
-      context.fillStyle = oceanGradient;
-      context.fillRect(0, 0, width, height);
+      // Draw earth image as background if loaded
+      if (earthImageRef.current) {
+        context.drawImage(earthImageRef.current, 0, 0, width, height);
+        // Add overlay gradient on top of earth
+        const overlayGradient = context.createLinearGradient(0, 0, width, height);
+        overlayGradient.addColorStop(0, "rgba(44, 182, 255, 0.25)");
+        overlayGradient.addColorStop(0.5, "rgba(26, 125, 184, 0.35)");
+        overlayGradient.addColorStop(1, "rgba(13, 63, 102, 0.45)");
+        context.fillStyle = overlayGradient;
+        context.fillRect(0, 0, width, height);
+      } else {
+        // Fallback to original ocean gradient if image not loaded
+        const oceanGradient = context.createLinearGradient(0, 0, width, height);
+        oceanGradient.addColorStop(0, "#2cb6ff");
+        oceanGradient.addColorStop(0.5, "#1a7db8");
+        oceanGradient.addColorStop(1, "#0d3f66");
+        context.fillStyle = oceanGradient;
+        context.fillRect(0, 0, width, height);
+      }
 
       context.globalAlpha = 0.16;
       context.strokeStyle = "#ffffff";

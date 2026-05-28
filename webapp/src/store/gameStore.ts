@@ -59,7 +59,7 @@ const typedGameData = gameData as unknown as GameData;
 
 export const useGameStore = create<GameStore>((set, get) => ({
   availableDifficulties: typedGameData.difficulties,
-  selectedDifficultyId: typedGameData.difficulties[0]?.id ?? "normal",
+  selectedDifficultyId: typedGameData.difficulties.find((d) => d.id === "normal")?.id ?? typedGameData.difficulties[0]?.id ?? "normal",
   appScreen: "main-menu",
   selectedLocationId: typedGameData.locations[0]?.id ?? "N AMERICA",
   settings: DEFAULT_APP_SETTINGS,

@@ -193,6 +193,7 @@ button {
   overflow: hidden;
   border: 1px solid var(--line);
   background: #0f5887;
+  box-shadow: 0 8px 24px rgba(15, 88, 135, 0.3);
 }
 
 .world-map-canvas {
@@ -204,13 +205,15 @@ button {
 
 .world-map-hud {
   position: absolute;
-  background: rgba(6, 13, 29, 0.55);
+  background: rgba(6, 13, 29, 0.75);
   color: #f6f8ff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
-  padding: 0.25rem 0.45rem;
+  padding: 0.35rem 0.55rem;
   font-size: 0.74rem;
-  backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(2px);
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .world-map-hud.top-left {
@@ -881,19 +884,35 @@ h3 {
   height: 100vh;
   background: #0f5887;
   overflow: hidden;
+  position: relative;
+}
+
+.map-viewport::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(0, 0, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .map-container {
   position: relative;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #0f5887 0%, #1a4d6d 100%);
-  background-image: 
-    url('/earth-night.jpg'),
-    linear-gradient(135deg, rgba(15, 88, 135, 0.7) 0%, rgba(26, 77, 109, 0.7) 100%);
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
+  background: 
+    /* Gradient overlay for depth */
+    linear-gradient(135deg, rgba(15, 88, 135, 0.4) 0%, rgba(26, 77, 109, 0.3) 100%),
+    /* Earth imagery as base layer */
+    url('/earth.jpg');
+  background-size: auto, cover;
+  background-position: center, center;
+  background-attachment: fixed, scroll;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: overlay, normal;
+  overflow: hidden;
+  z-index: 2;
 }
 
 .world-map {
