@@ -23,6 +23,7 @@ import {
 interface GameStore {
   availableDifficulties: GameData["difficulties"];
   selectedDifficultyId: string;
+  appScreen: "main-menu" | "game";
   game: GameState | null;
   selectedLocationId: string;
   settings: AppSettings;
@@ -32,6 +33,7 @@ interface GameStore {
   saveSummaries: SaveSummary[];
   sessionLog: Array<{ id: number; day: number; kind: string; message: string }>;
   reportHistory: ReportHistoryRecord[];
+  setAppScreen: (screen: "main-menu" | "game") => void;
   setDifficulty: (id: string) => void;
   setSelectedLocation: (id: string) => void;
   initializeSettings: () => Promise<void>;
@@ -58,6 +60,7 @@ const typedGameData = gameData as unknown as GameData;
 export const useGameStore = create<GameStore>((set, get) => ({
   availableDifficulties: typedGameData.difficulties,
   selectedDifficultyId: typedGameData.difficulties[0]?.id ?? "normal",
+  appScreen: "main-menu",
   selectedLocationId: typedGameData.locations[0]?.id ?? "N AMERICA",
   settings: DEFAULT_APP_SETTINGS,
   settingsLoaded: false,
@@ -67,6 +70,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   sessionLog: [],
   reportHistory: [],
   game: null,
+  setAppScreen: (screen) => set({ appScreen: screen }),
   setDifficulty: (id) => set({ selectedDifficultyId: id }),
   setSelectedLocation: (id) => set({ selectedLocationId: id }),
   initializeSettings: async () => {
@@ -87,6 +91,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get();
     const game = new GameState(typedGameData, state.selectedDifficultyId);
     set({
+      appScreen: "game",
       game,
       currentSlot: null,
       lastAutosaveDay: 0,
@@ -275,6 +280,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const saveSummaries = await listSaveSummaries();
     const reportHistory = await loadReportHistoryForSlot(slot);
     set({
+      appScreen: "game",
       game,
       currentSlot: slot,
       lastAutosaveDay: game.rawDay,

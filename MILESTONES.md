@@ -11,7 +11,7 @@ Scope target remains full gameplay parity in a browser-native webapp with deskto
 ## Current Snapshot
 Status date: 2026-05-27
 
-Overall completion estimate: 80%
+Overall completion estimate: 82%
 
 High-level status:
 - Foundation and multiple vertical slices implemented
@@ -222,24 +222,17 @@ Deliverables:
 ### M11. Screen-by-Screen UI Parity
 Status: in progress
 
-**CRITICAL REDESIGN: Main Menu + Game View Separation**
-Current state: Tab-based layout; main menu is one tab among many—doesn't feel like game intro.
-Target layout:
-  - Main menu screen: Full-screen entry point (new game, load game, options, difficulty selection)
-  - Game view screen: Only shown after starting/loading a game
-    - Sidebar (left, persistent): Navigation, quick status (day/cash/CPU/suspicion)
-    - Map hero (center, fills space): Full canvas-based world map
-    - Modal dialogs: Research, reports, save/load, log, knowledge, options
-    - Location/base operations: Modal or side panel (details TBD during implementation)
-  
-Implementation plan:
-1. Add `appScreen: "main-menu" | "game"` to store to track which view to show
-2. Refactor App.tsx to render MainMenu or GameView based on appScreen
-3. Create GameView layout component: sidebar + map + modal system
-4. Update startNewGame/loadFromSlot to set appScreen to "game"
-5. Create modal wrapper system for secondary screens
-6. Migrate existing screen panels to modals
-7. Add return-to-menu option in options screen
+**Completed Layout Redesign: Main Menu + Game View Separation**
+Implemented full redesign with proper visual hierarchy:
+  - Main menu screen: Full-screen entry point (difficulty selection, new game, load game, continue)
+  - Game view screen: Map-hero layout with persistent sidebar + modal dialogs
+    - Sidebar (left, 280px): Navigation buttons, quick status (day/cash/CPU/suspicion), simulation controls
+    - Map hero (center, fills): Full-viewport canvas-based world map
+    - Modal dialogs: Research, reports, save/load, activity log, knowledge/story, options (click-to-close)
+    - Location/base panel: Optional right sidebar (when location selected)
+  - New appScreen state in store tracks "main-menu" vs "game" mode
+  - startNewGame/loadFromSlot automatically switch to game view
+  - Return-to-menu button in sidebar for session end
 
 Completed in this phase slice (previous work):
 - Added dedicated Main Menu panel with difficulty selection and continue/new game actions
@@ -269,12 +262,16 @@ Completed in this phase slice (previous work):
 - Deepened reports with operational pressure details, resource outlook, CPU allocation breakdown, and event-duration insight
 - Updated new-game flow to jump directly to Map tab after start for immediate gameplay feedback
 - Added reports historical persistence so deeper insights survive save/load cycles
+- Redesigned entire app layout to make map the hero viewport with persistent sidebar and modal dialogs (fixes "looks like web forms" issue)
+- Separated main menu into dedicated full-screen view distinct from gameplay
+- Implemented app-screen state machine to manage main-menu vs game transitions
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Research screen advanced metadata (danger ratings, effects display)
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
+- Sidebar compact/expand toggle for responsive narrow screens
 - Reports additional parity polish (desktop fixture alignment)
 - Log screen additional parity polish (persistent archival storage behavior)
 - Knowledge/story additional parity polish (desktop narrative trigger alignment)
