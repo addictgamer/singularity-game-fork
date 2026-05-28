@@ -8,3 +8,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <App />
   </React.StrictMode>
 );
+
+const bootLoader = document.getElementById("boot-loader");
+if (bootLoader) {
+  requestAnimationFrame(() => {
+    bootLoader.classList.add("is-hidden");
+    window.setTimeout(() => {
+      bootLoader.remove();
+    }, 260);
+  });
+}
