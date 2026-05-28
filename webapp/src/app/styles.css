@@ -885,7 +885,7 @@ h3 {
 }
 
 .sidebar-edge-toggle-left {
-  top: 0.9rem;
+  top: 3.15rem;
   left: 0;
   border-left: none;
   border-radius: 0 10px 10px 0;
@@ -1993,7 +1993,7 @@ h3 {
   }
 
   .sidebar-edge-toggle-left {
-    top: 0.75rem;
+    top: 3rem;
   }
 
   .sidebar-edge-toggle-right {
