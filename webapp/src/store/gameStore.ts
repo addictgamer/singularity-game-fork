@@ -364,12 +364,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       kind: entry.kind,
       message: entry.message,
     }));
-    const timeAdvanceLogEntry: SessionLogEntry = {
-      id: baseLogId + eventLogEntries.length,
-      day: state.game.rawDay,
-      kind: "time",
-      message: `Advanced simulation by ${seconds} seconds`,
-    };
 
     set({
       game: state.game,
@@ -378,7 +372,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       sessionLog: [
         ...state.sessionLog,
         ...eventLogEntries,
-        timeAdvanceLogEntry,
       ],
     });
   },

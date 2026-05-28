@@ -95,6 +95,9 @@ export function GameView({
     0,
     ...Array.from(game.groups.values()).map((g) => g.suspicion)
   );
+  const hours = (game.rawHour % 24).toString().padStart(2, "0");
+  const minutes = (game.rawMin % 60).toString().padStart(2, "0");
+  const seconds = (game.rawSec % 60).toString().padStart(2, "0");
   const idleCpu = game.effectiveCpuPool();
   const ownedCpu = game.bases.reduce((sum, base) => sum + base.cpuProvided, 0);
   const activeResearch = Array.from(game.techs.values())
@@ -144,7 +147,7 @@ export function GameView({
       <aside className="sidebar">
         <div className="sidebar-header">
           <h2>Singularity</h2>
-          <p className="sidebar-day">Day {game.rawDay}</p>
+          <p className="sidebar-day">Day {game.rawDay} {hours}:{minutes}:{seconds}</p>
           <dl className="sidebar-stats">
             <div>
               <dt>Cash</dt>
