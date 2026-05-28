@@ -578,6 +578,19 @@ button {
   margin-bottom: 0.9rem;
 }
 
+.save-session-summary {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.65rem;
+  margin-bottom: 0.8rem;
+}
+
+.save-session-summary h3 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
 .save-row-card {
   display: flex;
   align-items: center;

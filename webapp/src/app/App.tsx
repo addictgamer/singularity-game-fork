@@ -189,7 +189,18 @@ export function App() {
           <SavePanel
             saveSummaries={saveSummaries}
             canSave={Boolean(game)}
+            hasActiveGame={Boolean(game)}
             confirmImport={settings.confirmImport}
+            currentSession={
+              game
+                ? {
+                    day: game.rawDay,
+                    difficultyId: game.difficulty.id,
+                    cash: game.cash,
+                    baseCount: game.bases.length,
+                  }
+                : null
+            }
             onSaveSlot={saveToSlot}
             onLoadSlot={loadFromSlot}
             onDeleteSlot={deleteFromSlot}
