@@ -38,3 +38,13 @@ Especially when alerts happen.
 It'd be kinda cool to replace the continent dots with random dots wherever we establish a base. Just, like, completely & totally randomly selected...
 
 
+
+
+Instead of "N AMERICA" the interface should always spell out the continent name.
+
+Research should describe what it does.
+
+
+
+When building bases, should we be able to bulk buy? Like open up a dialogue box and just type in what we want?
+Also, should we be able to just type in CPU counts to assign to research or to jobs/stealth?

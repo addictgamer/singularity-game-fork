@@ -725,8 +725,62 @@ h3 {
   box-shadow: 0 20px 40px rgba(73, 41, 16, 0.2);
 }
 
+.game-over-overlay {
+  z-index: 1100;
+}
+
+.game-over-modal {
+  width: min(420px, calc(100vw - 2rem));
+}
+
+.game-over-modal p {
+  margin-bottom: 1rem;
+}
+
 .modal-content h3 {
   margin-top: 0;
+}
+
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(43, 29, 23, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.confirm-dialog {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.2rem;
+  max-width: 320px;
+  box-shadow: 0 10px 30px rgba(73, 41, 16, 0.2);
+}
+
+.confirm-dialog p {
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+}
+
+.confirm-dialog-buttons {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.confirm-dialog-buttons button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 640px) {
@@ -886,6 +940,15 @@ h3 {
   cursor: pointer;
   font-weight: 600;
   transition: all 0.15s ease;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-exit:disabled,
+.inline-action:disabled,
+.nav-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -1389,6 +1452,14 @@ h3 {
 
 .story-watch-alerts li + li {
   margin-top: 0.12rem;
+}
+
+.story-watch-actions {
+  margin-top: 0.75rem;
+}
+
+.story-watch-surrender {
+  width: 100%;
 }
 
 /* Modal Styles */

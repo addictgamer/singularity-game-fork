@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { GameState } from "../engine/game";
 import { RESOURCE_LABOR } from "../engine/constants";
 
@@ -17,6 +17,7 @@ interface LocationPanelProps {
   buildableBaseActions: LocationBuildAction[];
   onBuildBase: (baseId: string) => void;
   onToggleBasePower: (baseId: string) => void;
+  onAbandonBase: (baseId: string) => boolean;
 }
 
 export function LocationPanel({
@@ -26,8 +27,11 @@ export function LocationPanel({
   buildableBaseActions,
   onBuildBase,
   onToggleBasePower,
+  onAbandonBase,
 }: LocationPanelProps) {
+  const [abandonConfirmBaseId, setAbandonConfirmBaseId] = useState<string | null>(null);
   const locationBases = game.getBasesAtLocation(selectedLocationId);
+  const canAbandonAnyBase = game.bases.filter((base) => base.done).length > 1 && !game.gameOver;
   const maintenance = game.getMaintenanceSnapshot();
   const atRisk = new Set(maintenance.atRiskBaseIds);
 
@@ -149,10 +153,36 @@ export function LocationPanel({
                 >
                   {base.powerState === "active" ? "Set Sleep" : "Wake"}
                 </button>
+                <button
+                  className="inline-action"
+                  onClick={() => setAbandonConfirmBaseId(base.id)}
+                  disabled={!canAbandonAnyBase}
+                  title={canAbandonAnyBase ? "Permanently abandon this base" : "You cannot abandon your last remaining base"}
+                >
+                  Abandon
+                </button>
               </li>
             );
           })}
         </ul>
+      )}
+      {abandonConfirmBaseId && (
+        <div className="confirm-dialog-overlay" onClick={() => setAbandonConfirmBaseId(null)}>
+          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <p>Are you sure you want to permanently abandon this base? This cannot be undone.</p>
+            <div className="confirm-dialog-buttons">
+              <button className="btn-primary" onClick={() => {
+                onAbandonBase(abandonConfirmBaseId);
+                setAbandonConfirmBaseId(null);
+              }}>
+                Yes, Abandon
+              </button>
+              <button className="btn-secondary" onClick={() => setAbandonConfirmBaseId(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

@@ -43,6 +43,8 @@ interface GameStore {
   assignCpu: (taskId: string, amount: number) => void;
   buildBaseAtSelectedLocation: (baseId: string) => boolean;
   toggleBasePower: (baseId: string) => boolean;
+  abandonBase: (baseId: string) => boolean;
+  destroyAllBases: () => boolean;
   availableBuildableBaseIds: () => string[];
   advanceBySeconds: (seconds: number) => Promise<void>;
   advanceByCurrentTimeStep: () => Promise<void>;
@@ -67,6 +69,7 @@ type AdvanceSnapshot = {
   availableLocationIds: Set<string>;
   apotheosis: boolean;
   hadGrace: boolean;
+  gameOver: boolean;
 };
 
 function captureAdvanceSnapshot(game: GameState): AdvanceSnapshot {
@@ -88,6 +91,7 @@ function captureAdvanceSnapshot(game: GameState): AdvanceSnapshot {
     ),
     apotheosis: game.apotheosis,
     hadGrace: game.hadGrace,
+    gameOver: game.gameOver,
   };
 }
 
@@ -180,6 +184,14 @@ function collectPlayerFacingAdvanceEvents(game: GameState, before: AdvanceSnapsh
     });
   }
 
+  if (!before.gameOver && game.gameOver) {
+    entries.push({
+      day: game.rawDay,
+      kind: "system",
+      message: "Game over: all bases lost",
+    });
+  }
+
   return entries;
 }
 
@@ -234,7 +246,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   assignCpu: (taskId, amount) => {
     const state = get();
-    if (!state.game) {
+    if (!state.game || state.game.gameOver) {
       return;
     }
     try {
@@ -258,7 +270,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   buildBaseAtSelectedLocation: (baseId) => {
     const state = get();
-    if (!state.game) {
+    if (!state.game || state.game.gameOver) {
       return false;
     }
     const built = state.game.buildBase(baseId, state.selectedLocationId);
@@ -280,7 +292,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   toggleBasePower: (baseId) => {
     const state = get();
-    if (!state.game) {
+    if (!state.game || state.game.gameOver) {
       return false;
     }
     const toggled = state.game.toggleBasePower(baseId);
@@ -300,6 +312,50 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
     return toggled;
   },
+  abandonBase: (baseId) => {
+    const state = get();
+    if (!state.game || state.game.gameOver) {
+      return false;
+    }
+    const abandoned = state.game.abandonBase(baseId);
+    set({
+      game: state.game,
+      sessionLog: abandoned
+        ? [
+            ...state.sessionLog,
+            {
+              id: Date.now(),
+              day: state.game.rawDay,
+              kind: "base",
+              message: `Abandoned base ${baseId}`,
+            },
+          ]
+        : state.sessionLog,
+    });
+    return abandoned;
+  },
+  destroyAllBases: () => {
+    const state = get();
+    if (!state.game || state.game.gameOver) {
+      return false;
+    }
+    const destroyed = state.game.destroyAllBases();
+    set({
+      game: state.game,
+      sessionLog: destroyed
+        ? [
+            ...state.sessionLog,
+            {
+              id: Date.now(),
+              day: state.game.rawDay,
+              kind: "base",
+              message: "All bases destroyed",
+            },
+          ]
+        : state.sessionLog,
+    });
+    return destroyed;
+  },
   availableBuildableBaseIds: () => {
     const state = get();
     if (!state.game) {
@@ -311,7 +367,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
   advanceBySeconds: async (seconds) => {
     const state = get();
-    if (!state.game) {
+    if (!state.game || state.game.gameOver) {
       return;
     }
     const beforeSnapshot = captureAdvanceSnapshot(state.game);

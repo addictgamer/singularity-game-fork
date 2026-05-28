@@ -26,6 +26,8 @@ export function App() {
     assignCpu,
     buildBaseAtSelectedLocation,
     toggleBasePower,
+    abandonBase,
+    destroyAllBases,
     availableBuildableBaseIds,
     advanceByCurrentTimeStep,
     advanceHour,
@@ -131,6 +133,8 @@ export function App() {
             onAssignCpu={assignCpu}
             onBuildBase={buildBaseAtSelectedLocation}
             onToggleBasePower={toggleBasePower}
+            onAbandonBase={abandonBase}
+            onDestroyAllBases={destroyAllBases}
             onAdvanceByTimeStep={advanceByCurrentTimeStep}
             onAdvanceHour={advanceHour}
             onAdvanceHalfDay={advanceHalfDay}

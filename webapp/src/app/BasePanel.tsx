@@ -6,11 +6,13 @@ interface BasePanelProps {
   game: GameState;
   onToggleBasePower: (baseId: string) => void;
   onSelectLocation: (locationId: string) => void;
+  onAbandonBase: (baseId: string) => boolean;
 }
 
-export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePanelProps) {
+export function BasePanel({ game, onToggleBasePower, onSelectLocation, onAbandonBase }: BasePanelProps) {
   const [locationFilter, setLocationFilter] = useState<string>("all");
   const [powerFilter, setPowerFilter] = useState<string>("all");
+  const [abandonConfirmBaseId, setAbandonConfirmBaseId] = useState<string | null>(null);
   const bases = [...game.bases].sort((a, b) => a.name.localeCompare(b.name));
   const maintenance = game.getMaintenanceSnapshot();
   const atRisk = new Set(maintenance.atRiskBaseIds);
@@ -31,6 +33,7 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
   const activeCount = rows.filter((base) => base.powerState === "active").length;
   const sleepingCount = rows.filter((base) => base.powerState === "sleep").length;
   const totalCpu = rows.reduce((sum, base) => sum + base.cpuProvided, 0);
+  const canAbandonAnyBase = game.bases.filter((base) => base.done).length > 1 && !game.gameOver;
 
   const filteredMaintenance = rows.reduce(
     (acc, base) => {
@@ -164,10 +167,36 @@ export function BasePanel({ game, onToggleBasePower, onSelectLocation }: BasePan
                   <button className="inline-action" onClick={() => onToggleBasePower(base.id)}>
                     {base.powerState === "active" ? "Set Sleep" : "Wake"}
                   </button>
+                  <button
+                    className="inline-action"
+                    onClick={() => setAbandonConfirmBaseId(base.id)}
+                    disabled={!canAbandonAnyBase}
+                    title={canAbandonAnyBase ? "Permanently abandon this base" : "You cannot abandon your last remaining base"}
+                  >
+                    Abandon
+                  </button>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+      {abandonConfirmBaseId && (
+        <div className="confirm-dialog-overlay" onClick={() => setAbandonConfirmBaseId(null)}>
+          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <p>Are you sure you want to permanently abandon this base? This cannot be undone.</p>
+            <div className="confirm-dialog-buttons">
+              <button className="btn-primary" onClick={() => {
+                onAbandonBase(abandonConfirmBaseId);
+                setAbandonConfirmBaseId(null);
+              }}>
+                Yes, Abandon
+              </button>
+              <button className="btn-secondary" onClick={() => setAbandonConfirmBaseId(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>

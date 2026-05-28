@@ -202,7 +202,56 @@ describe("GameState", () => {
 
     const totalSuspicion = Array.from(game.groups.values()).reduce((sum, group) => sum + group.suspicion, 0);
     expect(game.bases.length).toBe(0);
+    expect(game.gameOver).toBe(true);
     expect(totalSuspicion).toBeGreaterThan(0);
+  });
+
+  it("prevents abandoning the last remaining base", () => {
+    const game = new GameState(gameData, "normal");
+    const starter = game.getBasesAtLocation("N AMERICA")[0];
+    if (!starter) {
+      throw new Error("Starter base missing");
+    }
+
+    expect(game.abandonBase(starter.id)).toBe(false);
+    expect(game.bases.length).toBe(1);
+    expect(game.gameOver).toBe(false);
+  });
+
+  it("stops time progression after game over", () => {
+    const alwaysDetect = () => 0;
+    const game = new GameState(gameData, "normal", alwaysDetect);
+    game.cash = 100000;
+    game.hadGrace = false;
+
+    const starter = game.getBasesAtLocation("N AMERICA")[0];
+    if (!starter) {
+      throw new Error("Starter base missing");
+    }
+    starter.graceOver = true;
+
+    game.giveTime(SECONDS_PER_DAY);
+    expect(game.gameOver).toBe(true);
+
+    const rawSecAfterLoss = game.rawSec;
+    game.giveTime(SECONDS_PER_DAY);
+
+    expect(game.rawSec).toBe(rawSecAfterLoss);
+  });
+
+  it("can instantly destroy all bases and trigger the normal bases-lost game over", () => {
+    const game = new GameState(gameData, "normal");
+
+    expect(game.destroyAllBases()).toBe(true);
+    expect(game.gameOver).toBe(true);
+    expect(game.gameOverReason).toBe("bases-lost");
+    expect(game.bases.length).toBe(0);
+
+    const rawSecAtLoss = game.rawSec;
+    expect(game.buildBase("Datacenter", "N AMERICA")).toBe(false);
+
+    game.giveTime(SECONDS_PER_DAY);
+    expect(game.rawSec).toBe(rawSecAtLoss);
   });
 
   it("triggers and expires duration events", () => {

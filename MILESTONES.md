@@ -282,6 +282,9 @@ Completed in this phase slice (previous work):
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
+- Loss/game-over narrative parity: replace current generic game-over modal with desktop-aligned loss flow using story sections for both "Lost No Bases" and "Lost Suspicion"
+- Loss flow polish: support multi-step story dialog progression/skip behavior instead of single-message dead-end modal
+- Loss-state trigger parity: add suspicion-based defeat presentation (not just no-bases defeat), including correct branching into the matching loss narrative
 - Full tooltip coverage pass across all gameplay and menu surfaces (status stats, controls, map overlays, modals, form fields, and destructive actions)
 - Tooltip content standardization (what it means, why it matters, and side effects where applicable)
 - Tooltip consistency and discoverability pass (desktop hover + keyboard focus, mobile-safe alternatives)
@@ -372,6 +375,7 @@ Status: not started
 Remaining work:
 - Add browser-safe audio manager
 - Implement music and sound effect playback controls
+- Recreate desktop loss-audio behavior by supporting a dedicated "lose" music cue/class in the web runtime
 - Integrate with options/preferences
 - Validate browser autoplay restrictions and user-gesture handling
 
@@ -399,6 +403,7 @@ Status: not started
 Remaining work:
 - Expand unit tests to cover full engine behavior
 - Add fixture parity tests against desktop reference scenarios
+- Add regression coverage for both desktop defeat paths (all bases lost, suspicion threshold reached) and verify the correct loss narrative/audio branch is selected
 - Add E2E browser tests for full gameplay loops
 - Add cross-browser test matrix
 - Add CI workflow for conversion + test + build
@@ -616,3 +621,11 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Deepened phase 3 reports with risk-base details, net cash/CPU outlook, CPU allocation breakdown, and active-event remaining-duration reporting.
 - 2026-05-27: Updated new-game UX flow to switch to the Map tab immediately after starting a run.
 - 2026-05-27: Added report history persistence to IndexedDB so operational insights (activity, base distribution, suspicion trends, resource outlook) persist across save/load cycles and rebuild on game reload.
+- 2026-05-28: Completed UI/UX refinement phase 3 with CPU allocation safety guardrails: engine enforcement in setAllocatedCpuFor(), maxAssignableCpuFor() for dynamic button disabling, and effectiveCpuPool() cap-checking to prevent negative pool scenarios.
+- 2026-05-28: Resolved grace period messaging contradiction by documenting two independent systems: global grace (hadGrace flag) and per-base grace (graceOver flag with duration calculation), added comprehensive tooltips to BasePanel, LocationPanel, and KnowledgePanel distinguishing the systems.
+- 2026-05-28: Restored BasePanel modal as callable screen with 🏢 Bases button in sidebar navigation (missing in prior phase).
+- 2026-05-28: Enhanced BasePanel with comprehensive tooltip coverage across all stats and table columns explaining CPU contribution, maintenance costs, power status semantics, grace windows, and risk thresholds.
+- 2026-05-28: Implemented base abandonment feature with abandonBase() engine method calling internal destroyBase(), integrated through gameStore, and added confirm dialogs in both LocationPanel and BasePanel to prevent accidental deletions.
+- 2026-05-28: Restructured right sidebar layout using flexbox to enable LocationPanel scrolling while keeping Story Watch card fixed at bottom, preventing unreachable story/alert information.
+- 2026-05-28: Verified full build success with 0 TypeScript errors, 44/44 tests passing, and 58 modules compiled (356.96 kB JS / 111.35 kB gzip, 25.32 kB CSS / 5.67 kB gzip).
+- 2026-05-28: Audited original desktop loss flow and recorded remaining parity work: desktop uses story-section-based loss presentation for both no-base and suspicion defeat states plus an optional "lose" music cue, with no dedicated bundled loss image assets in this checkout.

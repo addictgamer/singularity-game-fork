@@ -105,6 +105,10 @@ export class GameState {
 
   public hadGrace: boolean;
 
+  public gameOver: boolean;
+
+  public gameOverReason: "bases-lost" | null;
+
   private baseCounter: number;
 
   private readonly randomFloat: () => number;
@@ -137,6 +141,8 @@ export class GameState {
     this.displayDiscover = "none";
     this.apotheosis = false;
     this.hadGrace = true;
+    this.gameOver = false;
+    this.gameOverReason = null;
 
     this.cpuUsage = new Map<string, number>();
     this.techs = new Map(data.techs.map((definition) => [definition.id, new TechState(definition)]));
@@ -392,6 +398,28 @@ export class GameState {
     }
     this.bases.splice(index, 1);
     this.recalculateCpuFromBases();
+    this.updateAutomaticGameOverState();
+  }
+
+  private updateAutomaticGameOverState(): void {
+    if (this.apotheosis) {
+      if (this.gameOverReason === "bases-lost") {
+        this.gameOver = false;
+        this.gameOverReason = null;
+      }
+      return;
+    }
+
+    if (this.bases.filter((base) => base.done).length === 0) {
+      this.gameOver = true;
+      this.gameOverReason = "bases-lost";
+      return;
+    }
+
+    if (this.gameOverReason === "bases-lost") {
+      this.gameOver = false;
+      this.gameOverReason = null;
+    }
   }
 
   private resolveBaseRisks(seconds: number, unpaidCpuMaintenance: number, unpaidCashMaintenance: number): void {
@@ -627,6 +655,9 @@ export class GameState {
   }
 
   buildBase(baseId: string, locationId: string): boolean {
+    if (this.gameOver) {
+      return false;
+    }
     const baseDef = this.baseDefs.get(baseId);
     if (!baseDef || !this.canBuildBaseAt(baseId, locationId)) {
       return false;
@@ -652,6 +683,9 @@ export class GameState {
   }
 
   toggleBasePower(baseId: string): boolean {
+    if (this.gameOver) {
+      return false;
+    }
     const base = this.bases.find((entry) => entry.id === baseId);
     if (!base || !base.done) {
       return false;
@@ -666,6 +700,31 @@ export class GameState {
     }
 
     this.recalculateCpuFromBases();
+    return true;
+  }
+
+  abandonBase(baseId: string): boolean {
+    if (this.gameOver) {
+      return false;
+    }
+    const base = this.bases.find((entry) => entry.id === baseId);
+    if (!base || !base.done) {
+      return false;
+    }
+    if (this.bases.filter((entry) => entry.done).length <= 1) {
+      return false;
+    }
+    this.destroyBase(baseId, "maint");
+    return true;
+  }
+
+  destroyAllBases(): boolean {
+    if (this.gameOver) {
+      return false;
+    }
+    this.bases = [];
+    this.recalculateCpuFromBases();
+    this.updateAutomaticGameOverState();
     return true;
   }
 
@@ -693,6 +752,9 @@ export class GameState {
   }
 
   setAllocatedCpuFor(taskId: string, amount: number): void {
+    if (this.gameOver) {
+      throw new Error("Cannot change CPU assignments after game over");
+    }
     if (amount < 0) {
       throw new Error(`Cannot assign negative cpu to ${taskId}`);
     }
@@ -772,6 +834,9 @@ export class GameState {
   }
 
   giveTime(seconds: number): void {
+    if (this.gameOver) {
+      return;
+    }
     if (seconds <= 0) {
       if (seconds < 0) {
         throw new Error("giveTime cannot go backwards");
@@ -907,6 +972,7 @@ export class GameState {
     projected.displayDiscover = this.displayDiscover;
     projected.apotheosis = this.apotheosis;
     projected.hadGrace = this.hadGrace;
+    projected.gameOver = this.gameOver;
 
     projected.cpuUsage.clear();
     for (const [taskId, amount] of this.cpuUsage) {
@@ -1014,6 +1080,8 @@ export class GameState {
         displayDiscover: this.displayDiscover,
         apotheosis: this.apotheosis,
         hadGrace: this.hadGrace,
+        gameOver: this.gameOver,
+        gameOverReason: this.gameOverReason ?? undefined,
       },
     };
   }
@@ -1073,6 +1141,8 @@ export class GameState {
       game.displayDiscover = saved.effects.displayDiscover;
       game.apotheosis = saved.effects.apotheosis;
       game.hadGrace = saved.effects.hadGrace;
+      game.gameOver = saved.effects.gameOver ?? false;
+      game.gameOverReason = saved.effects.gameOverReason ?? null;
     } else {
       game.interestRate = game.difficulty.startingInterestRate;
       game.income = 0;
@@ -1081,10 +1151,14 @@ export class GameState {
       game.displayDiscover = "none";
       game.apotheosis = false;
       game.hadGrace = true;
+      game.gameOver = false;
+      game.gameOverReason = null;
       for (const techId of game.researchedTechs) {
         game.applyTechEffects(techId, true);
       }
     }
+
+    game.updateAutomaticGameOverState();
 
     for (const [groupId, group] of game.groups) {
       const savedGroup = saved.groups?.[groupId];

@@ -152,6 +152,8 @@ export interface SerializedGameState {
     displayDiscover: string;
     apotheosis: boolean;
     hadGrace: boolean;
+    gameOver?: boolean;
+    gameOverReason?: "bases-lost";
   };
 }
 

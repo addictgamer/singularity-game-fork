@@ -34,6 +34,8 @@ interface GameViewProps {
   onAssignCpu: (taskId: string, amount: number) => void;
   onBuildBase: (baseId: string) => boolean;
   onToggleBasePower: (baseId: string) => boolean;
+  onAbandonBase: (baseId: string) => boolean;
+  onDestroyAllBases: () => boolean;
   onAdvanceByTimeStep: () => Promise<void>;
   onAdvanceHour: () => Promise<void>;
   onAdvanceHalfDay: () => Promise<void>;
@@ -60,6 +62,8 @@ export function GameView({
   onAssignCpu,
   onBuildBase,
   onToggleBasePower,
+  onAbandonBase,
+  onDestroyAllBases,
   onAdvanceByTimeStep,
   onAdvanceHour,
   onAdvanceHalfDay,
@@ -149,7 +153,12 @@ export function GameView({
     .sort((a, b) => a.localeCompare(b));
   const maintenanceSnapshot = game.getMaintenanceSnapshot();
   const activeBaseCount = game.bases.filter((base) => base.done && base.powerState === "active").length;
+  const gameOver = game.gameOver;
+  const gameOverMessage = "Game over: all bases lost";
   const narrativeAlerts: string[] = [];
+  if (gameOver) {
+    narrativeAlerts.push(gameOverMessage);
+  }
   if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 5000) {
     narrativeAlerts.push("Critical suspicion pressure");
   } else if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 2000) {
@@ -168,6 +177,12 @@ export function GameView({
     narrativeAlerts.push("Endgame condition active");
   }
   const severeAlerts: Array<{ id: string; summary: string }> = [];
+  if (gameOver) {
+    severeAlerts.push({
+      id: "game-over",
+      summary: gameOverMessage,
+    });
+  }
   if (maintenanceSnapshot.cashDeficit || maintenanceSnapshot.cpuDeficit) {
     severeAlerts.push({
       id: "maintenance-deficit",
@@ -300,22 +315,22 @@ export function GameView({
         </nav>
 
         <div className="sidebar-controls">
-          <button className="btn-primary" onClick={() => void onAdvanceDay()}>
+          <button className="btn-primary" onClick={() => void onAdvanceDay()} disabled={gameOver}>
             +1 Day
           </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceHalfDay()}>
+          <button className="btn-secondary" onClick={() => void onAdvanceHalfDay()} disabled={gameOver}>
             +12h
           </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceByTimeStep()}>
+          <button className="btn-secondary" onClick={() => void onAdvanceByTimeStep()} disabled={gameOver}>
             +{Math.round(settings.timeStepSeconds / 3600)}h
           </button>
-          <button className="btn-secondary" onClick={() => void onAdvanceHour()}>
+          <button className="btn-secondary" onClick={() => void onAdvanceHour()} disabled={gameOver}>
             +1h
           </button>
         </div>
 
         <button className="btn-exit" onClick={onReturnToMenu}>
-          ← Return to Menu
+          ← Quit to Menu
         </button>
       </aside>
 
@@ -454,6 +469,7 @@ export function GameView({
                 buildableBaseActions={buildableBaseActions}
                 onBuildBase={onBuildBase}
                 onToggleBasePower={onToggleBasePower}
+                onAbandonBase={onAbandonBase}
               />
               <section className="story-watch-card" aria-label="Story tracking alerts">
                 <h3>Story Watch</h3>
@@ -471,6 +487,17 @@ export function GameView({
                     ))}
                   </ul>
                 )}
+                <div className="story-watch-actions">
+                  <button
+                    type="button"
+                    className="btn-secondary story-watch-surrender"
+                    onClick={() => onDestroyAllBases()}
+                    disabled={gameOver}
+                    title={gameOver ? "This run has already ended" : "Instantly destroy all bases and lose the game"}
+                  >
+                    SUICIDE: Destroy All Bases
+                  </button>
+                </div>
               </section>
             </div>
           </aside>
@@ -500,7 +527,7 @@ export function GameView({
         <div className="modal-overlay" onClick={() => setOpenModal(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
-            <BasePanel game={game} onToggleBasePower={onToggleBasePower} onSelectLocation={onSelectLocation} />
+            <BasePanel game={game} onToggleBasePower={onToggleBasePower} onSelectLocation={onSelectLocation} onAbandonBase={onAbandonBase} />
           </div>
         </div>
       )}
@@ -557,6 +584,18 @@ export function GameView({
               settingsLoaded={settingsLoaded}
               onUpdateSettings={onUpdateSettings}
             />
+          </div>
+        </div>
+      )}
+
+      {gameOver && (
+        <div className="modal-overlay game-over-overlay">
+          <div className="modal-content game-over-modal" role="alertdialog" aria-labelledby="game-over-title" aria-describedby="game-over-text">
+            <h3 id="game-over-title">Game Over</h3>
+            <p id="game-over-text">All of your bases are gone. Time advancement and new construction are disabled for this run.</p>
+            <div className="confirm-dialog-buttons">
+              <button className="btn-primary" onClick={onReturnToMenu}>Return to Menu</button>
+            </div>
           </div>
         </div>
       )}
