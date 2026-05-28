@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GameState } from "../engine/game";
 import { WorldMap } from "./WorldMap";
 import { ResearchPanel } from "./ResearchPanel";
@@ -67,6 +67,8 @@ export function GameView({
   onReturnToMenu,
 }: GameViewProps) {
   const [openModal, setOpenModal] = useState<ModalId>(null);
+  const [eventConsoleCollapsed, setEventConsoleCollapsed] = useState(false);
+  const eventConsoleBodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!openModal) return;
@@ -124,6 +126,17 @@ export function GameView({
       return aEta - bEta;
     });
   const trackerResearch = activeResearch[0] ?? null;
+
+  useEffect(() => {
+    if (eventConsoleCollapsed) {
+      return;
+    }
+    const body = eventConsoleBodyRef.current;
+    if (!body) {
+      return;
+    }
+    body.scrollTop = body.scrollHeight;
+  }, [eventConsoleCollapsed, sessionLog]);
 
   return (
     <div className="game-view">
@@ -235,6 +248,34 @@ export function GameView({
             rawSec={game.rawSec}
             onSelect={handleLocationSelect}
           />
+          <section className="event-console" aria-label="Event log console" role="log" aria-live="polite">
+            <header className="event-console-header">
+              <span>Event Log</span>
+              <button
+                type="button"
+                className="event-console-toggle"
+                onClick={() => setEventConsoleCollapsed((value) => !value)}
+                aria-expanded={!eventConsoleCollapsed}
+                aria-controls="event-console-body"
+                title={eventConsoleCollapsed ? "Expand event log" : "Collapse event log"}
+              >
+                {eventConsoleCollapsed ? "▴" : "▾"}
+              </button>
+            </header>
+            {!eventConsoleCollapsed ? (
+              <div className="event-console-body" id="event-console-body" ref={eventConsoleBodyRef}>
+                {sessionLog.length === 0 ? (
+                  <div className="event-console-line event-console-line-empty">No events yet.</div>
+                ) : (
+                  sessionLog.map((entry) => (
+                    <div key={entry.id} className="event-console-line">
+                      [{entry.day.toString().padStart(3, "0")}] [{entry.kind}] {entry.message}
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : null}
+          </section>
         </section>
 
         {/* Location Operations Overlay (when location is selected) */}
