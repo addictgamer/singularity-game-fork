@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameData } from "../engine/types";
 import { SaveSummary } from "../store/persistence";
 
@@ -20,6 +20,22 @@ export function MainMenuPanel({
   onLoadSlot,
 }: MainMenuPanelProps) {
   const [showNewGameConfirm, setShowNewGameConfirm] = useState(false);
+
+  useEffect(() => {
+    if (!showNewGameConfirm) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowNewGameConfirm(false);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [showNewGameConfirm]);
+
   const selectedDifficulty = availableDifficulties.find((d) => d.id === selectedDifficultyId);
   const preferredSlots = ["slot-1", "autosave"];
   const visibleSummaries = preferredSlots

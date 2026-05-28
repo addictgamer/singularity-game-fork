@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameState } from "../engine/game";
 import { WorldMap } from "./WorldMap";
 import { ResearchPanel } from "./ResearchPanel";
@@ -64,6 +64,21 @@ export function GameView({
   onReturnToMenu,
 }: GameViewProps) {
   const [openModal, setOpenModal] = useState<ModalId>(null);
+
+  useEffect(() => {
+    if (!openModal) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenModal(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [openModal]);
 
   const handleLocationSelect = (id: string) => {
     onSelectLocation(id);
