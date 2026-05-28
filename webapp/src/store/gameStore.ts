@@ -58,6 +58,131 @@ interface GameStore {
 
 const typedGameData = gameData as unknown as GameData;
 
+type SessionLogEntry = { id: number; day: number; kind: string; message: string };
+
+type AdvanceSnapshot = {
+  techDoneById: Map<string, boolean>;
+  eventTriggeredById: Map<string, boolean>;
+  basesById: Map<string, { name: string; locationId: string; powerState: "active" | "sleep" | "offline" }>;
+  availableLocationIds: Set<string>;
+  apotheosis: boolean;
+  hadGrace: boolean;
+};
+
+function captureAdvanceSnapshot(game: GameState): AdvanceSnapshot {
+  return {
+    techDoneById: new Map(Array.from(game.techs.entries()).map(([id, tech]) => [id, tech.done])),
+    eventTriggeredById: new Map(Array.from(game.events.entries()).map(([id, event]) => [id, event.triggered])),
+    basesById: new Map(
+      game.bases.map((base) => [
+        base.id,
+        {
+          name: base.name,
+          locationId: base.locationId,
+          powerState: base.powerState,
+        },
+      ])
+    ),
+    availableLocationIds: new Set(
+      Array.from(game.locations.keys()).filter((locationId) => game.locationAvailable(locationId))
+    ),
+    apotheosis: game.apotheosis,
+    hadGrace: game.hadGrace,
+  };
+}
+
+function collectPlayerFacingAdvanceEvents(game: GameState, before: AdvanceSnapshot): Array<Omit<SessionLogEntry, "id">> {
+  const entries: Array<Omit<SessionLogEntry, "id">> = [];
+
+  for (const [techId, tech] of game.techs.entries()) {
+    if (tech.done && !before.techDoneById.get(techId)) {
+      entries.push({
+        day: game.rawDay,
+        kind: "research",
+        message: `Research completed: ${tech.name}`,
+      });
+    }
+  }
+
+  for (const [eventId, eventState] of game.events.entries()) {
+    const wasTriggered = before.eventTriggeredById.get(eventId) ?? false;
+    if (eventState.triggered && !wasTriggered) {
+      const eventName = game.eventDefs.get(eventId)?.name ?? eventId;
+      entries.push({
+        day: game.rawDay,
+        kind: "event",
+        message: `Event triggered: ${eventName}`,
+      });
+    } else if (!eventState.triggered && wasTriggered) {
+      const eventName = game.eventDefs.get(eventId)?.name ?? eventId;
+      entries.push({
+        day: game.rawDay,
+        kind: "event",
+        message: `Event ended: ${eventName}`,
+      });
+    }
+  }
+
+  const currentBaseIds = new Set(game.bases.map((base) => base.id));
+  for (const [baseId, baseBefore] of before.basesById.entries()) {
+    if (!currentBaseIds.has(baseId)) {
+      const locationName = game.locations.get(baseBefore.locationId)?.name ?? baseBefore.locationId;
+      entries.push({
+        day: game.rawDay,
+        kind: "base",
+        message: `Base lost: ${baseBefore.name} at ${locationName}`,
+      });
+    }
+  }
+
+  const currentBaseById = new Map(game.bases.map((base) => [base.id, base]));
+  for (const [baseId, baseBefore] of before.basesById.entries()) {
+    const baseAfter = currentBaseById.get(baseId);
+    if (!baseAfter) {
+      continue;
+    }
+    if (baseBefore.powerState === "active" && baseAfter.powerState === "sleep") {
+      entries.push({
+        day: game.rawDay,
+        kind: "base",
+        message: `Base entered sleep mode: ${baseAfter.name}`,
+      });
+    }
+  }
+
+  const availableAfter = new Set(
+    Array.from(game.locations.keys()).filter((locationId) => game.locationAvailable(locationId))
+  );
+  for (const locationId of availableAfter) {
+    if (!before.availableLocationIds.has(locationId)) {
+      const locationName = game.locations.get(locationId)?.name ?? locationId;
+      entries.push({
+        day: game.rawDay,
+        kind: "location",
+        message: `Location unlocked: ${locationName}`,
+      });
+    }
+  }
+
+  if (!before.apotheosis && game.apotheosis) {
+    entries.push({
+      day: game.rawDay,
+      kind: "event",
+      message: "Endgame state reached",
+    });
+  }
+
+  if (before.hadGrace && !game.hadGrace) {
+    entries.push({
+      day: game.rawDay,
+      kind: "system",
+      message: "Grace period ended",
+    });
+  }
+
+  return entries;
+}
+
 export const useGameStore = create<GameStore>((set, get) => ({
   availableDifficulties: typedGameData.difficulties,
   selectedDifficultyId: typedGameData.difficulties.find((d) => d.id === "normal")?.id ?? typedGameData.difficulties[0]?.id ?? "normal",
@@ -189,8 +314,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!state.game) {
       return;
     }
-    const beforeDay = state.game.rawDay;
+    const beforeSnapshot = captureAdvanceSnapshot(state.game);
     state.game.giveTime(seconds);
+    const playerFacingEvents = collectPlayerFacingAdvanceEvents(state.game, beforeSnapshot);
 
     let newLastAutosaveDay = state.lastAutosaveDay;
     if (state.settings.autosaveEnabled && state.game.rawDay - state.lastAutosaveDay >= 3) {
@@ -231,18 +357,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
       ? await listSaveSummaries()
       : state.saveSummaries;
 
+    const baseLogId = Date.now();
+    const eventLogEntries: SessionLogEntry[] = playerFacingEvents.map((entry, index) => ({
+      id: baseLogId + index,
+      day: entry.day,
+      kind: entry.kind,
+      message: entry.message,
+    }));
+    const timeAdvanceLogEntry: SessionLogEntry = {
+      id: baseLogId + eventLogEntries.length,
+      day: state.game.rawDay,
+      kind: "time",
+      message: `Advanced simulation by ${seconds} seconds`,
+    };
+
     set({
       game: state.game,
       lastAutosaveDay: newLastAutosaveDay,
       saveSummaries,
       sessionLog: [
         ...state.sessionLog,
-        {
-          id: Date.now(),
-          day: state.game.rawDay,
-          kind: "time",
-          message: `Advanced simulation by ${seconds} seconds`,
-        },
+        ...eventLogEntries,
+        timeAdvanceLogEntry,
       ],
     });
   },
