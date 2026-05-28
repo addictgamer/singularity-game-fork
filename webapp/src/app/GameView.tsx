@@ -15,6 +15,12 @@ import { RESOURCE_CPU, RESOURCE_CASH, SECONDS_PER_DAY } from "../engine/constant
 
 type ModalId = "research" | "reports" | "save" | "log" | "knowledge" | "options" | null;
 
+type FloatingNotice = {
+  id: number;
+  kind: string;
+  message: string;
+};
+
 interface GameViewProps {
   game: GameState;
   selectedLocationId: string;
@@ -68,7 +74,10 @@ export function GameView({
 }: GameViewProps) {
   const [openModal, setOpenModal] = useState<ModalId>(null);
   const [eventConsoleCollapsed, setEventConsoleCollapsed] = useState(false);
+  const [floatingNotices, setFloatingNotices] = useState<FloatingNotice[]>([]);
   const eventConsoleBodyRef = useRef<HTMLDivElement | null>(null);
+  const processedLogCountRef = useRef<number | null>(null);
+  const noticeTimeoutIdsRef = useRef<number[]>([]);
 
   useEffect(() => {
     if (!openModal) return;
@@ -138,6 +147,7 @@ export function GameView({
     .map(([eventId]) => game.eventDefs.get(eventId)?.name ?? eventId)
     .sort((a, b) => a.localeCompare(b));
   const maintenanceSnapshot = game.getMaintenanceSnapshot();
+  const activeBaseCount = game.bases.filter((base) => base.done && base.powerState === "active").length;
   const narrativeAlerts: string[] = [];
   if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 5000) {
     narrativeAlerts.push("Critical suspicion pressure");
@@ -156,6 +166,40 @@ export function GameView({
   if (game.apotheosis) {
     narrativeAlerts.push("Endgame condition active");
   }
+  const severeAlerts: Array<{ id: string; summary: string }> = [];
+  if (maintenanceSnapshot.cashDeficit || maintenanceSnapshot.cpuDeficit) {
+    severeAlerts.push({
+      id: "maintenance-deficit",
+      summary: "Maintenance deficit detected",
+    });
+  }
+  if (maintenanceSnapshot.atRiskBaseIds.length > 0) {
+    const riskCount = maintenanceSnapshot.atRiskBaseIds.length;
+    const fewBasesRemain = activeBaseCount <= 3;
+    const riskRatioHigh = activeBaseCount > 0 && riskCount / activeBaseCount >= 0.6;
+    let riskSummary = `${riskCount} base${riskCount === 1 ? "" : "s"} under elevated risk`;
+    if (fewBasesRemain) {
+      riskSummary = "You only have a few high-risk bases left, proliferate or risk extinction";
+    } else if (riskRatioHigh) {
+      riskSummary = "Most active bases are high-risk; expand or stabilize immediately";
+    }
+    severeAlerts.push({
+      id: "base-risk",
+      summary: riskSummary,
+    });
+  }
+  if (suspicionLeaders[0] && suspicionLeaders[0].suspicion >= 5000) {
+    severeAlerts.push({
+      id: "critical-suspicion",
+      summary: "Critical suspicion pressure",
+    });
+  }
+  if (!game.hadGrace) {
+    severeAlerts.push({
+      id: "grace-ended",
+      summary: "Grace period has ended",
+    });
+  }
 
   useEffect(() => {
     if (eventConsoleCollapsed) {
@@ -167,6 +211,51 @@ export function GameView({
     }
     body.scrollTop = body.scrollHeight;
   }, [eventConsoleCollapsed, sessionLog]);
+
+  useEffect(() => {
+    if (processedLogCountRef.current === null) {
+      processedLogCountRef.current = sessionLog.length;
+      return;
+    }
+    if (sessionLog.length <= processedLogCountRef.current) {
+      return;
+    }
+
+    const newEntries = sessionLog.slice(processedLogCountRef.current);
+    processedLogCountRef.current = sessionLog.length;
+
+    const notableEntries = newEntries.filter((entry) =>
+      ["research", "event", "base", "location", "system"].includes(entry.kind)
+    );
+    if (notableEntries.length === 0) {
+      return;
+    }
+
+    const baseNoticeId = Date.now();
+    const notices: FloatingNotice[] = notableEntries.slice(-4).map((entry, index) => ({
+      id: baseNoticeId + index,
+      kind: entry.kind,
+      message: entry.message,
+    }));
+
+    setFloatingNotices((current) => [...current, ...notices].slice(-5));
+
+    for (const notice of notices) {
+      const timeoutId = window.setTimeout(() => {
+        setFloatingNotices((current) => current.filter((item) => item.id !== notice.id));
+      }, 6200);
+      noticeTimeoutIdsRef.current.push(timeoutId);
+    }
+  }, [sessionLog]);
+
+  useEffect(() => {
+    return () => {
+      for (const timeoutId of noticeTimeoutIdsRef.current) {
+        window.clearTimeout(timeoutId);
+      }
+      noticeTimeoutIdsRef.current = [];
+    };
+  }, []);
 
   return (
     <div className="game-view">
@@ -235,6 +324,31 @@ export function GameView({
       {/* Main Map Viewport */}
       <main className="map-viewport">
         <section className="map-container">
+          {floatingNotices.length > 0 ? (
+            <section className="floating-notice-stack" aria-live="assertive" aria-label="Critical event notifications">
+              {floatingNotices.map((notice) => (
+                <article key={notice.id} className={`floating-notice floating-notice-${notice.kind}`}>
+                  <strong className="floating-notice-kind">{notice.kind.toUpperCase()}</strong>
+                  <span>{notice.message}</span>
+                </article>
+              ))}
+            </section>
+          ) : null}
+
+          {severeAlerts.length > 0 ? (
+            <section className="severe-alert-panel" aria-label="Severe alerts">
+              <h3>Critical Alerts</h3>
+              <ul>
+                {severeAlerts.map((alert) => (
+                  <li key={alert.id}>
+                    <span className="severe-alert-icon">!</span>
+                    <span>{alert.summary}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {trackerResearch ? (
             <aside
               className="research-tracker"

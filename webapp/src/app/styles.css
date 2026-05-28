@@ -1084,6 +1084,114 @@ h3 {
   font-style: italic;
 }
 
+.floating-notice-stack {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: min(340px, calc(100% - 2rem));
+  display: grid;
+  gap: 0.45rem;
+  pointer-events: none;
+}
+
+.floating-notice {
+  display: grid;
+  gap: 0.12rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 214, 160, 0.42);
+  background: linear-gradient(135deg, rgba(43, 24, 13, 0.9), rgba(28, 13, 9, 0.92));
+  color: #ffe9d1;
+  box-shadow: 0 8px 20px rgba(5, 1, 0, 0.35);
+  font-size: 0.75rem;
+  animation: floating-notice-fade 6.2s ease forwards;
+}
+
+.floating-notice-kind {
+  letter-spacing: 0.06em;
+  font-size: 0.66rem;
+}
+
+.floating-notice-event,
+.floating-notice-base {
+  border-color: rgba(255, 170, 130, 0.55);
+}
+
+.floating-notice-system {
+  border-color: rgba(245, 196, 114, 0.55);
+}
+
+@keyframes floating-notice-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.severe-alert-panel {
+  position: absolute;
+  right: 1rem;
+  bottom: 9.2rem;
+  z-index: 9;
+  width: min(320px, calc(100% - 2rem));
+  border: 1px solid rgba(255, 193, 164, 0.55);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(63, 24, 18, 0.82), rgba(44, 15, 14, 0.9));
+  color: #ffe8df;
+  box-shadow: 0 9px 22px rgba(14, 3, 3, 0.32);
+  padding: 0.52rem 0.62rem;
+}
+
+.severe-alert-panel h3 {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.severe-alert-panel ul {
+  margin: 0.38rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.severe-alert-panel li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.38rem;
+  font-size: 0.74rem;
+}
+
+.severe-alert-icon {
+  display: inline-flex;
+  width: 0.95rem;
+  height: 0.95rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 101, 81, 0.9);
+  color: #fff7f2;
+  font-weight: 700;
+  line-height: 1;
+  font-size: 0.68rem;
+  margin-top: 0.02rem;
+}
+
 .world-map {
   width: 100%;
   height: 100%;
