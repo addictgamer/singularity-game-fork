@@ -78,7 +78,12 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
       <p className="muted">
         Available technologies can receive CPU allocation. Completed techs are read-only.
       </p>
-      <p className="muted">Idle CPUs available for research: {freeCpu}</p>
+      <p
+        className="muted"
+        title="Idle CPUs will perform jobs and make money when they are not assigned to research."
+      >
+        Idle CPUs available for research: {freeCpu}
+      </p>
       <div className="toolbar-row">
         <label>
           Filter

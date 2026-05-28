@@ -138,8 +138,8 @@ export function GameView({
               <dd>{game.cash}</dd>
             </div>
             <div>
-              <dt>CPU Availability</dt>
-              <dd>{idleCpu}/{ownedCpu}</dd>
+              <dt title="Idle CPUs will perform jobs and make money.">CPU Availability</dt>
+              <dd title="Shown as idle/owned CPU.">{idleCpu}/{ownedCpu}</dd>
             </div>
             <div>
               <dt>Suspicion</dt>
