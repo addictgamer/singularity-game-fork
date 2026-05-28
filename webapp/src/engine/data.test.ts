@@ -58,6 +58,14 @@ describe("Game Data Conversion Validation", () => {
     expect(locations).toContain("EUROPE");
   });
 
+  it("uses spelled-out location names from source strings", () => {
+    const northAmerica = gameData.locations.find((location) => location.id === "N AMERICA");
+    const southAmerica = gameData.locations.find((location) => location.id === "S AMERICA");
+
+    expect(northAmerica?.name).toBe("NORTH AMERICA");
+    expect(southAmerica?.name).toBe("SOUTH AMERICA");
+  });
+
   it("validates locations reference existing regions", () => {
     const regionIds = new Set(gameData.regions.map((r) => r.id));
     for (const location of gameData.locations) {

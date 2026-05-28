@@ -1411,7 +1411,7 @@
   "locations": [
     {
       "id": "N AMERICA",
-      "name": "N AMERICA",
+      "name": "NORTH AMERICA",
       "position": {
         "absolute": false,
         "x": 25,
@@ -1426,7 +1426,7 @@
     },
     {
       "id": "S AMERICA",
-      "name": "S AMERICA",
+      "name": "SOUTH AMERICA",
       "position": {
         "absolute": false,
         "x": 33,

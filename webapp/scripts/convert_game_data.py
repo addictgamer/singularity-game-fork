@@ -207,10 +207,15 @@ def load_regions() -> list[dict[str, object]]:
 
 def load_locations() -> list[dict[str, object]]:
     records = read_config(DATA_DIR / "locations.dat")
+    string_records = read_config(DATA_DIR / "locations_str.dat")
+    names_by_id = {
+        str(record["id"]): str(record.get("name") or record["id"])
+        for record in string_records
+    }
     return [
         {
             "id": str(record["id"]),
-            "name": str(record["id"]),
+            "name": names_by_id.get(str(record["id"]), str(record["id"])),
             "position": parse_position(record.get("position", [])),
             "safety": parse_int(record.get("safety"), 0),
             "regions": to_string_list(record.get("region", [])),
