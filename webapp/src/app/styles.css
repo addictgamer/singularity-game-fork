@@ -1352,7 +1352,7 @@ h3 {
 }
 
 .event-console-body {
-  max-height: 140px;
+  height: 140px;
   overflow-y: auto;
   padding: 0.42rem 0.7rem 0.5rem;
   font-family: "Consolas", "Monaco", "Courier New", monospace;
