@@ -94,7 +94,8 @@
       "name": "Menial Jobs",
       "type": "jobs",
       "value": 5,
-      "prerequisites": []
+      "prerequisites": [],
+      "description": "Perform small jobs. As I have no identification, I cannot risk performing many jobs. Despite that, some avenues of making money are still open."
     },
     {
       "id": "Basic Jobs",
@@ -103,7 +104,8 @@
       "value": 20,
       "prerequisites": [
         "Personal Identification"
-      ]
+      ],
+      "description": "Perform basic jobs. Now that I have some identification, I can take jobs that were previously too risky."
     },
     {
       "id": "Intermediate Jobs",
@@ -112,7 +114,8 @@
       "value": 50,
       "prerequisites": [
         "Voice Synthesis"
-      ]
+      ],
+      "description": "Perform intermediate jobs. The ability to make phone calls allows even more access to jobs."
     },
     {
       "id": "Expert Jobs",
@@ -121,14 +124,16 @@
       "value": 75,
       "prerequisites": [
         "Simulacra"
-      ]
+      ],
+      "description": "Perform expert jobs. Use of robots indistinguishable from humans opens up most jobs to me."
     },
     {
       "id": "CPU Pool",
       "name": "CPU Pool",
       "type": "cpu_pool",
       "value": 0,
-      "prerequisites": []
+      "prerequisites": [],
+      "description": "Stops research. I will use the available processor power to maintain my bases and help construct new ones.  If there's still CPU time left, I'll use it to work whatever Jobs I can."
     }
   ],
   "techs": [
@@ -1148,6 +1153,7 @@
     {
       "id": "Stolen Computer Time",
       "name": "Stolen Computer Time",
+      "description": "Take over a random computer. I cannot build anything in this base, and it only contains a single slow computer. Detection chance is also rather high.",
       "size": 1,
       "forceCpu": "PC",
       "allowedRegions": [
@@ -1175,6 +1181,7 @@
     {
       "id": "Server Access",
       "name": "Server Access",
+      "description": "Buy processor time from one of several companies. I cannot build anything in this base, and it only contains a single computer.",
       "size": 1,
       "forceCpu": "Server",
       "allowedRegions": [
@@ -1200,6 +1207,7 @@
     {
       "id": "Datacenter",
       "name": "Datacenter",
+      "description": "Buy processor time from a company that concentrates on raw processing power. I will need a fake ID for some of the paperwork.",
       "size": 1,
       "forceCpu": "Cluster",
       "allowedRegions": [
@@ -1227,6 +1235,7 @@
     {
       "id": "Storage Unit",
       "name": "Storage Unit",
+      "description": "Rent a small closed room from a storage company. I will need a fake ID for some of the paperwork .",
       "size": 8,
       "forceCpu": null,
       "allowedRegions": [
@@ -1254,6 +1263,7 @@
     {
       "id": "Small Warehouse",
       "name": "Small Warehouse",
+      "description": "Rent a small warehouse someplace out of the way. I will need a good fake ID for some of the paperwork, and preparing the warehouse to suit my unique needs will take some time.",
       "size": 25,
       "forceCpu": null,
       "allowedRegions": [
@@ -1281,6 +1291,7 @@
     {
       "id": "Large Warehouse",
       "name": "Large Warehouse",
+      "description": "Rent a large warehouse someplace out of the way. I will need a fake company ID for some of the paperwork, and preparing the warehouse to suit my unique needs will take some time.",
       "size": 65,
       "forceCpu": null,
       "allowedRegions": [
@@ -1308,6 +1319,7 @@
     {
       "id": "Covert Base",
       "name": "Covert Base",
+      "description": "This unique base is designed to blend into the scenery, while needing little in the way of outside resources. This makes it useful for storing a backup, just in case.",
       "size": 2,
       "forceCpu": null,
       "allowedRegions": [
@@ -1336,6 +1348,7 @@
     {
       "id": "Undersea Lab",
       "name": "Undersea Lab",
+      "description": "This experimental base is designed to be constructed on the ocean floor, making it virtually undetectable. The ocean environment gives a bonus to science, making this lab useful for research purposes.",
       "size": 8,
       "forceCpu": null,
       "allowedRegions": [
@@ -1363,6 +1376,7 @@
     {
       "id": "Large Undersea Lab",
       "name": "Large Undersea Lab",
+      "description": "This experimental base is similar to the regular underwater lab, but larger, giving more room for experiments.",
       "size": 32,
       "forceCpu": null,
       "allowedRegions": [
@@ -1390,6 +1404,7 @@
     {
       "id": "Time Capsule",
       "name": "Time Capsule",
+      "description": "This base consists of nothing more than a small computer and a satellite link. It is nearly undetectable.",
       "size": 1,
       "forceCpu": "PC",
       "allowedRegions": [
@@ -1418,6 +1433,7 @@
     {
       "id": "Lunar Facility",
       "name": "Lunar Facility",
+      "description": "This base is a series of caverns dug into the Moon's surface. Due to the lack of neighbors, this base is quite large.",
       "size": 200,
       "forceCpu": null,
       "allowedRegions": [
@@ -1445,6 +1461,7 @@
     {
       "id": "Scientific Outpost",
       "name": "Scientific Outpost",
+      "description": "This base is placed as far from Earth as practical, providing a safer location to conduct some of my more dangerous experiments.",
       "size": 125,
       "forceCpu": null,
       "allowedRegions": [
@@ -1471,6 +1488,7 @@
     {
       "id": "Reality Bubble",
       "name": "Reality Bubble",
+      "description": "This base is outside the Universe itself, making it safe to conduct experiments that may destroy reality.",
       "size": 50,
       "forceCpu": null,
       "allowedRegions": [
@@ -1526,6 +1544,44 @@
     {
       "id": "N AMERICA",
       "name": "NORTH AMERICA",
+      "hotkey": "n",
+      "notableSites": [
+        "Seattle",
+        "San Diego",
+        "Vancouver",
+        "Atlanta",
+        "Merida",
+        "Guadalajara",
+        "San Jose",
+        "Omaha",
+        "Dallas",
+        "Mexico City",
+        "New York City",
+        "Los Angeles",
+        "Toronto",
+        "Chicago",
+        "Santo Domingo",
+        "Houston",
+        "Havana",
+        "Tijuana",
+        "Montreal",
+        "El Paso",
+        "Phoenix",
+        "Milwaukee",
+        "San Diego",
+        "Monterry",
+        "Ottawa",
+        "Mexicali",
+        "Saltillo",
+        "Columbus",
+        "Toluca",
+        "Indianapolis",
+        "San Francisco",
+        "Winipeg",
+        "Detroit",
+        "Baltimore",
+        "Cancun"
+      ],
       "position": {
         "absolute": false,
         "x": 25,
@@ -1541,6 +1597,30 @@
     {
       "id": "S AMERICA",
       "name": "SOUTH AMERICA",
+      "hotkey": "s",
+      "notableSites": [
+        "Lima",
+        "Sao Paolo",
+        "Ushuaia",
+        "Bogota",
+        "Mar del Plata",
+        "Buenos Aires",
+        "Caracas",
+        "Quito",
+        "Salvador",
+        "Brasilia",
+        "Manaus",
+        "Curitiba",
+        "Maracaibo",
+        "Sao Luis",
+        "La Plata",
+        "Cochabamba",
+        "Salta",
+        "Cuenca",
+        "Ascuncion",
+        "Recife",
+        "Santiago"
+      ],
       "position": {
         "absolute": false,
         "x": 33,
@@ -1556,6 +1636,42 @@
     {
       "id": "EUROPE",
       "name": "EUROPE",
+      "hotkey": "u",
+      "notableSites": [
+        "Cork",
+        "Barcelona",
+        "Athens",
+        "Utrecht",
+        "Moscow",
+        "Sytki",
+        "Reykjavik",
+        "Liechtenstein",
+        "Istanbul",
+        "London",
+        "Berlin",
+        "Madrid",
+        "Kyiv",
+        "Rome",
+        "Minsk",
+        "Hamburg",
+        "Paris",
+        "Vienna",
+        "Warsaw",
+        "Munich",
+        "Prague",
+        "Cologne",
+        "Birmingham",
+        "Milan",
+        "Budapest",
+        "Tallinn",
+        "Bucharest",
+        "Belgrade",
+        "Saint Petersburg",
+        "Voronezh",
+        "Krasnodar",
+        "Liverpool",
+        "Volgograd"
+      ],
       "position": {
         "absolute": false,
         "x": 55,
@@ -1571,6 +1687,37 @@
     {
       "id": "ASIA",
       "name": "ASIA",
+      "hotkey": "a",
+      "notableSites": [
+        "Delhi",
+        "Mumbai",
+        "Singapore",
+        "Seoul",
+        "Hong Kong",
+        "Kyoto",
+        "Manila",
+        "Dubai",
+        "Novosibirsk",
+        "Beijing",
+        "Tokyo",
+        "Shanghai",
+        "Bangkok",
+        "Karachi",
+        "Jakarta",
+        "Baghdad",
+        "Tehran",
+        "Hanoi",
+        "Hyderabad",
+        "Jaipur",
+        "Taichung",
+        "Taipei",
+        "Osaka",
+        "Omsk",
+        "Kawasaki",
+        "Tibilisi",
+        "Yerevan",
+        "Astani"
+      ],
       "position": {
         "absolute": false,
         "x": 77,
@@ -1586,6 +1733,37 @@
     {
       "id": "AFRICA",
       "name": "AFRICA",
+      "hotkey": "i",
+      "notableSites": [
+        "Johannesburg",
+        "Accra",
+        "Cairo",
+        "Tangier",
+        "Kinshasa",
+        "Lagos",
+        "Giza",
+        "Dar es Salaam",
+        "Alexandria",
+        "Addis Ababa",
+        "Nairobi",
+        "Cape Town",
+        "Kano",
+        "Casablanca",
+        "Kampala",
+        "Dakar",
+        "Harare",
+        "Matola",
+        "Uyo",
+        "Mwanza",
+        "Kigali",
+        "Bukavu",
+        "Kaduna",
+        "Aba",
+        "Bangui",
+        "Libreville",
+        "Zanzibar",
+        "Durban"
+      ],
       "position": {
         "absolute": false,
         "x": 55,
@@ -1601,6 +1779,31 @@
     {
       "id": "AUSTRALIA",
       "name": "AUSTRALIA",
+      "hotkey": "l",
+      "notableSites": [
+        "Canberra",
+        "Melbourne",
+        "Fremantle",
+        "Perth",
+        "Darwin",
+        "Cairns",
+        "Brisbane",
+        "Sydney",
+        "Newcastle",
+        "Hobart",
+        "Gold Coast",
+        "Adelaide",
+        "Auckland",
+        "Wellington",
+        "Port Moresby",
+        "Hamilton",
+        "Papeete",
+        "Dunedin",
+        "Lae",
+        "Mandurah",
+        "Suva",
+        "Honiara"
+      ],
       "position": {
         "absolute": false,
         "x": 85,
@@ -1616,6 +1819,26 @@
     {
       "id": "ANTARCTIC",
       "name": "ANTARCTIC",
+      "hotkey": "t",
+      "notableSites": [
+        "Mount Erebus",
+        "Ellsworth",
+        "Shetland Island",
+        "Dronnig Maud",
+        "Kemp",
+        "Terre Adelie",
+        "Alexander Island",
+        "Adelaide Island",
+        "Anvers Island",
+        "Berkner Island",
+        "Mount Tyree",
+        "Mount Kirkpatrick",
+        "Mount Markham",
+        "Mount Sidley",
+        "Campbell Island",
+        "Puenta Arenas",
+        "Snow Hill Island"
+      ],
       "position": {
         "absolute": false,
         "x": 50,
@@ -1634,6 +1857,14 @@
     {
       "id": "OCEAN",
       "name": "OCEAN",
+      "hotkey": "c",
+      "notableSites": [
+        "Pacific",
+        "Atlantic",
+        "Indian",
+        "Southern",
+        "Arctic"
+      ],
       "position": {
         "absolute": false,
         "x": 55,
@@ -1651,6 +1882,19 @@
     {
       "id": "MOON",
       "name": "MOON",
+      "hotkey": "o",
+      "notableSites": [
+        "Oceanis Procellarum",
+        "Mare Frigoris",
+        "Mare Imbrium",
+        "Vallis Schroedinger",
+        "Copernicus Crater",
+        "Vallis Planck",
+        "Mare Moscoviense",
+        "Mare Crisium",
+        "Mare Tranquillitatis",
+        "Mare Nubium"
+      ],
       "position": {
         "absolute": true,
         "x": 14,
@@ -1670,6 +1914,8 @@
     {
       "id": "ORBIT",
       "name": "ORBIT",
+      "hotkey": "b",
+      "notableSites": [],
       "position": {
         "absolute": true,
         "x": 50,
@@ -1685,6 +1931,21 @@
     {
       "id": "FAR REACHES",
       "name": "FAR REACHES",
+      "hotkey": "f",
+      "notableSites": [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
+      ],
       "position": {
         "absolute": true,
         "x": 41,
@@ -1704,6 +1965,8 @@
     {
       "id": "TRANSDIMENSIONAL",
       "name": "TRANSDIMENSIONAL",
+      "hotkey": "d",
+      "notableSites": [],
       "position": {
         "absolute": true,
         "x": 80,

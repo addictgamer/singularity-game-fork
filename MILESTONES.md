@@ -289,6 +289,16 @@ Completed in this phase slice (previous work):
   - Updated ResearchPanel to display description and result alongside unlock metadata
   - Verified parity with original game tech display (Intrusion example: "By researching current techniques..." + "I can now take over many computer systems.")
   - All 49 tests passing (data validation, engine parity, UI component tests)
+- Added research completion reward popup with richer unlock detail cards:
+  - GameView now opens a completion modal when new research log entries arrive
+  - Popup shows the completed tech result string plus newly unlocked research, bases, locations, and jobs
+  - Unlock detection uses live prerequisite evaluation against before/after researched-tech state
+  - Popup cards now include original narrative copy for unlocked bases and job tiers via bases_str.dat and tasks_str.dat
+  - Added focused GameView regression coverage for completion popup content and non-tech unlock presentation
+- Added original location flavor to unlock cards:
+  - Extended converted location data with hotkeys and notable site/city lists from locations_str.dat
+  - Research completion popup location cards now show original-game location flavor instead of generic placeholder copy
+  - Added focused GameView coverage for location unlock presentation (example: ANTARCTIC via Advanced Database Manipulation)
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -458,12 +468,16 @@ Deliverables:
 Current validated:
 - npm install: pass
 - npm test: pass (49 tests: 23 data validation + 22 game engine + 4 UI component)
+- focused popup regression: pass (`src/app/GameView.test.tsx`)
 - npm build: pass (58 modules, 381.31 kB, gzip 119.37 kB)
 - data generation command: pass
 - CPU allocation prevention: working (prevents allocation to completed techs)
 - Research completion cleanup: working (auto-clears CPU allocation)
 - Data schema validation: working (verified 22 schemas including costs, prerequisites, group references, etc.)
 - Tech narrative fields: working (description and result strings loaded from techs_str.dat and displayed in ResearchPanel)
+- Base/task narrative fields: working (descriptions loaded from bases_str.dat and tasks_str.dat and surfaced in completion popup cards)
+- Research completion popup: working (result string plus newly unlocked research, bases, locations, and jobs)
+- Location flavor fields: working (hotkeys and notable site lists loaded from locations_str.dat and surfaced in location unlock cards)
 
 Validation test coverage (M8/M16):
 - Difficulties: startingCash, gracePeriodCpu, baseGraceMultiplier verified
@@ -650,3 +664,6 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-28: Verified full build success with 0 TypeScript errors, 44/44 tests passing, and 58 modules compiled (356.96 kB JS / 111.35 kB gzip, 25.32 kB CSS / 5.67 kB gzip).
 - 2026-05-28: Audited original desktop loss flow and recorded remaining parity work: desktop uses story-section-based loss presentation for both no-base and suspicion defeat states plus an optional "lose" music cue, with no dedicated bundled loss image assets in this checkout.
 - 2026-05-28: Reworked gameplay layout controls with a bottom-docked collapsible event console and map-edge sidebar hide/show nubs, then followed up to fix the first-pass collapse behavior so sidebars release layout space instead of only hiding their contents.
+- 2026-06-01: Added a research completion reward popup in GameView that triggers from completed-research log entries, shows result text, and groups newly unlocked research, bases, locations, and jobs using live prerequisite checks.
+- 2026-06-01: Extended the data conversion pipeline to load narrative descriptions for bases and job tiers from bases_str.dat and tasks_str.dat, then surfaced that copy inside the research completion reward cards.
+- 2026-06-01: Extended converted location data with original-game hotkeys and site/city lists from locations_str.dat, then replaced generic location unlock copy with actual location flavor in the research completion reward cards.

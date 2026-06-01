@@ -126,6 +126,8 @@ def load_difficulties() -> list[dict[str, object]]:
 
 def load_tasks() -> list[dict[str, object]]:
     records = read_config(DATA_DIR / "tasks.dat")
+    strings = read_config(DATA_DIR / "tasks_str.dat")
+    strings_by_id = {str(s["id"]): s for s in strings}
     return [
         {
             "id": str(record["id"]),
@@ -133,6 +135,7 @@ def load_tasks() -> list[dict[str, object]]:
             "type": str(record["type"]),
             "value": parse_int(record.get("value")),
             "prerequisites": parse_prerequisites(record),
+            "description": str(strings_by_id.get(str(record["id"]), {}).get("description", "")),
         }
         for record in records
     ]
@@ -159,10 +162,13 @@ def load_techs() -> list[dict[str, object]]:
 
 def load_bases() -> list[dict[str, object]]:
     records = read_config(DATA_DIR / "bases.dat")
+    strings = read_config(DATA_DIR / "bases_str.dat")
+    strings_by_id = {str(s["id"]): s for s in strings}
     return [
         {
             "id": str(record["id"]),
             "name": str(record["id"]),
+            "description": str(strings_by_id.get(str(record["id"]), {}).get("description", "")),
             "size": parse_int(record.get("size"), 1),
             "forceCpu": record.get("force_cpu"),
             "allowedRegions": parse_regions(record),
@@ -212,14 +218,16 @@ def load_regions() -> list[dict[str, object]]:
 def load_locations() -> list[dict[str, object]]:
     records = read_config(DATA_DIR / "locations.dat")
     string_records = read_config(DATA_DIR / "locations_str.dat")
-    names_by_id = {
-        str(record["id"]): str(record.get("name") or record["id"])
+    strings_by_id = {
+        str(record["id"]): record
         for record in string_records
     }
     return [
         {
             "id": str(record["id"]),
-            "name": names_by_id.get(str(record["id"]), str(record["id"])),
+            "name": str(strings_by_id.get(str(record["id"]), {}).get("name") or record["id"]),
+            "hotkey": str(strings_by_id.get(str(record["id"]), {}).get("hotkey") or ""),
+            "notableSites": to_string_list(strings_by_id.get(str(record["id"]), {}).get("cities", [])),
             "position": parse_position(record.get("position", [])),
             "safety": parse_int(record.get("safety"), 0),
             "regions": to_string_list(record.get("region", [])),

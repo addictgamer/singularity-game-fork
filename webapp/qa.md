@@ -86,6 +86,9 @@ Only show results once researched?
 
 Research completion should show a popup dialogue showing what was unlocked for next research + the result string.
 
+UI:
+Put bases before research in the Research Completed popup.
+
 
 ## Survivability
 
@@ -110,4 +113,5 @@ Add debug/cheats options.
 - Instantly complete research
 - Set money amount.
 - Set suspicion amounts.
+- Make bases invincible temporarily/reset/pause grace windows/timers.
 Anything else??

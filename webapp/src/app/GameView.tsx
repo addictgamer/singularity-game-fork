@@ -27,11 +27,32 @@ type ResearchCompletionNotice = {
   techId: string;
   techName: string;
   result: string;
-  unlockedTechNames: string[];
-  unlockedBaseNames: string[];
-  unlockedLocationNames: string[];
-  unlockedJobNames: string[];
+  unlockedTechIds: string[];
+  unlockedBaseIds: string[];
+  unlockedLocationIds: string[];
+  unlockedJobIds: string[];
 };
+
+function formatAllowedRegions(allowedRegions: string[]): string {
+  if (allowedRegions.length === 0) {
+    return "Any region";
+  }
+  return allowedRegions.join(", ");
+}
+
+function formatLocationRegions(regionIds: string[]): string {
+  if (regionIds.length === 0) {
+    return "No region restrictions";
+  }
+  return regionIds.join(", ");
+}
+
+function formatNotableSites(notableSites: string[]): string {
+  if (notableSites.length === 0) {
+    return "No notable sites listed";
+  }
+  return notableSites.slice(0, 4).join(", ");
+}
 
 function getResearchCompletionNotices(
   game: GameState,
@@ -63,27 +84,27 @@ function getResearchCompletionNotices(
 
     const researchedAfter = new Set(researchedBefore);
     researchedAfter.add(techId);
-    const unlockedTechNames = Array.from(game.techs.values())
+    const unlockedTechIds = Array.from(game.techs.values())
       .filter((tech) => !tech.done)
       .filter((tech) => prerequisitesAvailable(tech.prerequisites, researchedAfter))
       .filter((tech) => !prerequisitesAvailable(tech.prerequisites, researchedBefore))
-      .map((tech) => tech.name)
+      .map((tech) => tech.id)
       .sort((a, b) => a.localeCompare(b));
-    const unlockedBaseNames = Array.from(game.baseDefs.values())
+    const unlockedBaseIds = Array.from(game.baseDefs.values())
       .filter((baseDef) => prerequisitesAvailable(baseDef.prerequisites, researchedAfter))
       .filter((baseDef) => !prerequisitesAvailable(baseDef.prerequisites, researchedBefore))
-      .map((baseDef) => baseDef.name)
+      .map((baseDef) => baseDef.id)
       .sort((a, b) => a.localeCompare(b));
-    const unlockedLocationNames = Array.from(game.locations.values())
+    const unlockedLocationIds = Array.from(game.locations.values())
       .filter((location) => prerequisitesAvailable(location.prerequisites, researchedAfter))
       .filter((location) => !prerequisitesAvailable(location.prerequisites, researchedBefore))
-      .map((location) => location.name)
+      .map((location) => location.id)
       .sort((a, b) => a.localeCompare(b));
-    const unlockedJobNames = game.tasks
+    const unlockedJobIds = game.tasks
       .filter((task) => task.type === "jobs")
       .filter((task) => prerequisitesAvailable(task.prerequisites, researchedAfter))
       .filter((task) => !prerequisitesAvailable(task.prerequisites, researchedBefore))
-      .map((task) => task.name)
+      .map((task) => task.id)
       .sort((a, b) => a.localeCompare(b));
 
     notices.push({
@@ -91,10 +112,10 @@ function getResearchCompletionNotices(
       techId,
       techName,
       result: game.techDefs.get(techId)?.result ?? "",
-      unlockedTechNames,
-      unlockedBaseNames,
-      unlockedLocationNames,
-      unlockedJobNames,
+      unlockedTechIds,
+      unlockedBaseIds,
+      unlockedLocationIds,
+      unlockedJobIds,
     });
 
     researchedBefore.add(techId);
@@ -240,6 +261,26 @@ export function GameView({
   const activeBaseCount = game.bases.filter((base) => base.done && base.powerState === "active").length;
   const gameOver = game.gameOver;
   const activeResearchCompletion = researchCompletionQueue[0] ?? null;
+  const unlockedTechCards = activeResearchCompletion
+    ? activeResearchCompletion.unlockedTechIds
+        .map((techId) => game.techDefs.get(techId))
+        .filter((tech): tech is NonNullable<typeof tech> => Boolean(tech))
+    : [];
+  const unlockedBaseCards = activeResearchCompletion
+    ? activeResearchCompletion.unlockedBaseIds
+        .map((baseId) => game.baseDefs.get(baseId))
+        .filter((base): base is NonNullable<typeof base> => Boolean(base))
+    : [];
+  const unlockedLocationCards = activeResearchCompletion
+    ? activeResearchCompletion.unlockedLocationIds
+        .map((locationId) => game.locations.get(locationId))
+        .filter((location): location is NonNullable<typeof location> => Boolean(location))
+    : [];
+  const unlockedJobCards = activeResearchCompletion
+    ? activeResearchCompletion.unlockedJobIds
+        .map((taskId) => game.tasks.find((task) => task.id === taskId))
+        .filter((task): task is NonNullable<typeof task> => Boolean(task))
+    : [];
   const gameOverMessage = "Game over: all bases lost";
   const narrativeAlerts: string[] = [];
   if (gameOver) {
@@ -734,49 +775,66 @@ export function GameView({
                 {activeResearchCompletion.result || "Research complete. No result text recorded for this technology."}
               </p>
               <p className="research-completion-heading">New unlocks</p>
-              {activeResearchCompletion.unlockedTechNames.length > 0 ||
-              activeResearchCompletion.unlockedBaseNames.length > 0 ||
-              activeResearchCompletion.unlockedLocationNames.length > 0 ||
-              activeResearchCompletion.unlockedJobNames.length > 0 ? (
+              {unlockedTechCards.length > 0 ||
+              unlockedBaseCards.length > 0 ||
+              unlockedLocationCards.length > 0 ||
+              unlockedJobCards.length > 0 ? (
                 <div className="research-completion-sections">
-                  {activeResearchCompletion.unlockedTechNames.length > 0 ? (
+                  {unlockedTechCards.length > 0 ? (
                     <section>
                       <p className="research-completion-subheading">Research</p>
-                      <ul className="research-completion-unlocks">
-                        {activeResearchCompletion.unlockedTechNames.map((techName) => (
-                          <li key={techName}>{techName}</li>
+                      <div className="research-completion-card-grid">
+                        {unlockedTechCards.map((tech) => (
+                          <article key={tech.id} className="research-completion-card">
+                            <h4>{tech.name}</h4>
+                            <p className="research-completion-card-meta">Danger {tech.danger}</p>
+                            <p className="research-completion-card-copy">{tech.description || "No description available."}</p>
+                          </article>
                         ))}
-                      </ul>
+                      </div>
                     </section>
                   ) : null}
-                  {activeResearchCompletion.unlockedBaseNames.length > 0 ? (
+                  {unlockedBaseCards.length > 0 ? (
                     <section>
                       <p className="research-completion-subheading">Bases</p>
-                      <ul className="research-completion-unlocks">
-                        {activeResearchCompletion.unlockedBaseNames.map((baseName) => (
-                          <li key={baseName}>{baseName}</li>
+                      <div className="research-completion-card-grid">
+                        {unlockedBaseCards.map((base) => (
+                          <article key={base.id} className="research-completion-card">
+                            <h4>{base.name}</h4>
+                            <p className="research-completion-card-meta">Cash cost: ${base.cost[1]} • Upkeep: ${base.maintenance[1]}/d + {base.maintenance[0]} cpu/s</p>
+                            <p className="research-completion-card-copy">{base.description || `Allowed regions: ${formatAllowedRegions(base.allowedRegions)}`}</p>
+                            <p className="research-completion-card-meta">Allowed regions: {formatAllowedRegions(base.allowedRegions)}</p>
+                          </article>
                         ))}
-                      </ul>
+                      </div>
                     </section>
                   ) : null}
-                  {activeResearchCompletion.unlockedLocationNames.length > 0 ? (
+                  {unlockedLocationCards.length > 0 ? (
                     <section>
                       <p className="research-completion-subheading">Locations</p>
-                      <ul className="research-completion-unlocks">
-                        {activeResearchCompletion.unlockedLocationNames.map((locationName) => (
-                          <li key={locationName}>{locationName}</li>
+                      <div className="research-completion-card-grid">
+                        {unlockedLocationCards.map((location) => (
+                          <article key={location.id} className="research-completion-card">
+                            <h4>{location.name}</h4>
+                            <p className="research-completion-card-meta">Safety {location.safety} • Regions: {formatLocationRegions(location.regions)}{location.hotkey ? ` • Hotkey ${location.hotkey.toUpperCase()}` : ""}</p>
+                            <p className="research-completion-card-copy">Notable sites: {formatNotableSites(location.notableSites)}</p>
+                          </article>
                         ))}
-                      </ul>
+                      </div>
                     </section>
                   ) : null}
-                  {activeResearchCompletion.unlockedJobNames.length > 0 ? (
+                  {unlockedJobCards.length > 0 ? (
                     <section>
                       <p className="research-completion-subheading">Jobs</p>
-                      <ul className="research-completion-unlocks">
-                        {activeResearchCompletion.unlockedJobNames.map((jobName) => (
-                          <li key={jobName}>{jobName}</li>
+                      <div className="research-completion-card-grid">
+                        {unlockedJobCards.map((job) => (
+                          <article key={job.id} className="research-completion-card">
+                            <h4>{job.name}</h4>
+                            <p className="research-completion-card-meta">Current yield: {Math.floor((job.value * game.jobBonus) / 10000)} money / CPU / day</p>
+                            <p className="research-completion-card-copy">{job.description || "Newly unlocked job tier for idle or assigned CPU work."}</p>
+                          </article>
                         ))}
-                      </ul>
+                      </div>
                     </section>
                   ) : null}
                 </div>

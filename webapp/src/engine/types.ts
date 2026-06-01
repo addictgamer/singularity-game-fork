@@ -20,6 +20,7 @@ export interface TaskDef {
   type: string;
   value: number;
   prerequisites: string[];
+  description: string;
 }
 
 export interface TechDef {
@@ -36,6 +37,7 @@ export interface TechDef {
 export interface BaseDef {
   id: string;
   name: string;
+  description: string;
   size: number;
   forceCpu: string | null;
   allowedRegions: string[];
@@ -54,6 +56,8 @@ export interface RegionDef {
 export interface LocationDef {
   id: string;
   name: string;
+  hotkey: string;
+  notableSites: string[];
   position: {
     absolute: boolean;
     x: number;
