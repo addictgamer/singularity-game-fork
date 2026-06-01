@@ -299,6 +299,15 @@ Completed in this phase slice (previous work):
   - Extended converted location data with hotkeys and notable site/city lists from locations_str.dat
   - Research completion popup location cards now show original-game location flavor instead of generic placeholder copy
   - Added focused GameView coverage for location unlock presentation (example: ANTARCTIC via Advanced Database Manipulation)
+- **Restored research screen parity with original game (2026-06-01):**
+  - ✅ Mirrored danger-tier CPU budgeting from original game (`getCpuLeftByDanger()`)
+  - ✅ Restored CPU Pool and Jobs as research panel allocation targets alongside techs
+  - ✅ Implemented cumulative safety-tier CPU restrictions (affects at danger tier affect all higher tiers)
+  - ✅ Restored dangerous-tech blocking when safe CPU unavailable
+  - ✅ Automatic CPU rebalancing when allocations exceed danger-tier budgets
+  - ✅ All 51 tests passing (23 data + 22 engine + 2 game view + 4 research panel)
+  - ✅ Full build validates cleanly, 395.08 kB gzip
+  - ✅ Unlock domains now include: research techs, bases, jobs, and locations all surfaced in completion modal
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
