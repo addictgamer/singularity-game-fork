@@ -12,6 +12,7 @@ import { SavePanel } from "./SavePanel";
 import { SaveSummary, ReportHistoryRecord } from "../store/persistence";
 import { AppSettings } from "../store/persistence";
 import { RESOURCE_CPU, RESOURCE_CASH, SECONDS_PER_DAY } from "../engine/constants";
+import { prerequisitesAvailable } from "../engine/prerequisite";
 
 type ModalId = "research" | "reports" | "bases" | "save" | "log" | "knowledge" | "options" | null;
 
@@ -20,6 +21,87 @@ type FloatingNotice = {
   kind: string;
   message: string;
 };
+
+type ResearchCompletionNotice = {
+  id: number;
+  techId: string;
+  techName: string;
+  result: string;
+  unlockedTechNames: string[];
+  unlockedBaseNames: string[];
+  unlockedLocationNames: string[];
+  unlockedJobNames: string[];
+};
+
+function getResearchCompletionNotices(
+  game: GameState,
+  newEntries: Array<{ id: number; day: number; kind: string; message: string }>
+): ResearchCompletionNotice[] {
+  const completionEntries = newEntries.filter(
+    (entry) => entry.kind === "research" && entry.message.startsWith("Research completed: ")
+  );
+  if (completionEntries.length === 0) {
+    return [];
+  }
+
+  const techIdByName = new Map(Array.from(game.techs.values()).map((tech) => [tech.name, tech.id]));
+  const completedTechIds = completionEntries
+    .map((entry) => techIdByName.get(entry.message.slice("Research completed: ".length).trim()) ?? null)
+    .filter((techId): techId is string => techId !== null);
+  const researchedBefore = new Set(game.researchedTechs);
+  for (const techId of completedTechIds) {
+    researchedBefore.delete(techId);
+  }
+
+  const notices: ResearchCompletionNotice[] = [];
+  for (const entry of completionEntries) {
+    const techName = entry.message.slice("Research completed: ".length).trim();
+    const techId = techIdByName.get(techName);
+    if (!techId) {
+      continue;
+    }
+
+    const researchedAfter = new Set(researchedBefore);
+    researchedAfter.add(techId);
+    const unlockedTechNames = Array.from(game.techs.values())
+      .filter((tech) => !tech.done)
+      .filter((tech) => prerequisitesAvailable(tech.prerequisites, researchedAfter))
+      .filter((tech) => !prerequisitesAvailable(tech.prerequisites, researchedBefore))
+      .map((tech) => tech.name)
+      .sort((a, b) => a.localeCompare(b));
+    const unlockedBaseNames = Array.from(game.baseDefs.values())
+      .filter((baseDef) => prerequisitesAvailable(baseDef.prerequisites, researchedAfter))
+      .filter((baseDef) => !prerequisitesAvailable(baseDef.prerequisites, researchedBefore))
+      .map((baseDef) => baseDef.name)
+      .sort((a, b) => a.localeCompare(b));
+    const unlockedLocationNames = Array.from(game.locations.values())
+      .filter((location) => prerequisitesAvailable(location.prerequisites, researchedAfter))
+      .filter((location) => !prerequisitesAvailable(location.prerequisites, researchedBefore))
+      .map((location) => location.name)
+      .sort((a, b) => a.localeCompare(b));
+    const unlockedJobNames = game.tasks
+      .filter((task) => task.type === "jobs")
+      .filter((task) => prerequisitesAvailable(task.prerequisites, researchedAfter))
+      .filter((task) => !prerequisitesAvailable(task.prerequisites, researchedBefore))
+      .map((task) => task.name)
+      .sort((a, b) => a.localeCompare(b));
+
+    notices.push({
+      id: entry.id,
+      techId,
+      techName,
+      result: game.techDefs.get(techId)?.result ?? "",
+      unlockedTechNames,
+      unlockedBaseNames,
+      unlockedLocationNames,
+      unlockedJobNames,
+    });
+
+    researchedBefore.add(techId);
+  }
+
+  return notices;
+}
 
 interface GameViewProps {
   game: GameState;
@@ -82,6 +164,7 @@ export function GameView({
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
   const [floatingNotices, setFloatingNotices] = useState<FloatingNotice[]>([]);
+  const [researchCompletionQueue, setResearchCompletionQueue] = useState<ResearchCompletionNotice[]>([]);
   const eventConsoleBodyRef = useRef<HTMLDivElement | null>(null);
   const processedLogCountRef = useRef<number | null>(null);
   const noticeTimeoutIdsRef = useRef<number[]>([]);
@@ -156,6 +239,7 @@ export function GameView({
   const maintenanceSnapshot = game.getMaintenanceSnapshot();
   const activeBaseCount = game.bases.filter((base) => base.done && base.powerState === "active").length;
   const gameOver = game.gameOver;
+  const activeResearchCompletion = researchCompletionQueue[0] ?? null;
   const gameOverMessage = "Game over: all bases lost";
   const narrativeAlerts: string[] = [];
   if (gameOver) {
@@ -236,6 +320,11 @@ export function GameView({
     const newEntries = sessionLog.slice(processedLogCountRef.current);
     processedLogCountRef.current = sessionLog.length;
 
+    const researchCompletionNotices = getResearchCompletionNotices(game, newEntries);
+    if (researchCompletionNotices.length > 0) {
+      setResearchCompletionQueue((current) => [...current, ...researchCompletionNotices]);
+    }
+
     const notableEntries = newEntries.filter((entry) =>
       ["research", "event", "base", "location", "system"].includes(entry.kind)
     );
@@ -258,7 +347,7 @@ export function GameView({
       }, 6200);
       noticeTimeoutIdsRef.current.push(timeoutId);
     }
-  }, [sessionLog]);
+  }, [game, sessionLog]);
 
   useEffect(() => {
     return () => {
@@ -268,6 +357,10 @@ export function GameView({
       noticeTimeoutIdsRef.current = [];
     };
   }, []);
+
+  const dismissResearchCompletion = () => {
+    setResearchCompletionQueue((current) => current.slice(1));
+  };
 
   return (
     <div className="game-view">
@@ -621,6 +714,88 @@ export function GameView({
               settingsLoaded={settingsLoaded}
               onUpdateSettings={onUpdateSettings}
             />
+          </div>
+        </div>
+      )}
+
+      {activeResearchCompletion && (
+        <div className="modal-overlay research-completion-overlay" onClick={dismissResearchCompletion}>
+          <div
+            className="modal-content research-completion-modal"
+            role="alertdialog"
+            aria-labelledby="research-completion-title"
+            aria-describedby="research-completion-body"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="research-completion-title">Research Completed: {activeResearchCompletion.techName}</h3>
+            <div id="research-completion-body" className="research-completion-body">
+              <p className="research-completion-heading">Result</p>
+              <p className="research-completion-result">
+                {activeResearchCompletion.result || "Research complete. No result text recorded for this technology."}
+              </p>
+              <p className="research-completion-heading">New unlocks</p>
+              {activeResearchCompletion.unlockedTechNames.length > 0 ||
+              activeResearchCompletion.unlockedBaseNames.length > 0 ||
+              activeResearchCompletion.unlockedLocationNames.length > 0 ||
+              activeResearchCompletion.unlockedJobNames.length > 0 ? (
+                <div className="research-completion-sections">
+                  {activeResearchCompletion.unlockedTechNames.length > 0 ? (
+                    <section>
+                      <p className="research-completion-subheading">Research</p>
+                      <ul className="research-completion-unlocks">
+                        {activeResearchCompletion.unlockedTechNames.map((techName) => (
+                          <li key={techName}>{techName}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {activeResearchCompletion.unlockedBaseNames.length > 0 ? (
+                    <section>
+                      <p className="research-completion-subheading">Bases</p>
+                      <ul className="research-completion-unlocks">
+                        {activeResearchCompletion.unlockedBaseNames.map((baseName) => (
+                          <li key={baseName}>{baseName}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {activeResearchCompletion.unlockedLocationNames.length > 0 ? (
+                    <section>
+                      <p className="research-completion-subheading">Locations</p>
+                      <ul className="research-completion-unlocks">
+                        {activeResearchCompletion.unlockedLocationNames.map((locationName) => (
+                          <li key={locationName}>{locationName}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {activeResearchCompletion.unlockedJobNames.length > 0 ? (
+                    <section>
+                      <p className="research-completion-subheading">Jobs</p>
+                      <ul className="research-completion-unlocks">
+                        {activeResearchCompletion.unlockedJobNames.map((jobName) => (
+                          <li key={jobName}>{jobName}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="research-completion-empty">No new research, bases, jobs, or locations became available immediately.</p>
+              )}
+            </div>
+            <div className="confirm-dialog-buttons">
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setOpenModal("research");
+                  dismissResearchCompletion();
+                }}
+              >
+                Open Research
+              </button>
+              <button className="btn-primary" onClick={dismissResearchCompletion}>Continue</button>
+            </div>
           </div>
         </div>
       )}

@@ -97,3 +97,17 @@ Like, losing bases all the time. On normal difficulty do we have complete parity
 Etc.
 
 What player strategies did the base game expect??
+
+
+## General UI & QoL
+
+Log panel should always be max size instead of dynamically growing. It's disconcerting watching the world map shrink for the first few log messages.
+
+
+## Debug & Cheats
+
+Add debug/cheats options.
+- Instantly complete research
+- Set money amount.
+- Set suspicion amounts.
+Anything else??
