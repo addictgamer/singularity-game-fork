@@ -1,3 +1,5 @@
+# QA & Ideas Log
+
 At some point I would like it to have a "Advance 1h" button.
 
 Bug: CPU remains assigned on research even after it's completed.
@@ -64,6 +66,7 @@ Antartica doesn't have the hover overlay and is clicable over the entire region 
 Apparently AI doesn't know how to handle this ...
 
 
+## Research, Tech, & Knowledge
 
 I like its suggestions:
 ```
@@ -77,3 +80,20 @@ Cross-panel integration so Knowledge and Research share identical effect wording
 I'd also love a "tech tree" visual view.
 
 Need to ask the AI if all research effects have been fully implemented and have parity with the original game.
+
+Make techs in the "Avaialble technologies" list clickable that shows their narrative descriptions and stuff. Or hover over to see it? Hmm.
+Only show results once researched?
+
+Research completion should show a popup dialogue showing what was unlocked for next research + the result string.
+
+
+## Survivability
+
+The game is extremely hard. Was the original game this hard?
+Like, losing bases all the time. On normal difficulty do we have complete parity with the original game?
+- global grace window
+- bases grace periods
+- discovery timers/changes
+Etc.
+
+What player strategies did the base game expect??

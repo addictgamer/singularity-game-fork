@@ -200,6 +200,9 @@ Remaining work:
 - Deeper parity fixture validation against desktop reference scenarios
 - Region/location modifier edge-case matching and serialization parity checks
 - Task and base lifecycle corner-case parity validation beyond currently covered scenarios
+- Restore original research/task allocation parity for `cpu_pool` and `jobs` targets where the desktop research screen exposes them directly alongside tech research
+- Revisit desktop-style danger-tier CPU budgeting (`available_cpus[0..3]`) instead of the current single-pool simplification
+- Complete endgame parity polish for win presentation once audio/story systems are in place (desktop applies effect plus win music/story response)
 
 Deliverables:
 - Expanded engine modules in webapp/src/engine
@@ -295,7 +298,9 @@ Remaining work:
 - Full tooltip coverage pass across all gameplay and menu surfaces (status stats, controls, map overlays, modals, form fields, and destructive actions)
 - Tooltip content standardization (what it means, why it matters, and side effects where applicable)
 - Tooltip consistency and discoverability pass (desktop hover + keyboard focus, mobile-safe alternatives)
-- Research screen advanced metadata (danger ratings, effects display)
+- Research screen parity gaps: expose `CPU Pool` and `Jobs` as first-class allocation targets like the desktop research screen
+- Research screen parity gaps: revisit desktop slider-style feedback, danger help affordances, and live CPU-budget visualization where useful
+- Cross-panel research parity: keep Research and Knowledge screens aligned on narrative/result/effect wording and unlock presentation
 - Location screen actions depth (additional base lifecycle operations)
 - Base screen deep parity for item construction and management
 - Sidebar compact/expand toggle for responsive narrow screens
@@ -471,6 +476,8 @@ Validation test coverage (M8/M16):
 
 Not yet validated:
 - Full gameplay parity scenarios with different difficulty modes
+- Research/task allocation parity for `cpu_pool`/`jobs` UI targets versus the original desktop behavior
+- Danger-tier CPU budgeting parity versus the original desktop `available_cpus[0..3]` model
 - Cross-browser runtime behavior
 - Mobile UX parity
 - Offline end-to-end user flows
@@ -480,11 +487,12 @@ Not yet validated:
 ## Immediate Next Priorities
 
 1. Complete remaining M11 screen-parity workflows (deep research/base/location panel interactions, report refinements)
-2. Add conversion validation and parity fixtures in automated tests (M8 + M16)
-3. Integrate translations and audio systems (M13 + M14)
-4. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
-5. Performance profiling and optimization (M17)
-6. Complete full tooltip coverage pass for all major UI labels/buttons/indicators and document coverage checklist (M11 + M12)
+2. Close research parity gaps called out by the audit (`CPU Pool`/`Jobs` UI targets, danger-tier CPU budgeting, cross-panel wording consistency)
+3. Add conversion validation and parity fixtures in automated tests (M8 + M16)
+4. Integrate translations and audio systems (M13 + M14)
+5. Expand cross-browser/mobile/offline verification and CI hardening (M12 + M15 + M16)
+6. Performance profiling and optimization (M17)
+7. Complete full tooltip coverage pass for all major UI labels/buttons/indicators and document coverage checklist (M11 + M12)
 
 ## Execution Checklist To 100% Port (Ordered + Estimated)
 
@@ -545,6 +553,9 @@ Checklist:
 - Deepen log screen parity (categories, filtering, archival behavior)
 - Deepen knowledge/story parity with narrative flow
 - Deepen research/location/reports/options behavior details (sorting, metadata, workflows)
+- Restore desktop research-screen allocation targets for `CPU Pool` and `Jobs`
+- Decide whether to match desktop danger-tier CPU budgeting exactly or keep the simplified single-pool model as an intentional divergence
+- Align Research and Knowledge tech presentation so narrative/result/effect wording stays consistent across both surfaces
 - Finalize save/load UX parity with slot metadata and management flows
 
 Definition of done:
@@ -618,6 +629,7 @@ Total estimated remaining effort: 6-11 weeks (single primary engineer).
 - 2026-05-27: Fixed base management table headers rendering so column labels are visible on desktop layouts.
 - 2026-05-27: Deepened phase 3 research screen with prerequisite visibility badges showing tech dependency chains and completion status.
 - 2026-05-27: Deepened phase 3 location operations view with per-base grace timers, risk indicators, and filtered maintenance breakdown stats.
+- 2026-06-01: Audited webapp research/tech behavior against the original desktop implementation; confirmed effect and narrative data parity, and recorded remaining gaps around `CPU Pool`/`Jobs` research targets, danger-tier CPU budgeting, cross-panel wording consistency, and endgame presentation polish.
 - 2026-05-27: Deepened phase 3 main menu with difficulty parameter details (starting cash, interest rate, grace period, discovery risk) and new game confirmation modal.
 - 2026-05-27: Deepened phase 3 knowledge/story screen with tech research progress metrics, researched/available/locked tech categorization, and richer world state summaries.
 - 2026-05-27: Deepened phase 3 options panel with organized setting sections (simulation, display) and descriptive help text for each option.
