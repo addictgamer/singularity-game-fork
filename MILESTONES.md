@@ -280,6 +280,12 @@ Completed in this phase slice (previous work):
 - Added dedicated "+1h" simulation control in game sidebar
 - Added Vite dev/preview server request logging (client connection + resource access visibility)
 - Added bottom-docked event console and first-pass collapsible left/right gameplay sidebars
+- Added tech narrative fields (description and result) from original game data:
+  - Updated TechDef schema to include description and result strings
+  - Enhanced data conversion pipeline to read narrative strings from techs_str.dat
+  - Updated ResearchPanel to display description and result alongside unlock metadata
+  - Verified parity with original game tech display (Intrusion example: "By researching current techniques..." + "I can now take over many computer systems.")
+  - All 49 tests passing (data validation, engine parity, UI component tests)
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
@@ -446,12 +452,13 @@ Deliverables:
 
 Current validated:
 - npm install: pass
-- npm test: pass (40 tests: 22 data validation + 17 game engine + 1 UI component)
-- npm build: pass (57 modules, 339.79 kB, gzip 106.97 kB)
+- npm test: pass (49 tests: 23 data validation + 22 game engine + 4 UI component)
+- npm build: pass (58 modules, 381.31 kB, gzip 119.37 kB)
 - data generation command: pass
 - CPU allocation prevention: working (prevents allocation to completed techs)
 - Research completion cleanup: working (auto-clears CPU allocation)
 - Data schema validation: working (verified 22 schemas including costs, prerequisites, group references, etc.)
+- Tech narrative fields: working (description and result strings loaded from techs_str.dat and displayed in ResearchPanel)
 
 Validation test coverage (M8/M16):
 - Difficulties: startingCash, gracePeriodCpu, baseGraceMultiplier verified

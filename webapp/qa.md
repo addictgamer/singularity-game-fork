@@ -61,3 +61,19 @@ Add some more base management options. Like maybe build multiples at once.
 - Destroy all high risk bases at a location or whatever.
 
 Antartica doesn't have the hover overlay and is clicable over the entire region to select it.
+Apparently AI doesn't know how to handle this ...
+
+
+
+I like its suggestions:
+```
+If you want, next deep research pass can target one of these:
+
+Expand/collapse per-tech dossier rows (cleaner for long effect text)
+Research queue/priority mode (single active target plus auto-redirect CPU)
+Cross-panel integration so Knowledge and Research share identical effect wording and unlock cards
+```
+
+I'd also love a "tech tree" visual view.
+
+Need to ask the AI if all research effects have been fully implemented and have parity with the original game.

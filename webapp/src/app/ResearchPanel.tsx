@@ -7,9 +7,58 @@ interface ResearchPanelProps {
   onAssignCpu: (taskId: string, amount: number) => void;
 }
 
+const SECONDS_PER_DAY = 86400;
+
+function describeTechEffects(effects: string[]): string[] {
+  const descriptions: string[] = [];
+
+  for (let index = 0; index < effects.length; index += 1) {
+    const action = effects[index];
+    if (!action) {
+      continue;
+    }
+
+    if (action === "interest") {
+      descriptions.push(`Interest rate ${Number.parseInt(effects[index + 1] ?? "0", 10)}%`);
+      index += 1;
+    } else if (action === "income") {
+      descriptions.push(`Passive income +${Number.parseInt(effects[index + 1] ?? "0", 10)}`);
+      index += 1;
+    } else if (action === "cost_labor") {
+      descriptions.push(`Labor cost modifier ${Number.parseInt(effects[index + 1] ?? "0", 10)}`);
+      index += 1;
+    } else if (action === "job_profit") {
+      descriptions.push(`Job profit +${Number.parseInt(effects[index + 1] ?? "0", 10)}%`);
+      index += 1;
+    } else if (action === "display_discover") {
+      descriptions.push(`Detection status label becomes \"${effects[index + 1] ?? "unknown"}\"`);
+      index += 1;
+    } else if (action === "endgame") {
+      descriptions.push("Unlocks apotheosis endgame state");
+    } else if (action === "suspicion") {
+      const who = effects[index + 1] ?? "unknown";
+      const value = Number.parseInt(effects[index + 2] ?? "0", 10);
+      if (who === "onetime") {
+        descriptions.push(`One-time suspicion reduction across all groups: ${value}`);
+      } else {
+        descriptions.push(`Suspicion pressure modifier for ${who}: ${value}`);
+      }
+      index += 2;
+    } else if (action === "discover") {
+      const who = effects[index + 1] ?? "unknown";
+      const value = Number.parseInt(effects[index + 2] ?? "0", 10);
+      descriptions.push(`Base discovery modifier for ${who}: ${value}`);
+      index += 2;
+    }
+  }
+
+  return descriptions;
+}
+
 export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
   const [visibilityFilter, setVisibilityFilter] = useState<"all" | "available" | "locked" | "done">("all");
   const [sortMode, setSortMode] = useState<"status" | "name" | "cash-left" | "cpu-left">("status");
+  const [allocationInputs, setAllocationInputs] = useState<Record<string, string>>({});
   const totalAvailableCpu = Math.max(0, game.availableCpus[0]);
   const totalAllocatedCpu = Array.from(game.cpuUsage.entries()).reduce((sum, [taskId, amount]) => {
     if (taskId === "cpu_pool") {
@@ -19,10 +68,37 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
   }, 0);
   const freeCpu = Math.max(0, totalAvailableCpu - totalAllocatedCpu);
 
+  const techById = new Map(Array.from(game.techs.values()).map((tech) => [tech.id, tech]));
+  const unlocksByTech = new Map<string, string[]>();
+  for (const tech of game.techs.values()) {
+    for (const prereqId of tech.prerequisites) {
+      const unlocked = unlocksByTech.get(prereqId) ?? [];
+      unlocked.push(tech.name);
+      unlocksByTech.set(prereqId, unlocked);
+    }
+  }
+
   const techRows = Array.from(game.techs.values())
     .map((tech) => {
       const available = tech.available(game);
       const allocation = game.getAllocatedCpuFor(tech.id);
+      const prerequisites = tech.prerequisites
+        .map((prereqId) => {
+          const prereq = techById.get(prereqId);
+          return prereq
+            ? {
+                id: prereqId,
+                name: prereq.name,
+                done: prereq.done,
+              }
+            : null;
+        })
+        .filter((item): item is { id: string; name: string; done: boolean } => item !== null);
+      const description = game.techDefs.get(tech.id)?.description ?? "";
+      const result = game.techDefs.get(tech.id)?.result ?? "";
+      const unlocks = (unlocksByTech.get(tech.id) ?? []).sort((a, b) => a.localeCompare(b));
+      const hasCpuEta = allocation > 0 && tech.costLeft[RESOURCE_CPU] > 0;
+      const etaDays = hasCpuEta ? tech.costLeft[RESOURCE_CPU] / (allocation * SECONDS_PER_DAY) : null;
       const cpuProgress =
         tech.totalCost[RESOURCE_CPU] > 0
           ? Math.max(
@@ -37,6 +113,11 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
         done: tech.done,
         available,
         allocation,
+        prerequisites,
+        description,
+        result,
+        unlocks,
+        etaDays,
         cpuLeft: tech.costLeft[RESOURCE_CPU],
         cashLeft: tech.costLeft[RESOURCE_CASH],
         cpuProgress,
@@ -108,8 +189,18 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
         {techRows.map((row) => {
           const maxAllocForRow = Math.max(0, totalAvailableCpu - (totalAllocatedCpu - row.allocation));
           const canIncrease = row.available && !row.done;
+          const canDecrease = row.available && !row.done && row.allocation > 0;
           const canAssignDelta = (delta: number) => canIncrease && row.allocation + delta <= maxAllocForRow;
           const blockedByBudget = !row.done && row.available && row.allocation >= maxAllocForRow;
+          const exactInputValue = allocationInputs[row.id] ?? String(row.allocation);
+          const exactTarget = Number.parseInt(exactInputValue, 10);
+          const canSetExact =
+            row.available &&
+            !row.done &&
+            Number.isFinite(exactTarget) &&
+            exactTarget >= 0 &&
+            exactTarget <= maxAllocForRow &&
+            exactTarget !== row.allocation;
 
           return (
             <article key={row.id} className={`research-row ${row.done ? "done" : row.available ? "available" : "locked"}`}>
@@ -123,35 +214,50 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
               <span>CPU left: {row.cpuLeft}</span>
               <span>Cash left: {row.cashLeft}</span>
               <span>CPU assigned: {row.allocation}</span>
+              <span>
+                ETA: {row.cashLeft > 0 ? "Awaiting cash" : row.etaDays === null ? "--" : `${row.etaDays.toFixed(1)} days`}
+              </span>
               <span className={`danger-level danger-${row.danger}`}>Danger: {row.danger}</span>
             </div>
             <div className="progress-track" aria-label={`${row.name} cpu progress`}>
               <div className="progress-fill" style={{ width: `${row.cpuProgress}%` }} />
             </div>
-            {Array.from(game.techs.values())
-              .filter((tech) => tech.id === row.id)
-              .flatMap((tech) => tech.prerequisites)
-              .length > 0 ? (
+            {row.prerequisites.length > 0 ? (
               <div className="research-prerequisites">
                 <strong className="muted">Requires:</strong>
-                {Array.from(game.techs.values())
-                  .filter((tech) => tech.id === row.id)
-                  .flatMap((tech) => tech.prerequisites)
-                  .map((prereqId) => {
-                    const prereq = game.techs.get(prereqId);
-                    if (!prereq) return null;
-                    return (
-                      <span
-                        key={prereqId}
-                        className={`prerequisite-badge ${prereq.done ? "done" : "pending"}`}
-                      >
-                        {prereq.name}
-                      </span>
-                    );
-                  })}
+                {row.prerequisites.map((prereq) => (
+                  <span
+                    key={prereq.id}
+                    className={`prerequisite-badge ${prereq.done ? "done" : "pending"}`}
+                  >
+                    {prereq.name}
+                  </span>
+                ))}
               </div>
             ) : null}
+            <div className="research-details">
+              {row.description ? (
+                <p className="research-detail-line">
+                  <strong>Description:</strong> {row.description}
+                </p>
+              ) : null}
+              {row.result ? (
+                <p className="research-detail-line">
+                  <strong>Result:</strong> {row.result}
+                </p>
+              ) : null}
+              <p className="research-detail-line">
+                <strong>Unlocks:</strong> {row.unlocks.length === 0 ? "No direct downstream tech unlocks." : row.unlocks.join(", ")}
+              </p>
+            </div>
             <div className="research-actions">
+              <button
+                disabled={!canDecrease}
+                onClick={() => onAssignCpu(row.id, Math.max(0, row.allocation - 1))}
+                title={row.allocation === 0 ? "No allocation to reduce" : "Decrease allocation by 1 CPU"}
+              >
+                -1 CPU
+              </button>
               <button
                 disabled={!canAssignDelta(1)}
                 onClick={() => onAssignCpu(row.id, row.allocation + 1)}
@@ -197,12 +303,73 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
               >
                 +10 CPU
               </button>
+              <button
+                disabled={!canIncrease || row.allocation >= maxAllocForRow}
+                onClick={() => onAssignCpu(row.id, maxAllocForRow)}
+                title={
+                  row.done
+                    ? "Completed - cannot assign"
+                    : !row.available
+                      ? "Locked - prerequisites not met"
+                      : row.allocation >= maxAllocForRow
+                        ? "Already at max for current budget"
+                        : "Assign all currently available CPU to this technology"
+                }
+              >
+                Max CPU
+              </button>
               <button 
                 disabled={row.allocation === 0}
                 onClick={() => onAssignCpu(row.id, 0)}
                 title={row.allocation === 0 ? "No allocation to clear" : "Clear CPU allocation"}
               >
                 Clear
+              </button>
+            </div>
+            <div className="research-exact-assign">
+              <label htmlFor={`research-exact-${row.id}`}>Set CPU</label>
+              <input
+                id={`research-exact-${row.id}`}
+                type="number"
+                min={0}
+                max={maxAllocForRow}
+                step={1}
+                value={exactInputValue}
+                disabled={!row.available || row.done}
+                onChange={(event) =>
+                  setAllocationInputs((current) => ({
+                    ...current,
+                    [row.id]: event.target.value,
+                  }))
+                }
+                aria-label={`Set CPU allocation for ${row.name}`}
+              />
+              <button
+                disabled={!canSetExact}
+                onClick={() => {
+                  onAssignCpu(row.id, exactTarget);
+                  setAllocationInputs((current) => ({
+                    ...current,
+                    [row.id]: String(exactTarget),
+                  }));
+                }}
+                title={
+                  !row.available
+                    ? "Locked - prerequisites not met"
+                    : row.done
+                      ? "Completed - cannot assign"
+                      : !Number.isFinite(exactTarget)
+                        ? "Enter a whole CPU amount"
+                        : exactTarget > maxAllocForRow
+                          ? "Not enough free CPU"
+                          : exactTarget < 0
+                            ? "CPU cannot be negative"
+                            : exactTarget === row.allocation
+                              ? "Already at this allocation"
+                              : "Apply exact CPU allocation"
+                }
+              >
+                Set
               </button>
             </div>
             </article>

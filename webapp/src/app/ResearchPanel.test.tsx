@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it } from "vitest";
-import { render, within } from "@testing-library/react";
+import { fireEvent, render, within } from "@testing-library/react";
+import { vi } from "vitest";
 import gameDataJson from "../generated/gameData.json";
 import { GameData } from "../engine/types";
 import { GameState } from "../engine/game";
@@ -84,4 +85,41 @@ describe("ResearchPanel", () => {
     const { getAllByText } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
     expect(getAllByText("Idle CPUs available for research: 0").length).toBeGreaterThan(0);
   });
+
+  it("assigns the current budget cap with Max CPU", () => {
+    const game = new GameState(gameData, "normal");
+    game.availableCpus[0] = 6;
+    game.cpuUsage.clear();
+    const onAssignCpu = vi.fn<(taskId: string, amount: number) => void>();
+
+    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={onAssignCpu} />);
+    const maxButtons = getAllByRole("button", { name: "Max CPU" }) as HTMLButtonElement[];
+    const maxButton = maxButtons.find((button) => !button.disabled);
+    if (!maxButton) {
+      throw new Error("No enabled Max CPU button found");
+    }
+
+    const row = maxButton.closest("article");
+    if (!row) {
+      throw new Error("Research row container missing");
+    }
+    const techId = row.querySelector("header strong")?.textContent;
+    if (!techId) {
+      throw new Error("Research row tech id missing");
+    }
+
+    const totalAvailableCpu = Math.max(0, game.availableCpus[0]);
+    const totalAllocatedCpu = Array.from(game.cpuUsage.entries()).reduce((sum, [taskId, amount]) => {
+      if (taskId === "cpu_pool") {
+        return sum;
+      }
+      return sum + Math.max(0, amount);
+    }, 0);
+    const currentAllocation = game.getAllocatedCpuFor(techId);
+    const maxAllocForRow = Math.max(0, totalAvailableCpu - (totalAllocatedCpu - currentAllocation));
+
+    fireEvent.click(maxButton);
+    expect(onAssignCpu).toHaveBeenCalledWith(techId, maxAllocForRow);
+  });
+
 });

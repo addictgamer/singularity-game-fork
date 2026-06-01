@@ -29,6 +29,8 @@ export interface TechDef {
   prerequisites: string[];
   danger: number;
   effects: string[];
+  description: string;
+  result: string;
 }
 
 export interface BaseDef {

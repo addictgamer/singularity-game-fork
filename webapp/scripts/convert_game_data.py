@@ -140,6 +140,8 @@ def load_tasks() -> list[dict[str, object]]:
 
 def load_techs() -> list[dict[str, object]]:
     records = read_config(DATA_DIR / "techs.dat")
+    strings = read_config(DATA_DIR / "techs_str.dat")
+    strings_by_id = {str(s["id"]): s for s in strings}
     return [
         {
             "id": str(record["id"]),
@@ -148,6 +150,8 @@ def load_techs() -> list[dict[str, object]]:
             "prerequisites": parse_prerequisites(record),
             "danger": parse_int(record.get("danger")),
             "effects": [str(part) for part in record.get("effect", [])],
+            "description": str(strings_by_id.get(str(record["id"]), {}).get("description", "")),
+            "result": str(strings_by_id.get(str(record["id"]), {}).get("result", "")),
         }
         for record in records
     ]

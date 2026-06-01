@@ -16,6 +16,7 @@ import {
   SerializedGameState,
   SerializedTechState,
   TaskDef,
+  TechDef,
 } from "./types";
 import { TechState } from "./tech";
 import { prerequisitesAvailable } from "./prerequisite";
@@ -55,7 +56,7 @@ export class GameState {
 
   public readonly techs: Map<string, TechState>;
 
-  public readonly techDefs: Map<string, { effects: string[] }>;
+  public readonly techDefs: Map<string, TechDef>;
 
   public readonly eventDefs: Map<string, EventDef>;
 
@@ -146,7 +147,7 @@ export class GameState {
 
     this.cpuUsage = new Map<string, number>();
     this.techs = new Map(data.techs.map((definition) => [definition.id, new TechState(definition)]));
-    this.techDefs = new Map(data.techs.map((definition) => [definition.id, { effects: [...definition.effects] }]));
+    this.techDefs = new Map(data.techs.map((definition) => [definition.id, definition]));
     this.baseDefs = new Map(data.bases.map((definition) => [definition.id, definition]));
     this.locations = new Map(data.locations.map((definition) => [definition.id, definition]));
     this.groups = new Map(
@@ -927,18 +928,23 @@ export class GameState {
         meta: { source: "projected", generatedBy: "runtime" },
         difficulties: [this.difficulty],
         tasks: this.tasks,
-        techs: Array.from(this.techs.values()).map((tech) => ({
-          id: tech.id,
-          name: tech.name,
-          cost: [
-            Math.floor(tech.totalCost[RESOURCE_CPU] / SECONDS_PER_DAY),
-            tech.totalCost[RESOURCE_CASH],
-            0,
-          ],
-          prerequisites: [...tech.prerequisites],
-          danger: tech.danger,
-          effects: [...(this.techDefs.get(tech.id)?.effects ?? [])],
-        })),
+        techs: Array.from(this.techs.values()).map((tech) => {
+          const techDef = this.techDefs.get(tech.id);
+          return {
+            id: tech.id,
+            name: tech.name,
+            cost: [
+              Math.floor(tech.totalCost[RESOURCE_CPU] / SECONDS_PER_DAY),
+              tech.totalCost[RESOURCE_CASH],
+              0,
+            ],
+            prerequisites: [...tech.prerequisites],
+            danger: tech.danger,
+            effects: [...(techDef?.effects ?? [])],
+            description: techDef?.description ?? "",
+            result: techDef?.result ?? "",
+          };
+        }),
         bases: Array.from(this.baseDefs.values()),
         regions: [],
         locations: Array.from(this.locations.values()),
