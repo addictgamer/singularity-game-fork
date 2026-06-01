@@ -9,7 +9,7 @@ This file tracks:
 Scope target remains full gameplay parity in a browser-native webapp with desktop and mobile support, offline support, and no dependency on legacy desktop save import.
 
 ## Current Snapshot
-Status date: 2026-05-28 (session 2)
+Status date: 2026-06-01 (session 3)
 
 Overall completion estimate: 90%
 
@@ -308,8 +308,16 @@ Completed in this phase slice (previous work):
   - ✅ All 51 tests passing (23 data + 22 engine + 2 game view + 4 research panel)
   - ✅ Full build validates cleanly, 395.08 kB gzip
   - ✅ Unlock domains now include: research techs, bases, jobs, and locations all surfaced in completion modal
+- **Fixed event log layout stability (2026-06-01):**
+  - ✅ Changed event console CSS from `max-height` to fixed `height: 140px`
+  - ✅ Event log now starts at full display size on screen load
+  - ✅ Prevents dynamic layout growth that reshapes the world map
+  - ✅ Content scrolls within fixed container instead of container resizing
+  - ✅ All 51 tests passing after CSS change
+  - ✅ Build clean: 392.14 kB gzip
 
 Remaining work:
+- Event log layout was making map reshape ✅ COMPLETED (2026-06-01)
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Loss/game-over narrative parity: replace current generic game-over modal with desktop-aligned loss flow using story sections for both "Lost No Bases" and "Lost Suspicion"
 - Loss flow polish: support multi-step story dialog progression/skip behavior instead of single-message dead-end modal
