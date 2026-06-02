@@ -281,8 +281,6 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
     return `${node.etaDays.toFixed(1)} days`;
   };
 
-  const detailDependents = detailNode?.dependents ?? [];
-
   const describeNodeState = (
     state: "done" | "in-progress" | "paused" | "locked" | "danger" | "danger-locked" | "available"
   ): string => {
@@ -507,16 +505,16 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
                   </>
                 )}
 
-                {detailTech.prerequisites.length > 0 && (
-                  <>
-                    <dt>Requires</dt>
-                    <dd>
-                      {detailTech.prerequisites
-                        .map((id) => game.techs.get(id)?.name ?? id)
-                        .join(", ")}
-                    </dd>
-                  </>
-                )}
+                <>
+                  <dt>Dependencies</dt>
+                  <dd>
+                    {detailTech.prerequisites.length > 0
+                      ? detailTech.prerequisites
+                          .map((id) => game.techs.get(id)?.name ?? id)
+                          .join(", ")
+                      : "None"}
+                  </dd>
+                </>
 
                 {detailTechId && (
                   <>
@@ -529,14 +527,6 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
                   </>
                 )}
 
-                {detailDependents.length > 0 && (
-                  <>
-                    <dt>Dependents</dt>
-                    <dd>
-                      {detailDependents.map((techId) => game.techs.get(techId)?.name ?? techId).join(", ")}
-                    </dd>
-                  </>
-                )}
               </dl>
             </div>
             {(() => {
