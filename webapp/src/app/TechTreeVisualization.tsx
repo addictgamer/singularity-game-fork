@@ -60,7 +60,7 @@ const LAYOUT_COMPACT: LayoutMetrics = {
   padding: 28,
 };
 
-const DANGEROUS_THRESHOLD = 5;
+const DANGEROUS_THRESHOLD = 1;
 
 export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizationProps) {
   const [selectedTechId, setSelectedTechId] = useState<string | null>(null);
@@ -242,12 +242,11 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
   const detailNode = detailTechId ? nodeMap.get(detailTechId) ?? null : null;
   const detailUnlocks = detailTechId ? unlockedByTechId.get(detailTechId) ?? [] : [];
 
-  const getNodeState = (node: LayoutNode): "done" | "in-progress" | "paused" | "locked" | "danger" | "available" => {
+  const getNodeState = (
+    node: LayoutNode
+  ): "done" | "in-progress" | "paused" | "locked" | "danger" | "danger-locked" | "available" => {
     if (node.done) {
       return "done";
-    }
-    if (!node.available) {
-      return "locked";
     }
     if (node.allocation > 0) {
       return "in-progress";
@@ -258,7 +257,13 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
       return "paused";
     }
     if (node.danger >= DANGEROUS_THRESHOLD) {
+      if (!node.available) {
+        return "danger-locked";
+      }
       return "danger";
+    }
+    if (!node.available) {
+      return "locked";
     }
     return "available";
   };
@@ -278,7 +283,9 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
 
   const detailDependents = detailNode?.dependents ?? [];
 
-  const describeNodeState = (state: "done" | "in-progress" | "paused" | "locked" | "danger" | "available"): string => {
+  const describeNodeState = (
+    state: "done" | "in-progress" | "paused" | "locked" | "danger" | "danger-locked" | "available"
+  ): string => {
     if (state === "done") {
       return "Done";
     }
@@ -290,6 +297,9 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
     }
     if (state === "locked") {
       return "Locked";
+    }
+    if (state === "danger-locked") {
+      return "Danger Locked";
     }
     if (state === "danger") {
       return "Dangerous";
@@ -332,13 +342,13 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
     <section className={`card card-span-2 tech-tree-screen${compactMode ? " compact" : ""}`}>
       <h2>Technology Tree</h2>
       <p className="muted">
-        Click a tech to inspect what it requires and what it unlocks. Colors: in-progress yellow, paused amber, locked gray, dangerous unlocked red, complete green.
+        Click a tech to inspect what it requires and what it unlocks. Colors: in-progress yellow, paused amber, locked gray, dangerous (locked or unlocked) red, complete green.
       </p>
       <div className="tech-tree-legend" aria-label="Technology status legend">
         <span className="legend-chip in-progress">In Progress</span>
         <span className="legend-chip paused">Paused</span>
         <span className="legend-chip locked">Locked</span>
-        <span className="legend-chip danger">Dangerous Unlocked</span>
+        <span className="legend-chip danger">Dangerous</span>
         <span className="legend-chip done">Done</span>
       </div>
 
@@ -455,14 +465,16 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
                 <dd>
                   {detailTech.done
                     ? "Done"
-                    : !detailNode.available
-                      ? "Locked"
-                      : detailNode.allocation > 0
+                    : detailNode.allocation > 0
                         ? "In progress"
                         : detailNode.cpuProgressPercent > 0 || detailNode.cashProgressPercent > 0
                           ? "Paused"
-                        : detailNode.danger >= DANGEROUS_THRESHOLD
+                          : detailNode.danger >= DANGEROUS_THRESHOLD && !detailNode.available
+                            ? "Dangerous locked"
+                          : detailNode.danger >= DANGEROUS_THRESHOLD
                           ? "Dangerous unlocked"
+                          : !detailNode.available
+                            ? "Locked"
                           : "Unlocked"}
                 </dd>
 

@@ -795,6 +795,11 @@ button {
   border-color: #b53e3e;
 }
 
+.tech-card.danger-locked {
+  background: linear-gradient(160deg, #f7dddd 0%, #efc0c0 100%);
+  border-color: #b53e3e;
+}
+
 .tech-card.available {
   background: linear-gradient(160deg, #fdf0d8 0%, #f7e2bc 100%);
   border-color: #c0924f;
@@ -856,6 +861,12 @@ button {
   background: rgba(249, 215, 215, 0.95);
   border-color: #b43c3c;
   color: #7f1111;
+}
+
+.tech-card-status.danger-locked {
+  background: rgba(242, 194, 194, 0.95);
+  border-color: #ac3535;
+  color: #761010;
 }
 
 .tech-card-status.done {

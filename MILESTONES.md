@@ -332,11 +332,13 @@ Completed in this phase slice (previous work):
   - ✅ Added explicit "Paused" status for partially researched techs with 0 assigned CPUs
   - ✅ Cash progress display update: zero-cash techs now show "N/A" instead of "100%"
   - ✅ Fixed stale tech-tree status rendering after popup CPU changes (tree now refreshes without reopening)
+  - ✅ Dangerous-tech visual rule update: dangerous techs now render red in both locked and unlocked states
+  - ✅ Dangerous threshold update: any positive danger level now counts as dangerous for red tech-tree rendering
   - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
   - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
   - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button
   - ✅ All 51 tests passing after redesign
-  - ✅ Build clean: 405.19 kB gzip (59 modules), DOM/SVG branch graph visualization
+  - ✅ Build clean: 405.30 kB gzip (59 modules), DOM/SVG branch graph visualization
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
