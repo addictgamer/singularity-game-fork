@@ -9,12 +9,13 @@ import { BasePanel } from "./BasePanel";
 import { LogPanel } from "./LogPanel";
 import { KnowledgePanel } from "./KnowledgePanel";
 import { SavePanel } from "./SavePanel";
+import { TechTreeVisualization } from "./TechTreeVisualization";
 import { SaveSummary, ReportHistoryRecord } from "../store/persistence";
 import { AppSettings } from "../store/persistence";
 import { RESOURCE_CPU, RESOURCE_CASH, SECONDS_PER_DAY } from "../engine/constants";
 import { prerequisitesAvailable } from "../engine/prerequisite";
 
-type ModalId = "research" | "reports" | "bases" | "save" | "log" | "knowledge" | "options" | null;
+type ModalId = "research" | "reports" | "bases" | "save" | "log" | "knowledge" | "options" | "tech-tree" | null;
 
 type FloatingNotice = {
   id: number;
@@ -680,7 +681,7 @@ export function GameView({
         <div className="modal-overlay" onClick={() => setOpenModal(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
-            <ResearchPanel game={game} onAssignCpu={onAssignCpu} />
+            <ResearchPanel game={game} onAssignCpu={onAssignCpu} onShowTechTree={() => setOpenModal("tech-tree")} />
           </div>
         </div>
       )}
@@ -741,7 +742,7 @@ export function GameView({
         <div className="modal-overlay" onClick={() => setOpenModal(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
-            <KnowledgePanel game={game} entries={sessionLog} />
+            <KnowledgePanel game={game} entries={sessionLog} onShowTechTree={() => setOpenModal("tech-tree")} />
           </div>
         </div>
       )}
@@ -755,6 +756,15 @@ export function GameView({
               settingsLoaded={settingsLoaded}
               onUpdateSettings={onUpdateSettings}
             />
+          </div>
+        </div>
+      )}
+
+      {openModal === "tech-tree" && (
+        <div className="modal-overlay" onClick={() => setOpenModal(null)}>
+          <div className="modal-content tech-tree-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
+            <TechTreeVisualization game={game} />
           </div>
         </div>
       )}

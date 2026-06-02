@@ -5,6 +5,7 @@ import { RESOURCE_CASH, RESOURCE_CPU } from "../engine/constants";
 interface ResearchPanelProps {
   game: GameState;
   onAssignCpu: (taskId: string, amount: number) => void;
+  onShowTechTree: () => void;
 }
 
 const SECONDS_PER_DAY = 86400;
@@ -55,7 +56,7 @@ function describeTechEffects(effects: string[]): string[] {
   return descriptions;
 }
 
-export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
+export function ResearchPanel({ game, onAssignCpu, onShowTechTree }: ResearchPanelProps) {
   const [visibilityFilter, setVisibilityFilter] = useState<"all" | "available" | "locked" | "done">("all");
   const [sortMode, setSortMode] = useState<"status" | "name" | "cash-left" | "cpu-left">("status");
   const [allocationInputs, setAllocationInputs] = useState<Record<string, string>>({});
@@ -184,6 +185,7 @@ export function ResearchPanel({ game, onAssignCpu }: ResearchPanelProps) {
             <option value="cpu-left">CPU Left</option>
           </select>
         </label>
+        <button onClick={onShowTechTree} title="View visual technology tree">📊 View Tech Tree</button>
       </div>
       <div className="research-list">
         {techRows.map((row) => {

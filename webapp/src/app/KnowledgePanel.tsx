@@ -4,9 +4,10 @@ import { GameState } from "../engine/game";
 interface KnowledgePanelProps {
   game: GameState;
   entries: Array<{ id: number; day: number; kind: string; message: string }>;
+  onShowTechTree: () => void;
 }
 
-export function KnowledgePanel({ game, entries }: KnowledgePanelProps) {
+export function KnowledgePanel({ game, entries, onShowTechTree }: KnowledgePanelProps) {
   const researched = [...game.researchedTechs].sort((a, b) => a.localeCompare(b));
   const available = useMemo(
     () =>
@@ -130,6 +131,10 @@ export function KnowledgePanel({ game, entries }: KnowledgePanelProps) {
           <dd>{storyPhase}</dd>
         </div>
       </dl>
+
+      <button onClick={onShowTechTree} title="View visual technology tree" style={{ marginBottom: "1rem" }}>
+        📊 View Tech Tree
+      </button>
 
       <div className="knowledge-grid">
         <article>

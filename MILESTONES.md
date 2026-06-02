@@ -9,7 +9,7 @@ This file tracks:
 Scope target remains full gameplay parity in a browser-native webapp with desktop and mobile support, offline support, and no dependency on legacy desktop save import.
 
 ## Current Snapshot
-Status date: 2026-06-01 (session 3)
+Status date: 2026-06-01 (session 3 continued)
 
 Overall completion estimate: 90%
 
@@ -315,9 +315,24 @@ Completed in this phase slice (previous work):
   - ✅ Content scrolls within fixed container instead of container resizing
   - ✅ All 51 tests passing after CSS change
   - ✅ Build clean: 392.14 kB gzip
+- **Redesigned tech tree as branch-linked strategy graph (2026-06-01):**
+  - ✅ Replaced canvas dots with full tech cards (name, narrative description, and progress tracking)
+  - ✅ Added branch lines between prerequisites and unlocked dependents
+  - ✅ Enforced requested status colors: yellow (in progress), gray (locked), red (dangerous unlocked), green (done)
+  - ✅ Added per-tech tracking data in each card: CPU progress, cash progress, CPU assignment, and ETA state
+  - ✅ Improved selection flow: clicking a card highlights connected branches and opens detailed requires/unlocks context
+  - ✅ Follow-up polish: stronger branch contrast with halo strokes for easier dependency scanning
+  - ✅ Follow-up polish: clearer card hierarchy with explicit status badges and labeled CPU/Cash progress bars
+  - ✅ Follow-up polish: adaptive compact layout mode for large trees to keep dense graphs readable
+  - ✅ Interaction update: tech click now opens a dedicated popup modal instead of expanding inline details
+  - ✅ Detail modal supports close button, backdrop click, and Escape key dismissal
+  - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
+  - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
+  - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button
+  - ✅ All 51 tests passing after redesign
+  - ✅ Build clean: 401.40 kB gzip (59 modules), DOM/SVG branch graph visualization
 
 Remaining work:
-- Event log layout was making map reshape ✅ COMPLETED (2026-06-01)
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Loss/game-over narrative parity: replace current generic game-over modal with desktop-aligned loss flow using story sections for both "Lost No Bases" and "Lost Suspicion"
 - Loss flow polish: support multi-step story dialog progression/skip behavior instead of single-message dead-end modal

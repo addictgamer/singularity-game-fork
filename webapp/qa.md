@@ -89,6 +89,10 @@ Research completion should show a popup dialogue showing what was unlocked for n
 UI:
 Put bases before research in the Research Completed popup.
 
+Clicking on the tech tree item should pop up a dialogue box with info on the tech and the option to set research for it.
+Tech tree should also show items in progress, what % complete, and how long remains.
+Eh, nah, just build that info into the tech tree!
+
 
 ## Survivability
 

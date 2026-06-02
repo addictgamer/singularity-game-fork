@@ -23,7 +23,7 @@ describe("ResearchPanel", () => {
     }
 
     const cpuBefore = stealth.costLeft[1];
-    const { rerender, getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    const { rerender, getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} onShowTechTree={() => {}} />);
 
     // Find the Stealth row by matching the header strong element
     const articles = getAllByRole("article");
@@ -37,7 +37,7 @@ describe("ResearchPanel", () => {
     expect(within(rowBefore).getByText(`CPU left: ${stealth.costLeft[1]}`)).toBeTruthy();
 
     game.giveTime(SECONDS_PER_DAY);
-    rerender(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    rerender(<ResearchPanel game={game} onAssignCpu={() => {}} onShowTechTree={() => {}} />);
 
     const cpuAfter = stealth.costLeft[1];
     expect(cpuAfter).toBeLessThan(cpuBefore);
@@ -57,7 +57,7 @@ describe("ResearchPanel", () => {
     const game = new GameState(gameData, "impossible");
     game.setAllocatedCpuFor("jobs", 1);
 
-    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={() => {}} onShowTechTree={() => {}} />);
 
     const articles = getAllByRole("article");
     const row = articles.find((article) => {
@@ -82,7 +82,7 @@ describe("ResearchPanel", () => {
     const game = new GameState(gameData, "impossible");
     game.setAllocatedCpuFor("jobs", 1);
 
-    const { getAllByText } = render(<ResearchPanel game={game} onAssignCpu={() => {}} />);
+    const { getAllByText } = render(<ResearchPanel game={game} onAssignCpu={() => {}} onShowTechTree={() => {}} />);
     expect(getAllByText("Idle CPUs available for research: 0").length).toBeGreaterThan(0);
   });
 
@@ -92,7 +92,7 @@ describe("ResearchPanel", () => {
     game.cpuUsage.clear();
     const onAssignCpu = vi.fn<(taskId: string, amount: number) => void>();
 
-    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={onAssignCpu} />);
+    const { getAllByRole } = render(<ResearchPanel game={game} onAssignCpu={onAssignCpu} onShowTechTree={() => {}} />);
     const maxButtons = getAllByRole("button", { name: "Max CPU" }) as HTMLButtonElement[];
     const maxButton = maxButtons.find((button) => !button.disabled);
     if (!maxButton) {

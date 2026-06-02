@@ -653,6 +653,408 @@ button {
   margin: 0 0 0.35rem;
 }
 
+.tech-tree-screen {
+  padding: 0.9rem;
+}
+
+.tech-tree-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0.95rem;
+}
+
+.legend-chip {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.legend-chip.in-progress {
+  background: #fff0b8;
+  border-color: #d2ae1e;
+  color: #6d5200;
+}
+
+.legend-chip.locked {
+  background: #e7e7e7;
+  border-color: #9b9b9b;
+  color: #444;
+}
+
+.legend-chip.danger {
+  background: #f9d7d7;
+  border-color: #b74242;
+  color: #7a1010;
+}
+
+.legend-chip.done {
+  background: #d8f0d8;
+  border-color: #3f914e;
+  color: #155f22;
+}
+
+.tech-tree-viewport {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 20% 16%, rgba(255, 233, 192, 0.45) 0%, transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(241, 173, 130, 0.25) 0%, transparent 45%),
+    linear-gradient(180deg, #f8f3e7 0%, #f4ecdd 100%);
+  max-height: 68vh;
+  position: relative;
+}
+
+.tech-tree-stage {
+  position: relative;
+}
+
+.tech-tree-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tech-tree-edge {
+  fill: none;
+  stroke: rgba(70, 53, 41, 0.78);
+  stroke-width: 2.6;
+}
+
+.tech-tree-edge.selected {
+  stroke: rgba(240, 90, 40, 0.95);
+  stroke-width: 3.4;
+}
+
+.tech-tree-edge-halo {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 6.2;
+}
+
+.tech-tree-edge-halo.selected {
+  stroke: rgba(255, 231, 170, 0.95);
+  stroke-width: 8;
+}
+
+.tech-card {
+  position: absolute;
+  text-align: left;
+  margin: 0;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  padding: 0.7rem;
+  cursor: pointer;
+  color: #2f241c;
+  box-shadow: 0 8px 20px rgba(68, 45, 24, 0.14);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+.tech-card:hover,
+.tech-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(68, 45, 24, 0.2);
+}
+
+.tech-card.selected {
+  border-color: #f05a28;
+  box-shadow: 0 0 0 2px rgba(240, 90, 40, 0.2), 0 12px 26px rgba(68, 45, 24, 0.22);
+}
+
+.tech-card.in-progress {
+  background: linear-gradient(160deg, #fff6ce 0%, #ffe89d 100%);
+  border-color: #c7a518;
+}
+
+.tech-card.locked {
+  background: linear-gradient(160deg, #efefef 0%, #dfdfdf 100%);
+  border-color: #9f9f9f;
+}
+
+.tech-card.danger {
+  background: linear-gradient(160deg, #ffe2e2 0%, #f8c7c7 100%);
+  border-color: #b53e3e;
+}
+
+.tech-card.available {
+  background: linear-gradient(160deg, #fdf0d8 0%, #f7e2bc 100%);
+  border-color: #c0924f;
+}
+
+.tech-card.done {
+  background: linear-gradient(160deg, #e2f5df 0%, #cfecc9 100%);
+  border-color: #3f8f4d;
+}
+
+.tech-card-head {
+  display: block;
+}
+
+.tech-card-head h3 {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.2;
+}
+
+.tech-card-badges {
+  margin-top: 0.38rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.tech-card-status {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.tech-card-status.in-progress {
+  background: rgba(255, 240, 184, 0.9);
+  border-color: #c89e00;
+  color: #725400;
+}
+
+.tech-card-status.locked {
+  background: rgba(230, 230, 230, 0.92);
+  border-color: #929292;
+  color: #494949;
+}
+
+.tech-card-status.danger {
+  background: rgba(249, 215, 215, 0.95);
+  border-color: #b43c3c;
+  color: #7f1111;
+}
+
+.tech-card-status.done {
+  background: rgba(216, 240, 216, 0.95);
+  border-color: #3f914e;
+  color: #1a6227;
+}
+
+.tech-card-status.available {
+  background: rgba(252, 236, 207, 0.95);
+  border-color: #b6874a;
+  color: #664521;
+}
+
+.tech-card-danger {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(50, 30, 20, 0.8);
+}
+
+.tech-card-description {
+  margin: 0.5rem 0 0.6rem;
+  font-size: 0.79rem;
+  line-height: 1.34;
+  color: #4d3b2f;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tech-card-metrics {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.tech-card-metrics p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #46352a;
+  font-weight: 600;
+}
+
+.tech-card-progress-stack {
+  margin-top: 0.48rem;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.tech-progress-row {
+  display: grid;
+  grid-template-columns: 2.1rem 1fr auto;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.tech-progress-label {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(55, 40, 30, 0.78);
+}
+
+.tech-progress-track {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(80, 60, 48, 0.18);
+  height: 0.36rem;
+}
+
+.tech-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.tech-progress-fill.cpu {
+  background: linear-gradient(90deg, #fd9448 0%, #f05a28 100%);
+}
+
+.tech-progress-fill.cash {
+  background: linear-gradient(90deg, #2f7a43 0%, #1e5f31 100%);
+}
+
+.tech-progress-value {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: rgba(53, 38, 29, 0.85);
+}
+
+.tech-tree-detail-panel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.tech-node-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 18, 14, 0.56);
+  backdrop-filter: blur(2px);
+}
+
+.tech-node-modal {
+  position: relative;
+  width: min(46rem, calc(100vw - 2rem));
+  max-height: min(80vh, 48rem);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  background:
+    linear-gradient(145deg, rgba(255, 253, 247, 0.98) 0%, rgba(244, 235, 221, 0.98) 100%),
+    url('/earth-night.jpg');
+  background-size: auto, cover;
+  background-position: center;
+  box-shadow: 0 16px 40px rgba(40, 25, 16, 0.45);
+}
+
+.tech-node-modal h3 {
+  margin: 0 2rem 0.8rem 0;
+}
+
+.tech-node-modal-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.7rem;
+  width: auto;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.2rem 0.35rem;
+}
+
+.tech-node-modal-close:hover,
+.tech-node-modal-close:focus-visible {
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.tech-tree-detail-panel h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1.2rem;
+}
+
+.tech-detail-content dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: auto 1fr;
+}
+
+.tech-detail-content dt {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.tech-detail-content dd {
+  margin: 0;
+  color: #555;
+}
+
+.tech-description {
+  font-style: italic;
+  color: #6f5040;
+  line-height: 1.4;
+}
+
+.modal-content.tech-tree-modal {
+  width: min(96vw, 1500px);
+  max-width: min(96vw, 1500px);
+  max-height: 94vh;
+  overflow: hidden;
+}
+
+.tech-tree-screen.compact .tech-card {
+  border-radius: 12px;
+  padding: 0.55rem;
+}
+
+.tech-tree-screen.compact .tech-card-head h3 {
+  font-size: 0.84rem;
+}
+
+.tech-tree-screen.compact .tech-card-description {
+  margin: 0.35rem 0 0.44rem;
+  font-size: 0.72rem;
+  -webkit-line-clamp: 2;
+}
+
+.tech-tree-screen.compact .tech-card-metrics p {
+  font-size: 0.66rem;
+}
+
+.tech-tree-screen.compact .tech-progress-label,
+.tech-tree-screen.compact .tech-progress-value {
+  font-size: 0.58rem;
+}
+
 .knowledge-grid {
   display: grid;
   gap: 0.8rem;
@@ -928,6 +1330,14 @@ h3 {
   .save-row-actions {
     width: 100%;
     min-width: 0;
+  }
+
+  .tech-tree-viewport {
+    max-height: 62vh;
+  }
+
+  .tech-tree-screen {
+    padding: 0.45rem;
   }
 }
 
