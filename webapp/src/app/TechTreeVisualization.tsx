@@ -19,6 +19,7 @@ interface LayoutNode {
   cashLeft: number;
   cpuTotal: number;
   cashTotal: number;
+  cashNotApplicable: boolean;
   cpuProgressPercent: number;
   cashProgressPercent: number;
   etaDays: number | null;
@@ -65,6 +66,14 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
   const [selectedTechId, setSelectedTechId] = useState<string | null>(null);
   const [detailTechId, setDetailTechId] = useState<string | null>(null);
   const [allocationInputs, setAllocationInputs] = useState<Record<string, string>>({});
+
+  // GameState is mutable, so use snapshots of mutable tech/cpu fields to invalidate memoized UI data.
+  const techStateSnapshot = Array.from(game.techs.values())
+    .map((tech) => `${tech.id}:${tech.done ? 1 : 0}:${tech.costLeft[RESOURCE_CPU]}:${tech.costLeft[RESOURCE_CASH]}`)
+    .join("|");
+  const cpuUsageSnapshot = Array.from(game.cpuUsage.entries())
+    .map(([taskId, amount]) => `${taskId}:${amount}`)
+    .join("|");
 
   const totalAvailableCpu = Math.max(0, game.availableCpus[0]);
   const totalAllocatedCpu = Array.from(game.cpuUsage.entries()).reduce((sum, [taskId, amount]) => {
@@ -175,6 +184,7 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
         const cashLeft = Math.max(0, Math.ceil(tech.costLeft[RESOURCE_CASH]));
         const cpuTotal = Math.max(0, tech.totalCost[RESOURCE_CPU]);
         const cashTotal = Math.max(0, tech.totalCost[RESOURCE_CASH]);
+        const cashNotApplicable = cashTotal <= 0;
         const cpuProgressPercent =
           cpuTotal > 0
             ? Math.max(0, Math.min(100, Math.round((1 - cpuLeft / cpuTotal) * 100)))
@@ -199,6 +209,7 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
           cashLeft,
           cpuTotal,
           cashTotal,
+          cashNotApplicable,
           cpuProgressPercent,
           cashProgressPercent,
           etaDays,
@@ -220,7 +231,7 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
     }
 
     return { nodes, edges, canvasWidth, canvasHeight, unlockedByTechId, compactMode, layout };
-  }, [game]);
+  }, [game, techStateSnapshot, cpuUsageSnapshot]);
 
   const nodeMap = useMemo(() => {
     return new Map(nodes.map((node) => [node.id, node]));
@@ -231,16 +242,20 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
   const detailNode = detailTechId ? nodeMap.get(detailTechId) ?? null : null;
   const detailUnlocks = detailTechId ? unlockedByTechId.get(detailTechId) ?? [] : [];
 
-  const getNodeState = (node: LayoutNode): "done" | "in-progress" | "locked" | "danger" | "available" => {
+  const getNodeState = (node: LayoutNode): "done" | "in-progress" | "paused" | "locked" | "danger" | "available" => {
     if (node.done) {
       return "done";
     }
     if (!node.available) {
       return "locked";
     }
-    const started = node.allocation > 0 || node.cpuProgressPercent > 0 || node.cashProgressPercent > 0;
-    if (started) {
+    if (node.allocation > 0) {
       return "in-progress";
+    }
+    const startedPreviously =
+      node.cpuProgressPercent > 0 || (!node.cashNotApplicable && node.cashProgressPercent > 0);
+    if (startedPreviously) {
+      return "paused";
     }
     if (node.danger >= DANGEROUS_THRESHOLD) {
       return "danger";
@@ -263,12 +278,15 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
 
   const detailDependents = detailNode?.dependents ?? [];
 
-  const describeNodeState = (state: "done" | "in-progress" | "locked" | "danger" | "available"): string => {
+  const describeNodeState = (state: "done" | "in-progress" | "paused" | "locked" | "danger" | "available"): string => {
     if (state === "done") {
       return "Done";
     }
     if (state === "in-progress") {
       return "In Progress";
+    }
+    if (state === "paused") {
+      return "Paused";
     }
     if (state === "locked") {
       return "Locked";
@@ -314,10 +332,11 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
     <section className={`card card-span-2 tech-tree-screen${compactMode ? " compact" : ""}`}>
       <h2>Technology Tree</h2>
       <p className="muted">
-        Click a tech to inspect what it requires and what it unlocks. Colors: in-progress yellow, locked gray, dangerous unlocked red, complete green.
+        Click a tech to inspect what it requires and what it unlocks. Colors: in-progress yellow, paused amber, locked gray, dangerous unlocked red, complete green.
       </p>
       <div className="tech-tree-legend" aria-label="Technology status legend">
         <span className="legend-chip in-progress">In Progress</span>
+        <span className="legend-chip paused">Paused</span>
         <span className="legend-chip locked">Locked</span>
         <span className="legend-chip danger">Dangerous Unlocked</span>
         <span className="legend-chip done">Done</span>
@@ -397,9 +416,12 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
                   <div className="tech-progress-row">
                     <span className="tech-progress-label">Cash</span>
                     <span className="tech-progress-track">
-                      <span className="tech-progress-fill cash" style={{ width: `${node.cashProgressPercent}%` }} />
+                      <span
+                        className="tech-progress-fill cash"
+                        style={{ width: node.cashNotApplicable ? "0%" : `${node.cashProgressPercent}%` }}
+                      />
                     </span>
-                    <span className="tech-progress-value">{node.cashProgressPercent}%</span>
+                    <span className="tech-progress-value">{node.cashNotApplicable ? "N/A" : `${node.cashProgressPercent}%`}</span>
                   </div>
                 </div>
               </button>
@@ -435,8 +457,10 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
                     ? "Done"
                     : !detailNode.available
                       ? "Locked"
-                      : detailNode.allocation > 0 || detailNode.cpuProgressPercent > 0 || detailNode.cashProgressPercent > 0
+                      : detailNode.allocation > 0
                         ? "In progress"
+                        : detailNode.cpuProgressPercent > 0 || detailNode.cashProgressPercent > 0
+                          ? "Paused"
                         : detailNode.danger >= DANGEROUS_THRESHOLD
                           ? "Dangerous unlocked"
                           : "Unlocked"}
@@ -451,7 +475,7 @@ export function TechTreeVisualization({ game, onAssignCpu }: TechTreeVisualizati
 
                 <dt>Progress</dt>
                 <dd>
-                  CPU {detailNode.cpuProgressPercent}% ({detailNode.cpuLeft} left) • Cash {detailNode.cashProgressPercent}% ({detailNode.cashLeft} left)
+                  CPU {detailNode.cpuProgressPercent}% ({detailNode.cpuLeft} left) • {detailNode.cashNotApplicable ? "Cash N/A" : `Cash ${detailNode.cashProgressPercent}% (${detailNode.cashLeft} left)`}
                 </dd>
 
                 <dt>Tracking</dt>

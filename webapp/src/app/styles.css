@@ -681,6 +681,12 @@ button {
   color: #6d5200;
 }
 
+.legend-chip.paused {
+  background: #f2e0b6;
+  border-color: #b6872f;
+  color: #694200;
+}
+
 .legend-chip.locked {
   background: #e7e7e7;
   border-color: #9b9b9b;
@@ -774,6 +780,11 @@ button {
   border-color: #c7a518;
 }
 
+.tech-card.paused {
+  background: linear-gradient(160deg, #f8ead0 0%, #ecd3a0 100%);
+  border-color: #b7832f;
+}
+
 .tech-card.locked {
   background: linear-gradient(160deg, #efefef 0%, #dfdfdf 100%);
   border-color: #9f9f9f;
@@ -827,6 +838,12 @@ button {
   background: rgba(255, 240, 184, 0.9);
   border-color: #c89e00;
   color: #725400;
+}
+
+.tech-card-status.paused {
+  background: rgba(242, 224, 182, 0.95);
+  border-color: #b6872f;
+  color: #6f4500;
 }
 
 .tech-card-status.locked {

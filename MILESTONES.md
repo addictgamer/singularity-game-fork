@@ -328,11 +328,15 @@ Completed in this phase slice (previous work):
   - ✅ Detail modal supports close button, backdrop click, and Escape key dismissal
   - ✅ Added full per-tech research controls directly inside popup modal (−1/+1/+5/+10, max, clear, exact set)
   - ✅ Tech popup allocation logic now matches main research panel budget and lock/completion guardrails
+  - ✅ Status behavior update: "In Progress" now requires active CPU assignment
+  - ✅ Added explicit "Paused" status for partially researched techs with 0 assigned CPUs
+  - ✅ Cash progress display update: zero-cash techs now show "N/A" instead of "100%"
+  - ✅ Fixed stale tech-tree status rendering after popup CPU changes (tree now refreshes without reopening)
   - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
   - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
   - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button
   - ✅ All 51 tests passing after redesign
-  - ✅ Build clean: 404.75 kB gzip (59 modules), DOM/SVG branch graph visualization
+  - ✅ Build clean: 405.19 kB gzip (59 modules), DOM/SVG branch graph visualization
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)

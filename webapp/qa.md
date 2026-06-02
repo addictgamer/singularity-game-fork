@@ -89,9 +89,14 @@ Research completion should show a popup dialogue showing what was unlocked for n
 UI:
 Put bases before research in the Research Completed popup.
 
-Clicking on the tech tree item should pop up a dialogue box with info on the tech and the option to set research for it.
-Tech tree should also show items in progress, what % complete, and how long remains.
-Eh, nah, just build that info into the tech tree!
+Dangerous should show red in both locked & unlocked state.
+Technology Tree doesn't auto-update after state is changed in tech popup? It showed as paused even when it shouldn't.
+
+Research Tracker should always show shortest-ETA tech first.
+ESc. should only close tech popup if open and not the entire tech tree/research panel.
+Likewise, tech tree hitting escape OR clicking on the x for the tech tree windowx should go back to research panel.
+
+Only show the first level of locked techs in the tech tree.
 
 
 ## Survivability
