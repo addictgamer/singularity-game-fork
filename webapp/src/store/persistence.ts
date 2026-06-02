@@ -22,6 +22,13 @@ export interface AppSettings {
   autosaveEnabled: boolean;
   compactCards: boolean;
   confirmImport: boolean;
+  audioMuted: boolean;
+  masterVolume: number;
+  musicEnabled: boolean;
+  musicVolume: number;
+  musicShuffle: boolean;
+  sfxEnabled: boolean;
+  sfxVolume: number;
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -29,6 +36,13 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   autosaveEnabled: true,
   compactCards: false,
   confirmImport: true,
+  audioMuted: false,
+  masterVolume: 0.9,
+  musicEnabled: true,
+  musicVolume: 0.35,
+  musicShuffle: false,
+  sfxEnabled: true,
+  sfxVolume: 0.6,
 };
 
 interface SettingsRecord {

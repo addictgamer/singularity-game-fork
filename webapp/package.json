@@ -4,9 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "sync:music": "python3 ./scripts/sync_music.py",
+    "music:update": "git -C .. submodule update --init --recursive singularity/music/singularity-music && npm run sync:music",
+    "dev": "python3 ./scripts/sync_music.py && vite",
     "generate:data": "python3 ./scripts/convert_game_data.py",
-    "build": "python3 ./scripts/convert_game_data.py && tsc -b && vite build",
+    "build": "python3 ./scripts/sync_music.py && python3 ./scripts/convert_game_data.py && tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run"
   },

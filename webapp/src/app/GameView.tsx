@@ -466,6 +466,20 @@ export function GameView({
               <button className="btn-secondary" onClick={() => void onAdvanceHour()} disabled={gameOver}>
                 +1h
               </button>
+              <button
+                className="btn-secondary"
+                onClick={() => void onUpdateSettings({ musicEnabled: !settings.musicEnabled })}
+                title="Toggle music (Alt+M)"
+              >
+                {settings.musicEnabled ? "♫ Music On" : "♫ Music Off"}
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => void onUpdateSettings({ sfxEnabled: !settings.sfxEnabled })}
+                title="Toggle sound effects (Alt+S)"
+              >
+                {settings.sfxEnabled ? "🔔 SFX On" : "🔕 SFX Off"}
+              </button>
             </div>
 
             <button className="btn-exit" onClick={onReturnToMenu}>

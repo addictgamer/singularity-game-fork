@@ -1,31 +1,140 @@
-# Singularity Webapp (Implementation Slice)
+# Singularity Webapp
 
-This folder contains the first implemented vertical slice of the webapp rewrite plan:
+Browser-native rewrite of the Singularity strategy game, built with TypeScript, React, and Vite. Targets full parity with the original Python/Pygame desktop client.
 
-- Browser-native TypeScript + React + Vite app scaffold
-- Build-time data conversion from `singularity/data/*.dat` into JSON
-- Initial simulation engine for time, cash, CPU allocation, and early tech research
-- Location availability and base construction flow (engine + UI)
-- IndexedDB persistence via Dexie
-- JSON import/export for web savegames
-- Basic multi-screen shell for Map/Research/Location/Reports/Options navigation
-- PWA plugin wiring and manifest setup
-- Vitest coverage for core engine behavior and save roundtrip
+## Quick Start
 
-## Commands
-
-Run from this folder:
+Run all commands from this folder (`webapp/`):
 
 ```bash
-python3 ./scripts/convert_game_data.py
 npm install
-npm run test
-npm run dev
+npm run music:update    # Pull and sync music tracks (first time, requires submodule access)
+npm run dev             # Start dev server at http://localhost:5173
 ```
 
-## Notes
+## NPM Scripts
 
-- The engine currently focuses on parity for behaviors covered by early game tests (new game, CPU assignment, cash progression, and initial research flow).
-- The map is a styled placeholder. The full Pixi.js map rendering pass is the next major implementation milestone.
-- The location tab now supports selecting locations, checking availability, and building eligible bases.
-- Save compatibility currently targets the new web format only (`version: 1`).
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server. Auto-syncs music before starting. |
+| `npm run build` | Full production build (music sync → data conversion → TypeScript → Vite). |
+| `npm run preview` | Preview the production build locally. |
+| `npm test` | Run the Vitest test suite. |
+| `npm run generate:data` | Re-run game data conversion from `singularity/data/*.dat` only. |
+| `npm run sync:music` | Copy audio tracks from the music submodule into `public/music/` and regenerate the track manifest. |
+| `npm run music:update` | Initialize/update the `singularity-music` git submodule and then sync tracks. |
+
+## Project Structure
+
+```
+webapp/
+├── public/             # Static assets served at /
+│   ├── earth.jpg       # Daytime world map texture
+│   ├── earth-night.jpg # Night-time world map texture
+│   ├── sfx/            # Sound effect assets (click0.wav, etc.)
+│   └── music/          # Synced music tracks + generated tracks.json manifest
+├── scripts/
+│   ├── convert_game_data.py  # Reads game .dat files, writes src/generated/gameData.json
+│   └── sync_music.py         # Copies tracks from submodule into public/music/, writes tracks.json
+├── src/
+│   ├── app/            # React UI components and screens
+│   │   ├── App.tsx                    # Root shell: audio lifecycle, hotkeys, session log SFX routing
+│   │   ├── audio.ts                   # AudioController: music playlist, SFX, mute/volume, fallbacks
+│   │   ├── GameView.tsx               # Main game UI: map, sidebars, modals, floating notices
+│   │   ├── TechTreeVisualization.tsx  # SVG/DOM tech tree with branch layout and research popups
+│   │   ├── ResearchPanel.tsx          # Research allocation panel with CPU budget controls
+│   │   ├── KnowledgePanel.tsx         # Discovered tech dossiers and story milestones
+│   │   ├── LocationPanel.tsx          # Location selection and base construction
+│   │   ├── BasePanel.tsx              # Base management (power, abandon, destroy)
+│   │   ├── ReportsPanel.tsx           # Historical reports and resource outlook
+│   │   ├── LogPanel.tsx               # Session and archived event log
+│   │   ├── OptionsPanel.tsx           # Settings (simulation, display, audio)
+│   │   ├── SavePanel.tsx              # Save slot management, import/export
+│   │   ├── MainMenuPanel.tsx          # Start screen, difficulty selection, load
+│   │   └── styles.css                 # All application styles
+│   ├── engine/         # Game simulation engine (TypeScript port of original Python engine)
+│   │   ├── game.ts               # GameState, advance-by-seconds, serialization
+│   │   ├── tech.ts               # Tech state and research progression
+│   │   ├── prerequisite.ts       # Prerequisite graph evaluation
+│   │   ├── constants.ts          # Resource indices, timing constants
+│   │   ├── save.ts               # JSON import/export helpers
+│   │   └── types.ts              # Shared TypeScript types
+│   ├── store/
+│   │   ├── gameStore.ts          # Zustand store: game lifecycle, advance, save/load, session log
+│   │   └── persistence.ts        # Dexie IndexedDB schema, save/settings persistence
+│   └── generated/
+│       └── gameData.json         # Auto-generated at build time from .dat source files
+└── package.json
+```
+
+## Architecture Notes
+
+**Data flow**: Game data originates in `singularity/data/*.dat`, converted to `gameData.json` at build time via `scripts/convert_game_data.py`. All game state lives in `GameState` (engine) and `useGameStore` (Zustand). Settings are persisted to IndexedDB via Dexie.
+
+**Rendering**: World map uses HTML5 Canvas with shared region geometry for click detection. Tech tree uses a pure SVG/DOM layer-based layout with cubic Bézier branch curves and adaptive compact mode for dense graphs.
+
+**Save format**: Web saves use a JSON format (`version: 1`). Not compatible with the original Python `.sav` format.
+
+## Audio System
+
+`src/app/audio.ts` handles all audio:
+
+- **Background music**: Loads track list from `/music/tracks.json` (generated by `sync_music.py`). Falls back to built-in ambient synth when no tracks are available.
+- **Playlist**: Tracks play in sequence with optional shuffle. Track index persists in `localStorage` across sessions.
+- **Sound effects**: Click SFX plays on interactive controls. Additional SFX categories fire on gameplay events (research completed, base built/lost, save/load, warnings). Per-event cooldowns prevent rapid stacking.
+- **Settings**: Master volume, global mute, music/SFX enable/volume, and shuffle are persisted to IndexedDB and configurable from the Options panel or in-game sidebar toggles.
+- **Hotkeys** (not when focused in a text input):
+  - `M` — toggle global mute
+  - `Alt+M` — toggle music
+  - `Alt+S` — toggle SFX
+- **Autoplay recovery**: AudioContext is resumed on `visibilitychange` and `pageshow` to handle browser tab/sleep cycles.
+
+### Getting Music Tracks
+
+Tracks come from the `singularity/music/singularity-music` git submodule. To populate them:
+
+```bash
+# From repo root — initialize the submodule:
+git submodule update --init --recursive singularity/music/singularity-music
+
+# Then from webapp/ — copy into public/music and regenerate manifest:
+npm run sync:music
+```
+
+Or in one step from `webapp/`:
+
+```bash
+npm run music:update
+```
+
+If no tracks are present, the synth fallback is used and a one-time warning appears at the top of the screen with the command to fix it.
+
+## Settings Persistence
+
+All settings live in IndexedDB (Dexie, `singularity_webapp` database, `settings` table). Defaults are defined in `DEFAULT_APP_SETTINGS` in `src/store/persistence.ts` and merged with stored values on load, so new settings fields are backward compatible.
+
+## Testing
+
+```bash
+npm test
+```
+
+Tests use Vitest + jsdom + Testing Library. The suite covers core engine logic, game data validation, and UI integration. 51 tests across 4 test files.
+
+For a single-pass exit (CI-style):
+
+```bash
+npm test -- --run
+```
+
+## Tech Stack
+
+| Tool | Role |
+|---|---|
+| React 18 | UI framework |
+| TypeScript 5 | Type safety |
+| Vite 5 | Build tool and dev server |
+| Vitest 2 | Test runner |
+| Zustand 5 | App state management |
+| Dexie 4 | IndexedDB wrapper for save/settings |
+| Web Audio API | SFX fallback synthesis |

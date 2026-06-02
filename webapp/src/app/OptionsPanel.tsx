@@ -70,6 +70,91 @@ export function OptionsPanel({ settings, settingsLoaded, onUpdateSettings }: Opt
             </label>
           </div>
 
+          <h3>Audio Settings</h3>
+          <div className="options-grid">
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.audioMuted}
+                onChange={(event) => void onUpdateSettings({ audioMuted: event.target.checked })}
+              />
+              Mute all audio (hotkey: M)
+            </label>
+
+            <label>
+              Master volume: {Math.round(settings.masterVolume * 100)}%
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={Math.round(settings.masterVolume * 100)}
+                onChange={(event) =>
+                  void onUpdateSettings({ masterVolume: Number.parseInt(event.target.value, 10) / 100 })
+                }
+                disabled={settings.audioMuted}
+              />
+            </label>
+
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.musicEnabled}
+                onChange={(event) => void onUpdateSettings({ musicEnabled: event.target.checked })}
+              />
+              Enable music (hotkey: Alt+M)
+            </label>
+
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.musicShuffle}
+                onChange={(event) => void onUpdateSettings({ musicShuffle: event.target.checked })}
+                disabled={!settings.musicEnabled || settings.audioMuted}
+              />
+              Shuffle music playlist
+            </label>
+
+            <label>
+              Music volume: {Math.round(settings.musicVolume * 100)}%
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={Math.round(settings.musicVolume * 100)}
+                onChange={(event) =>
+                  void onUpdateSettings({ musicVolume: Number.parseInt(event.target.value, 10) / 100 })
+                }
+                disabled={!settings.musicEnabled || settings.audioMuted}
+              />
+            </label>
+
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={settings.sfxEnabled}
+                onChange={(event) => void onUpdateSettings({ sfxEnabled: event.target.checked })}
+              />
+              Enable sound effects (hotkey: Alt+S)
+            </label>
+
+            <label>
+              SFX volume: {Math.round(settings.sfxVolume * 100)}%
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={Math.round(settings.sfxVolume * 100)}
+                onChange={(event) =>
+                  void onUpdateSettings({ sfxVolume: Number.parseInt(event.target.value, 10) / 100 })
+                }
+                disabled={!settings.sfxEnabled || settings.audioMuted}
+              />
+            </label>
+          </div>
+
           <p className="muted" style={{ fontSize: "0.85rem", marginTop: "1rem" }}>
             Settings are saved automatically to your browser's local storage and will persist across sessions.
           </p>

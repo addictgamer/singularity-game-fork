@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../store/gameStore";
 import { MainMenuPanel } from "./MainMenuPanel";
 import { GameView } from "./GameView";
+import { audioController } from "./audio";
 
 export function App() {
   const [gameAssetsReady, setGameAssetsReady] = useState(false);
+  const [audioWarning, setAudioWarning] = useState<string | null>(null);
+  const processedLogCountRef = useRef<number | null>(null);
 
   const {
     appScreen,
@@ -43,6 +46,126 @@ export function App() {
   useEffect(() => {
     void initializeSettings();
   }, [initializeSettings]);
+
+  useEffect(() => {
+    audioController.setSettings(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    audioController.setWarningHandler((message) => {
+      setAudioWarning(message);
+      window.setTimeout(() => {
+        setAudioWarning((current) => (current === message ? null : current));
+      }, 4200);
+    });
+    return () => {
+      audioController.setWarningHandler(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    const baseline = processedLogCountRef.current;
+    if (baseline === null) {
+      processedLogCountRef.current = sessionLog.length;
+      return;
+    }
+
+    if (sessionLog.length <= baseline) {
+      return;
+    }
+
+    const newEntries = sessionLog.slice(baseline);
+    for (const entry of newEntries) {
+      audioController.playSfxForEvent(entry.kind, entry.message);
+    }
+
+    processedLogCountRef.current = sessionLog.length;
+  }, [sessionLog]);
+
+  useEffect(() => {
+    const unlockAudio = () => {
+      audioController.unlockFromGesture();
+      audioController.resumeIfNeeded();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      unlockAudio();
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+      const actionable = target.closest(
+        "button, [role='button'], a, summary, input[type='checkbox'], input[type='radio'], input[type='range'], select"
+      );
+      if (actionable) {
+        audioController.playUiClick();
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (event.key.toLowerCase() === "m" && !event.altKey && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        unlockAudio();
+        void updateSettings({ audioMuted: !settings.audioMuted });
+        audioController.playUiClick();
+        return;
+      }
+
+      if (event.key.toLowerCase() === "m" && event.altKey) {
+        event.preventDefault();
+        unlockAudio();
+        void updateSettings({ musicEnabled: !settings.musicEnabled });
+        audioController.playUiClick();
+        return;
+      }
+
+      if (event.key.toLowerCase() === "s" && event.altKey) {
+        event.preventDefault();
+        unlockAudio();
+        void updateSettings({ sfxEnabled: !settings.sfxEnabled });
+        audioController.playUiClick();
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === " ") {
+        unlockAudio();
+        audioController.playUiClick();
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        audioController.resumeIfNeeded();
+      }
+    };
+
+    const onPageShow = () => {
+      audioController.resumeIfNeeded();
+    };
+
+    window.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("keydown", onKeyDown, true);
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("keydown", onKeyDown, true);
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      audioController.dispose();
+    };
+  }, [settings.audioMuted, settings.musicEnabled, settings.sfxEnabled, updateSettings]);
 
   useEffect(() => {
     if (appScreen !== "game" || !game) {
@@ -97,6 +220,12 @@ export function App() {
 
   return (
     <>
+      {audioWarning ? (
+        <div className="app-audio-warning" role="status" aria-live="polite">
+          Audio: {audioWarning}
+        </div>
+      ) : null}
+
       {appScreen === "main-menu" && (
         <div className="app-shell main-menu-view">
           <MainMenuPanel

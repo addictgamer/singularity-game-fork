@@ -336,13 +336,31 @@ Completed in this phase slice (previous work):
   - ✅ Dangerous threshold update: any positive danger level now counts as dangerous for red tech-tree rendering
   - ✅ Research completion modal now lists Bases/Locations/Jobs before Research unlocks
   - ✅ Tech popup semantics cleanup: distinct Dependencies (prereqs) and Unlocks (downstream), removed duplicate Dependents listing
+  - ✅ Implemented webapp audio system: background music + UI click sound effects
+  - ✅ Added persistent audio settings (master/mute/music/sfx toggles + volume sliders + shuffle)
+  - ✅ Wired click SFX to primary interactive controls and browser-gesture audio unlock flow
+  - ✅ Added in-game quick audio toggles and keyboard hotkeys (`M`, `Alt+M`, `Alt+S`)
+  - ✅ Routed gameplay session events to SFX categories (research, base, location, system, save/load, warning)
+  - ✅ Added per-event SFX cooldown/debounce rules to prevent rapid-fire stacking
+  - ✅ Added one-time user-visible warnings for missing/failed audio assets
+  - ✅ Added autoplay/suspended-context resilience (`visibilitychange`/`pageshow` recovery)
+  - ✅ Added playlist sequencing with deterministic index resume and optional shuffle
+  - ✅ Added music asset sync pipeline from submodule source into `webapp/public/music`
+  - ✅ Added generated track manifest (`/music/tracks.json`) and runtime playlist loading
+  - ✅ Added `npm run music:update` helper to init/pull music submodule and sync tracks
+  - ✅ Added click asset to webapp public bundle (`/sfx/click0.wav`)
   - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
   - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
   - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button
   - ✅ All 51 tests passing after redesign
-  - ✅ Build clean: 405.30 kB gzip (59 modules), DOM/SVG branch graph visualization
+  - ✅ Build clean: 416.09 kB gzip (60 modules), DOM/SVG branch graph visualization
 
 Remaining work:
+- Music/audio/SFX remaining work:
+  - Initialize/populate `singularity/music/singularity-music` in this clone so sync has real tracks to copy
+  - Expand modal-specific SFX set (open/close, confirm/cancel) with distinct assets
+  - Add audio-focused tests (settings persistence, controller behavior, no-throw on missing assets)
+  - Verify parity with desktop/game intent for ambient mood, feedback timing, and event emphasis
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
 - Loss/game-over narrative parity: replace current generic game-over modal with desktop-aligned loss flow using story sections for both "Lost No Bases" and "Lost Suspicion"
 - Loss flow polish: support multi-step story dialog progression/skip behavior instead of single-message dead-end modal

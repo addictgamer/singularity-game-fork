@@ -66,6 +66,9 @@ Antartica doesn't have the hover overlay and is clicable over the entire region 
 Apparently AI doesn't know how to handle this ...
 
 
+Main menu should have options menu too.
+
+
 ## Research, Tech, & Knowledge
 
 I like its suggestions:
@@ -77,26 +80,10 @@ Research queue/priority mode (single active target plus auto-redirect CPU)
 Cross-panel integration so Knowledge and Research share identical effect wording and unlock cards
 ```
 
-I'd also love a "tech tree" visual view.
-
-Need to ask the AI if all research effects have been fully implemented and have parity with the original game.
-
-Make techs in the "Avaialble technologies" list clickable that shows their narrative descriptions and stuff. Or hover over to see it? Hmm.
-Only show results once researched?
-
-Research completion should show a popup dialogue showing what was unlocked for next research + the result string.
-
-UI:
-Put bases before research in the Research Completed popup.
-
-Dangerous should show red in both locked & unlocked state.
-Technology Tree doesn't auto-update after state is changed in tech popup? It showed as paused even when it shouldn't.
-
 Research Tracker should always show shortest-ETA tech first.
+
 ESc. should only close tech popup if open and not the entire tech tree/research panel.
 Likewise, tech tree hitting escape OR clicking on the x for the tech tree windowx should go back to research panel.
-
-Only show the first level of locked techs in the tech tree.
 
 
 ## Survivability
