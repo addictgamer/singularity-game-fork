@@ -764,7 +764,7 @@ export function GameView({
         <div className="modal-overlay" onClick={() => setOpenModal(null)}>
           <div className="modal-content tech-tree-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpenModal(null)}>✕</button>
-            <TechTreeVisualization game={game} />
+            <TechTreeVisualization game={game} onAssignCpu={onAssignCpu} />
           </div>
         </div>
       )}

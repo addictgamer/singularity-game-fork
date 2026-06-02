@@ -975,6 +975,10 @@ button {
   margin: 0 2rem 0.8rem 0;
 }
 
+.tech-node-free-cpu {
+  margin: 0 0 0.75rem;
+}
+
 .tech-node-modal-close {
   position: absolute;
   top: 0.65rem;
@@ -993,6 +997,26 @@ button {
 .tech-node-modal-close:focus-visible {
   color: var(--accent-strong);
   outline: none;
+}
+
+.tech-node-research-controls {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(111, 80, 64, 0.25);
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tech-node-research-controls h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6f5040;
+}
+
+.tech-node-exact-assign {
+  margin-top: 0.2rem;
 }
 
 .tech-tree-detail-panel h3 {

@@ -326,11 +326,13 @@ Completed in this phase slice (previous work):
   - ✅ Follow-up polish: adaptive compact layout mode for large trees to keep dense graphs readable
   - ✅ Interaction update: tech click now opens a dedicated popup modal instead of expanding inline details
   - ✅ Detail modal supports close button, backdrop click, and Escape key dismissal
+  - ✅ Added full per-tech research controls directly inside popup modal (−1/+1/+5/+10, max, clear, exact set)
+  - ✅ Tech popup allocation logic now matches main research panel budget and lock/completion guardrails
   - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
   - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
   - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button
   - ✅ All 51 tests passing after redesign
-  - ✅ Build clean: 401.40 kB gzip (59 modules), DOM/SVG branch graph visualization
+  - ✅ Build clean: 404.75 kB gzip (59 modules), DOM/SVG branch graph visualization
 
 Remaining work:
 - Main menu flow additional depth (submenus, campaign story intro, credits/help)
