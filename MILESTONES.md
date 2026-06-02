@@ -334,6 +334,7 @@ Completed in this phase slice (previous work):
   - ✅ Fixed stale tech-tree status rendering after popup CPU changes (tree now refreshes without reopening)
   - ✅ Dangerous-tech visual rule update: dangerous techs now render red in both locked and unlocked states
   - ✅ Dangerous threshold update: any positive danger level now counts as dangerous for red tech-tree rendering
+  - ✅ Research completion modal now lists Bases/Locations/Jobs before Research unlocks
   - ✅ Upgraded modal sizing for a proper wide tech-tree screen feel
   - ✅ Modal accessible from Research panel via "📊 View Tech Tree" button
   - ✅ Modal accessible from Knowledge panel via "📊 View Tech Tree" button

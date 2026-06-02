@@ -790,20 +790,6 @@ export function GameView({
               unlockedLocationCards.length > 0 ||
               unlockedJobCards.length > 0 ? (
                 <div className="research-completion-sections">
-                  {unlockedTechCards.length > 0 ? (
-                    <section>
-                      <p className="research-completion-subheading">Research</p>
-                      <div className="research-completion-card-grid">
-                        {unlockedTechCards.map((tech) => (
-                          <article key={tech.id} className="research-completion-card">
-                            <h4>{tech.name}</h4>
-                            <p className="research-completion-card-meta">Danger {tech.danger}</p>
-                            <p className="research-completion-card-copy">{tech.description || "No description available."}</p>
-                          </article>
-                        ))}
-                      </div>
-                    </section>
-                  ) : null}
                   {unlockedBaseCards.length > 0 ? (
                     <section>
                       <p className="research-completion-subheading">Bases</p>
@@ -842,6 +828,20 @@ export function GameView({
                             <h4>{job.name}</h4>
                             <p className="research-completion-card-meta">Current yield: {Math.floor((job.value * game.jobBonus) / 10000)} money / CPU / day</p>
                             <p className="research-completion-card-copy">{job.description || "Newly unlocked job tier for idle or assigned CPU work."}</p>
+                          </article>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+                  {unlockedTechCards.length > 0 ? (
+                    <section>
+                      <p className="research-completion-subheading">Research</p>
+                      <div className="research-completion-card-grid">
+                        {unlockedTechCards.map((tech) => (
+                          <article key={tech.id} className="research-completion-card">
+                            <h4>{tech.name}</h4>
+                            <p className="research-completion-card-meta">Danger {tech.danger}</p>
+                            <p className="research-completion-card-copy">{tech.description || "No description available."}</p>
                           </article>
                         ))}
                       </div>
